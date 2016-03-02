@@ -1,0 +1,287 @@
+{
+  parserClass = "org.dmitrigb.ideanim.parser.NimParser"
+  extends = "com.intellij.extapi.psi.ASTWrapperPsiElement"
+  
+  //psiClassPrefix = "Nim"
+  psiImplClassSuffix = "Impl"
+  psiPackage = "org.dmitrigb.ideanim.psi"
+  psiImplPackage = "org.dmitrigb.ideanim.psi.impl"
+  //psiImplUtilClass = "org.dmitrigb.ideanim.psi.NimPsiImplUtil"
+  
+  elementTypeHolderClass = "org.dmitrigb.ideanim.psi.NimTypesBase"
+  elementTypeClass = "org.dmitrigb.ideanim.psi.NimElementType"
+  tokenTypeClass = "org.dmitrigb.ideanim.psi.NimTokenType"
+
+  parserUtilClass = "org.dmitrigb.ideanim.parser.ParserUtil"
+}
+
+NimFile ::= <<listOf (!<<eof>> complexOrSimpleStmt) (T_SEMICOLON (&INDNONE | &INDEQ) | &INDEQ)>>?
+
+external INDEQ ::= indEq
+external INDLT ::= indLt
+external INDGT ::= indGt
+external INDNONE ::= indNone
+external OPTIND ::= indOpt
+
+Identifier ::= IDENT | T_ADDR | T_TYPE | ACCENT_QUOTED {mixin="org.dmitrigb.ideanim.psi.IdentifierImplMixin" extends=Expression}
+Literal ::= NUMBER_LITERAL | CHARACTER_LITERAL | STRING_LITERAL {extends=Expression}
+
+Symbol ::= IDENT | T_ADDR | T_TYPE | ACCENT_QUOTED
+
+private meta listOf ::= <<p1>> (<<p2>> <<p1>>)*
+private meta section ::= &INDNONE <<p>> | <<indented <<listOf <<p>> INDEQ>>>>
+
+private stmt ::=
+      <<indented <<listOf complexOrSimpleStmt (T_SEMICOLON (&INDNONE | &INDEQ) | &INDEQ)>>>>
+    | !<<inSemiStmtList>> <<listOf (&INDNONE simpleStmt) (T_SEMICOLON)>>
+    | &<<inSemiStmtList>> simpleStmt
+
+fake Statement ::= stmt
+
+private complexOrSimpleStmt ::=
+    IfStmt
+  | WhileStmt
+  | CaseStmt
+  | TryStmt
+  | ForStmt
+  | BlockStmt
+  | ProcDef
+  | IteratorDef
+  | TemplateDef
+  | TypeSect
+  | ConstSect
+  | LetSect
+  | WhenStmt
+  | VarSect
+  | simpleStmt
+  {recoverWhile="complexOrSimpleStmtRecover"}
+
+private complexOrSimpleStmtRecover ::= !(INDEQ | INDLT | T_SEMICOLON | T_RPAREN)
+
+
+private condStmt ::= <<listOf (expr T_COLON stmt) ((&INDNONE | &INDEQ) T_ELIF)>> ((&INDNONE | &INDEQ) T_ELSE T_COLON stmt)?
+
+IfStmt ::= T_IF &OPTIND condStmt {pin=1 extends=Statement}
+
+WhenStmt ::= T_WHEN &OPTIND condStmt {pin=1 extends=Statement}
+
+WhileStmt ::= T_WHILE &OPTIND expr T_COLON stmt {pin=1 extends=Statement}
+
+CaseStmt ::= caseStmtOrExpr {extends=Statement}
+private caseStmtOrExpr ::= T_CASE expr T_COLON? (<<indented caseBranches>> | caseBranches) {pin=1}
+private caseBranches ::= (&INDEQ T_OF &OPTIND exprList T_COLON stmt)* (&INDEQ T_ELIF &OPTIND expr T_COLON stmt)* (&INDEQ T_ELSE T_COLON stmt)?
+private exprList ::= <<listOf expr (T_COMMA &OPTIND)>>
+
+TryStmt ::= T_TRY T_COLON stmt (&(INDNONE | INDEQ) T_EXCEPT &OPTIND exprList T_COLON stmt)*
+            (&(INDNONE | INDEQ) T_FINALLY &OPTIND exprList T_COLON stmt)? {pin=1}
+
+ForStmt ::= T_FOR INDNONE <<listOf (OPTIND identWithPragma) (T_COMMA)>> T_IN expr T_COLON stmt {pin=1 extends=Statement}
+private identWithPragma ::= identVis Pragma?
+private identVis ::= Symbol OPERATOR?
+
+Pragma ::= T_BRACEDOT <<enterPragma (OPTIND (exprColonEqExpr T_COMMA?)*)>> (T_DOTBRACE | T_RBRACE) {pin=1}
+
+BlockStmt ::= T_BLOCK INDNONE Symbol? T_COLON stmt {pin=1 extends=Statement}
+
+fake RoutineDef ::= (T_PROC | T_TEMPLATE | T_ITERATOR) routine {
+  pin=1
+  extends=Statement
+  mixin="org.dmitrigb.ideanim.psi.RoutineDefMixin"
+  methods=[
+    genericParameters="GenericParamList"
+    parameters="ParamList"
+    returnType="TypeDesc"
+    body="RoutineBody"
+  ]
+}
+
+ProcDef ::= T_PROC routine {
+  pin=1
+  extends=RoutineDef
+  methods=[
+    genericParameters="GenericParamList"
+    parameters="ParamList"
+    returnType="TypeDesc"
+    body="RoutineBody"
+  ]
+}
+
+private routine ::= &OPTIND identVis (OPTIND Pattern)? (OPTIND GenericParamList)? INDNONE paramListColon (OPTIND Pragma)? (OPTIND T_EQ RoutineBody)?
+
+RoutineBody ::= stmt
+
+Pattern ::= T_LBRACE stmt T_RBRACE {pin=1}
+
+GenericParamList ::= T_LBRACKET OPTIND <<listOf genericParam (T_COMMA | T_SEMICOLON)>>? T_RBRACKET {pin=1}
+private genericParam ::= <<listOf ((&IDENT | &ACCENT_QUOTED) Symbol) (T_COMMA OPTIND)>> (T_COLON OPTIND expr)? (T_EQ OPTIND expr)?
+
+ParamList ::= &INDNONE T_LPAREN OPTIND <<listOf identColonEqualsWithBothOptionalWithPragma (T_COMMA | T_SEMICOLON)>>? T_RPAREN {pin=2}
+private paramListColon ::= ParamList? (&INDNONE T_COLON OPTIND TypeDesc)?
+private paramListArrow ::= ParamList? (&INDNONE <<arrow>> OPTIND TypeDesc)?
+
+IteratorDef ::= T_ITERATOR routine {
+  pin=1
+  extends=RoutineDef
+  methods=[
+    genericParameters="GenericParamList"
+    parameters="ParamList"
+    returnType="TypeDesc"
+    body="RoutineBody"
+  ]
+}
+
+TemplateDef ::= T_TEMPLATE routine {
+  pin=1
+  extends=RoutineDef
+  methods=[
+    genericParameters="GenericParamList"
+    parameters="ParamList"
+    returnType="TypeDesc"
+    body="RoutineBody"
+  ]
+}
+
+TypeSect ::= T_TYPE !T_LPAREN <<section TypeDef>> {pin=1 extends=Statement}
+TypeDef ::= identWithPragma (OPTIND GenericParamList)? (T_EQ OPTIND <<typeDefMode simpleExpr>>)?
+
+ConstSect ::= T_CONST <<section ConstDef>> {pin=1 extends=Statement}
+LetSect ::= T_LET <<section VarDef>> {pin=1 extends=Statement}
+VarSect ::= T_VAR <<section VarDef>> {pin=1 extends=Statement}
+
+ConstDef ::= identWithPragma (T_COLON OPTIND TypeDesc)? T_EQ OPTIND expr
+VarDef ::= identColonEqualsWithPragma
+
+private identColonEquals ::=
+    <<listOf (&(IDENT | ACCENT_QUOTED) Symbol) (T_COMMA OPTIND)>> (T_COMMA OPTIND)?
+    (T_COLON OPTIND TypeDesc (T_EQ OPTIND expr)? | T_EQ OPTIND expr)
+private identColonEqualsWithPragma ::=
+    <<listOf (&(IDENT | ACCENT_QUOTED) identWithPragma) (T_COMMA OPTIND)>> (T_COMMA OPTIND)?
+    (T_COLON OPTIND TypeDesc (T_EQ OPTIND expr)? | T_EQ OPTIND expr)
+private identColonEqualsWithBothOptionalWithPragma ::=
+    <<listOf (&(IDENT | ACCENT_QUOTED) identWithPragma) (T_COMMA OPTIND)>> (T_COMMA OPTIND)?
+    (T_COLON OPTIND TypeDesc)? (T_EQ OPTIND expr)?
+
+TypeDesc ::= <<typeDescMode simpleExpr>>
+
+private simpleStmt ::=
+    ReturnStmt
+  | RaiseStmt
+  | YieldStmt
+  | DiscardStmt
+  | BreakStmt
+  | PragmaStmt
+  | ImportStmt
+  | (&isExprStart ExprStmt)?
+
+ReturnStmt ::= T_RETURN (OPTIND &isExprStart expr)? {pin=1 extends=Statement}
+
+RaiseStmt ::= T_RAISE (OPTIND &isExprStart expr)? {pin=1 extends=Statement}
+
+YieldStmt ::= T_YIELD (OPTIND &isExprStart expr)? {pin=1 extends=Statement}
+
+DiscardStmt ::= T_DISCARD (OPTIND &isExprStart expr)? {pin=1 extends=Statement}
+
+BreakStmt ::= T_BREAK (OPTIND &isExprStart expr)? {pin=1 extends=Statement}
+
+PragmaStmt ::= Pragma (&INDNONE T_COLON stmt)? {extends=Statement}
+
+ImportStmt ::= T_IMPORT OPTIND expr (T_COMMA OPTIND expr)* {pin=1 extends=Statement}
+
+ExprStmt ::= simpleExpr (AssignmentExpr | &INDNONE <<extendCommand (T_COMMA OPTIND expr)+>>? (&T_DO doBlocks | macroColon)? )?
+  {extends=Statement}
+
+fake Expression ::= expr
+
+left AssignmentExpr ::= T_EQ OPTIND expr {extends=Expression}
+private macroColon ::= (&INDNONE T_COLON (!(T_OF | T_ELIF | T_ELSE | T_EXCEPT) stmt)?)?
+
+private expr ::= IfExpr | WhenExpr | CaseExpr | simpleExpr
+
+IfExpr ::= T_IF condExpr {extends=Expression}
+WhenExpr ::= T_WHEN condExpr {extends=Expression}
+private condExpr ::= <<listOf (expr T_COLON expr &OPTIND) (T_ELIF)>> T_ELSE T_COLON expr
+
+CaseExpr ::= caseStmtOrExpr {extends=Expression}
+
+external simpleExpr ::= parseSimpleExpr primary 0
+private primary ::=
+      PrefixExpr
+    | tuple
+    | procExpr
+    | <<inTypeDefMode>> EnumDef
+    | <<inTypeDefMode>> ObjectDef
+    | T_VAR OPTIND typeDescK
+    | T_PTR OPTIND typeDescK
+    | identOrLiteral primarySuffix*
+
+PrefixExpr ::= anyOperator OPTIND primary {pin=1 extends=Expression}
+
+private tuple ::= T_TUPLE (T_LBRACKET OPTIND <<listOf identColonEquals (T_COMMA | T_SEMICOLON)>> (T_COMMA | T_SEMICOLON)? T_RBRACKET) {pin=1}
+
+private procExpr ::= (T_PROC | T_ITERATOR) (INDNONE paramListColon? Pragma?)? (<<inNormalMode>> T_EQ stmt)? {pin=1}
+
+EnumDef ::= T_ENUM (&OPTIND Symbol (&INDNONE T_EQ &OPTIND expr)? (&INDNONE T_COMMA)?)* {pin=1}
+
+ObjectDef ::= T_OBJECT (OPTIND Pragma)? (INDNONE T_OF TypeDesc)? (INDGT objectPart)? {pin=1}
+private objectPart ::= <<indented (INDEQ &(T_CASE | T_WHEN | IDENT | ACCENT_QUOTED | T_NIL | T_DISCARD) objectPart)*>>
+                     | /*objectWhen | objectCase |*/ identColonEqualsWithPragma | NilToken
+//private objectWhen ::=
+
+private typeDescK ::= !anyOperator &isExprStart primary
+private anyOperator ::= OPERATOR | T_DIV | T_MOD | T_SHL | T_SHR | T_IN | T_NOTIN | T_IS | T_ISNOT | T_NOT | T_OF | T_AS
+                      | T_DOTDOT | T_AND | T_OR | T_XOR
+private isExprStart ::= IDENT | ACCENT_QUOTED | OPERATOR | T_NOT | T_NIL | T_CAST | T_IF | T_PROC | T_ITERATOR | T_BIND
+                      | T_ADDR | T_LPAREN | T_LBRACKET | T_RBRACE | Literal | T_VAR | T_REF | T_PTR | T_TUPLE | T_OBJECT
+                      | T_TYPE | T_WHEN | T_CASE | T_OUT
+
+private identOrLiteral ::=
+      (&IDENT | &T_TYPE | &T_ADDR) Identifier /* generalizedLit */
+    | &ACCENT_QUOTED Identifier
+    | Literal
+    | NilToken
+    | BracketCtor
+    | CastExpr
+    | <<inNormalMode>> GroupedExpr
+    | SetOrTableCtor
+
+NilToken ::= T_NIL {extends=Expression}
+BracketCtor ::= T_LBRACKET exprColonEqExprList T_RBRACKET {pin=1 extends=Expression}
+CastExpr ::= T_CAST T_LBRACKET OPTIND TypeDesc T_RBRACKET T_LPAREN OPTIND expr T_RPAREN {pin=1 extends=Expression}
+
+GroupedExpr ::= T_LPAREN OPTIND (
+      &parKeyw semiStmtList
+    | T_SEMICOLON OPTIND semiStmtList
+    //| stmtPragma
+    | simpleExpr (T_EQ OPTIND expr (&T_SEMICOLON semiStmtList)? | &T_SEMICOLON semiStmtList | /*colonOrEquals*/ (T_COMMA exprColonEqExpr)* T_COMMA?)
+    ) T_RPAREN {pin=1 extends=Expression}
+private parKeyw ::= T_DISCARD | T_INCLUDE | T_IF | T_WHILE | T_CASE | T_TRY | T_DEFER | T_FINALLY | T_EXCEPT | T_FOR
+                  | T_BLOCK | T_CONST | T_LET | T_WHEN | T_VAR | T_MIXIN
+
+private semiStmtList ::= <<enterSemiStmtList <<listOf complexOrSimpleStmt (T_SEMICOLON OPTIND)>>>>
+
+SetOrTableCtor ::= T_LBRACE &OPTIND (T_COLON | <<listOf exprColonEqExpr (T_COMMA)>>? T_COMMA?) T_RBRACE {extends=Expression}
+
+private primarySuffix ::= INDNONE (CallExpr | &T_DO callWithDoBlocks | BracketExpr | CommandExpr) | DotExpr
+
+left callWithDoBlocks ::= doBlocks {elementType=CallExpr}
+private doBlocks ::= <<listOf DoBlock INDEQ>>?
+DoBlock ::= T_DO paramListArrow (OPTIND Pragma)? T_COLON stmt {pin=1}
+
+left CallExpr ::= T_LPAREN exprColonEqExprList T_RPAREN doBlocks {
+  pin=1
+  extends=Expression
+  methods=[
+    argument="Expression"
+  ]
+}
+
+left BracketExpr ::= T_LBRACKET exprColonEqExprList T_RBRACKET {pin=1 extends=Expression}
+private exprColonEqExprList ::= OPTIND <<listOf exprColonEqExpr (T_COMMA)>>?
+private exprColonEqExpr ::= expr (T_COLON expr | T_EQ expr)?
+
+left CommandExpr ::= &(IDENT | Literal | ACCENT_QUOTED | T_NIL | T_CAST | T_ADDR | T_TYPE) expr {extends=Expression}
+
+left DotExpr ::= T_DOT OPTIND Symbol {pin=1 extends=Expression}
+
+
+InfixExpr ::= expr {extends=Expression} // Used by ParserUtil
