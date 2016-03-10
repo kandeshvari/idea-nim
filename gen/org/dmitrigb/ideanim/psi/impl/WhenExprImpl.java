@@ -16,8 +16,12 @@ public class WhenExprImpl extends ExpressionImpl implements WhenExpr {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitWhenExpr(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitWhenExpr(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 

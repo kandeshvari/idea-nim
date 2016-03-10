@@ -16,8 +16,12 @@ public class CallExprImpl extends ExpressionImpl implements CallExpr {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitCallExpr(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitCallExpr(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 

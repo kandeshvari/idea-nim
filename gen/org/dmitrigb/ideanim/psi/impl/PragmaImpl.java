@@ -17,8 +17,12 @@ public class PragmaImpl extends ASTWrapperPsiElement implements Pragma {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitPragma(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitPragma(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 

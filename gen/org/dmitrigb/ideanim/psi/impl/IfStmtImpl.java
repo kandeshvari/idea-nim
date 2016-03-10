@@ -16,21 +16,25 @@ public class IfStmtImpl extends StatementImpl implements IfStmt {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitIfStmt(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitIfStmt(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
+  }
+
+  @Override
+  @NotNull
+  public List<Block> getBlockList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, Block.class);
   }
 
   @Override
   @NotNull
   public List<Expression> getExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, Expression.class);
-  }
-
-  @Override
-  @NotNull
-  public List<Statement> getStatementList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, Statement.class);
   }
 
 }

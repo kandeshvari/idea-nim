@@ -11,6 +11,6 @@ public interface EnumDef extends PsiElement {
   List<Expression> getExpressionList();
 
   @NotNull
-  List<Symbol> getSymbolList();
+  List<Identifier> getIdentifierList();
 
 }

@@ -5,12 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface TryStmt extends PsiElement {
+public interface TryStmt extends Statement {
+
+  @NotNull
+  List<Block> getBlockList();
 
   @NotNull
   List<Expression> getExpressionList();
-
-  @NotNull
-  List<Statement> getStatementList();
 
 }

@@ -16,9 +16,19 @@ public class PrefixExprImpl extends ExpressionImpl implements PrefixExpr {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitPrefixExpr(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitPrefixExpr(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
+  }
+
+  @Override
+  @Nullable
+  public Block getBlock() {
+    return findChildByClass(Block.class);
   }
 
   @Override
@@ -28,9 +38,21 @@ public class PrefixExprImpl extends ExpressionImpl implements PrefixExpr {
   }
 
   @Override
+  @Nullable
+  public Expression getExpression() {
+    return findChildByClass(Expression.class);
+  }
+
+  @Override
   @NotNull
-  public List<Expression> getExpressionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, Expression.class);
+  public List<IdentifierDef> getIdentifierDefList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdentifierDef.class);
+  }
+
+  @Override
+  @NotNull
+  public List<IdentifierDefs> getIdentifierDefsList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdentifierDefs.class);
   }
 
   @Override
@@ -41,32 +63,8 @@ public class PrefixExprImpl extends ExpressionImpl implements PrefixExpr {
 
   @Override
   @Nullable
-  public ParamList getParamList() {
-    return findChildByClass(ParamList.class);
-  }
-
-  @Override
-  @Nullable
   public Pragma getPragma() {
     return findChildByClass(Pragma.class);
-  }
-
-  @Override
-  @Nullable
-  public PrefixExpr getPrefixExpr() {
-    return findChildByClass(PrefixExpr.class);
-  }
-
-  @Override
-  @NotNull
-  public List<Statement> getStatementList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, Statement.class);
-  }
-
-  @Override
-  @NotNull
-  public List<Symbol> getSymbolList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, Symbol.class);
   }
 
   @Override

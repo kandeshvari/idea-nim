@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface LetSect extends Statement {
 
-  @Nullable
-  VarDef getVarDef();
+  @NotNull
+  List<VarDef> getDefinitionList();
 
 }

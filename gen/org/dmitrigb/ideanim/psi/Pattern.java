@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface Pattern extends PsiElement {
 
-  @NotNull
-  List<Statement> getStatementList();
+  @Nullable
+  Block getBlock();
 
 }

@@ -8,30 +8,33 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static org.dmitrigb.ideanim.psi.NimTypesBase.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import org.dmitrigb.ideanim.psi.*;
 
-public class TryStmtImpl extends ASTWrapperPsiElement implements TryStmt {
+public class TryStmtImpl extends StatementImpl implements TryStmt {
 
   public TryStmtImpl(ASTNode node) {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitTryStmt(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitTryStmt(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
+  }
+
+  @Override
+  @NotNull
+  public List<Block> getBlockList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, Block.class);
   }
 
   @Override
   @NotNull
   public List<Expression> getExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, Expression.class);
-  }
-
-  @Override
-  @NotNull
-  public List<Statement> getStatementList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, Statement.class);
   }
 
 }

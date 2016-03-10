@@ -8,24 +8,24 @@ import com.intellij.psi.PsiElement;
 public interface RoutineDef extends Statement {
 
   @Nullable
+  GenericParameters getGenericParameters();
+
+  @Nullable
+  Identifier getIdentifier();
+
+  @Nullable
   Pattern getPattern();
 
   @Nullable
   Pragma getPragma();
 
-  @Nullable
-  Symbol getSymbol();
-
-  @Nullable
-  GenericParamList getGenericParameters();
-
-  @Nullable
-  ParamList getParameters();
+  @NotNull
+  List<IdentifierDefs> getParameterList();
 
   @Nullable
   TypeDesc getReturnType();
 
   @Nullable
-  RoutineBody getBody();
+  Block getBody();
 
 }

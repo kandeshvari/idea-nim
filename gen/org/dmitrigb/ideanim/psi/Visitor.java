@@ -11,6 +11,10 @@ public class Visitor extends PsiElementVisitor {
     visitExpression(o);
   }
 
+  public void visitBlock(@NotNull Block o) {
+    visitPsiElement(o);
+  }
+
   public void visitBlockStmt(@NotNull BlockStmt o) {
     visitStatement(o);
   }
@@ -83,7 +87,7 @@ public class Visitor extends PsiElementVisitor {
     visitStatement(o);
   }
 
-  public void visitGenericParamList(@NotNull GenericParamList o) {
+  public void visitGenericParameters(@NotNull GenericParameters o) {
     visitPsiElement(o);
   }
 
@@ -91,7 +95,23 @@ public class Visitor extends PsiElementVisitor {
     visitExpression(o);
   }
 
+  public void visitIdentPragmaPair(@NotNull IdentPragmaPair o) {
+    visitPsiElement(o);
+  }
+
   public void visitIdentifier(@NotNull Identifier o) {
+    visitPsiElement(o);
+  }
+
+  public void visitIdentifierDef(@NotNull IdentifierDef o) {
+    visitIdentifier(o);
+  }
+
+  public void visitIdentifierDefs(@NotNull IdentifierDefs o) {
+    visitPsiElement(o);
+  }
+
+  public void visitIdentifierExpr(@NotNull IdentifierExpr o) {
     visitExpression(o);
   }
 
@@ -131,10 +151,6 @@ public class Visitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitParamList(@NotNull ParamList o) {
-    visitPsiElement(o);
-  }
-
   public void visitPattern(@NotNull Pattern o) {
     visitPsiElement(o);
   }
@@ -163,10 +179,6 @@ public class Visitor extends PsiElementVisitor {
     visitStatement(o);
   }
 
-  public void visitRoutineBody(@NotNull RoutineBody o) {
-    visitPsiElement(o);
-  }
-
   public void visitRoutineDef(@NotNull RoutineDef o) {
     visitStatement(o);
   }
@@ -179,8 +191,8 @@ public class Visitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitSymbol(@NotNull Symbol o) {
-    visitPsiElement(o);
+  public void visitStaticStmt(@NotNull StaticStmt o) {
+    visitStatement(o);
   }
 
   public void visitTemplateDef(@NotNull TemplateDef o) {
@@ -188,7 +200,7 @@ public class Visitor extends PsiElementVisitor {
   }
 
   public void visitTryStmt(@NotNull TryStmt o) {
-    visitPsiElement(o);
+    visitStatement(o);
   }
 
   public void visitTypeDef(@NotNull TypeDef o) {

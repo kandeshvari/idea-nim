@@ -17,27 +17,31 @@ public class TypeDefImpl extends ASTWrapperPsiElement implements TypeDef {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitTypeDef(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitTypeDef(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
   @Nullable
-  public GenericParamList getGenericParamList() {
-    return findChildByClass(GenericParamList.class);
+  public GenericParameters getGenericParameters() {
+    return findChildByClass(GenericParameters.class);
+  }
+
+  @Override
+  @NotNull
+  public Identifier getIdentifier() {
+    return findNotNullChildByClass(Identifier.class);
   }
 
   @Override
   @Nullable
   public Pragma getPragma() {
     return findChildByClass(Pragma.class);
-  }
-
-  @Override
-  @NotNull
-  public Symbol getSymbol() {
-    return findNotNullChildByClass(Symbol.class);
   }
 
 }

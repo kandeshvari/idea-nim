@@ -16,8 +16,12 @@ public class LiteralImpl extends ExpressionImpl implements Literal {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitLiteral(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitLiteral(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 

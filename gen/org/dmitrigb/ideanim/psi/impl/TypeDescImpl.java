@@ -17,8 +17,12 @@ public class TypeDescImpl extends ASTWrapperPsiElement implements TypeDesc {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitTypeDesc(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitTypeDesc(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 

@@ -16,9 +16,25 @@ public class ProcDefImpl extends RoutineDefImpl implements ProcDef {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitProcDef(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitProcDef(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
+  }
+
+  @Override
+  @Nullable
+  public GenericParameters getGenericParameters() {
+    return findChildByClass(GenericParameters.class);
+  }
+
+  @Override
+  @Nullable
+  public Identifier getIdentifier() {
+    return findChildByClass(Identifier.class);
   }
 
   @Override
@@ -34,21 +50,9 @@ public class ProcDefImpl extends RoutineDefImpl implements ProcDef {
   }
 
   @Override
-  @Nullable
-  public Symbol getSymbol() {
-    return findChildByClass(Symbol.class);
-  }
-
-  @Override
-  @Nullable
-  public GenericParamList getGenericParameters() {
-    return findChildByClass(GenericParamList.class);
-  }
-
-  @Override
-  @Nullable
-  public ParamList getParameters() {
-    return findChildByClass(ParamList.class);
+  @NotNull
+  public List<IdentifierDefs> getParameterList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdentifierDefs.class);
   }
 
   @Override
@@ -59,8 +63,8 @@ public class ProcDefImpl extends RoutineDefImpl implements ProcDef {
 
   @Override
   @Nullable
-  public RoutineBody getBody() {
-    return findChildByClass(RoutineBody.class);
+  public Block getBody() {
+    return findChildByClass(Block.class);
   }
 
 }

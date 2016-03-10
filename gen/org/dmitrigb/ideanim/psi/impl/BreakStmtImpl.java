@@ -16,8 +16,12 @@ public class BreakStmtImpl extends StatementImpl implements BreakStmt {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitBreakStmt(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitBreakStmt(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 

@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface CommandExpr extends Expression {
 
-  @Nullable
-  Expression getExpression();
+  @NotNull
+  List<Expression> getExpressionList();
 
 }

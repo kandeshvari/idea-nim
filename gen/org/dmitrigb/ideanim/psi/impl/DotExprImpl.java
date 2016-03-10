@@ -16,8 +16,12 @@ public class DotExprImpl extends ExpressionImpl implements DotExpr {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitDotExpr(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitDotExpr(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 
@@ -29,8 +33,8 @@ public class DotExprImpl extends ExpressionImpl implements DotExpr {
 
   @Override
   @Nullable
-  public Symbol getSymbol() {
-    return findChildByClass(Symbol.class);
+  public Identifier getIdentifier() {
+    return findChildByClass(Identifier.class);
   }
 
 }

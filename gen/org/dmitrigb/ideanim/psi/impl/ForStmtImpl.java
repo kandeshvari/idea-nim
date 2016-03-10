@@ -16,9 +16,19 @@ public class ForStmtImpl extends StatementImpl implements ForStmt {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitForStmt(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitForStmt(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
+  }
+
+  @Override
+  @Nullable
+  public Block getBlock() {
+    return findChildByClass(Block.class);
   }
 
   @Override
@@ -29,20 +39,8 @@ public class ForStmtImpl extends StatementImpl implements ForStmt {
 
   @Override
   @NotNull
-  public List<Pragma> getPragmaList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, Pragma.class);
-  }
-
-  @Override
-  @NotNull
-  public List<Statement> getStatementList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, Statement.class);
-  }
-
-  @Override
-  @NotNull
-  public List<Symbol> getSymbolList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, Symbol.class);
+  public List<IdentPragmaPair> getIdentPragmaPairList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdentPragmaPair.class);
   }
 
 }

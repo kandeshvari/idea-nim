@@ -16,8 +16,12 @@ public class ImportStmtImpl extends StatementImpl implements ImportStmt {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitImportStmt(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitImportStmt(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 

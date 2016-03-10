@@ -34,6 +34,6 @@ public class NimFileType extends LanguageFileType {
   @Nullable
   @Override
   public Icon getIcon() {
-    return null;
+    return NimIcons.FILE;
   }
 }

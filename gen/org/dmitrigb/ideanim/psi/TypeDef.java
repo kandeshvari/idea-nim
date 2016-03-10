@@ -8,12 +8,12 @@ import com.intellij.psi.PsiElement;
 public interface TypeDef extends PsiElement {
 
   @Nullable
-  GenericParamList getGenericParamList();
+  GenericParameters getGenericParameters();
+
+  @NotNull
+  Identifier getIdentifier();
 
   @Nullable
   Pragma getPragma();
-
-  @NotNull
-  Symbol getSymbol();
 
 }

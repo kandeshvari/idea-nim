@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface Statement extends PsiElement {
 
-  @NotNull
-  List<Statement> getStatementList();
+  @Nullable
+  Statement getStatement();
 
 }

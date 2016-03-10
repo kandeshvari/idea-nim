@@ -8,15 +8,12 @@ import com.intellij.psi.PsiElement;
 public interface ForStmt extends Statement {
 
   @Nullable
+  Block getBlock();
+
+  @Nullable
   Expression getExpression();
 
   @NotNull
-  List<Pragma> getPragmaList();
-
-  @NotNull
-  List<Statement> getStatementList();
-
-  @NotNull
-  List<Symbol> getSymbolList();
+  List<IdentPragmaPair> getIdentPragmaPairList();
 
 }

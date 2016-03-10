@@ -17,15 +17,19 @@ public class PatternImpl extends ASTWrapperPsiElement implements Pattern {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitPattern(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitPattern(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
-  @NotNull
-  public List<Statement> getStatementList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, Statement.class);
+  @Nullable
+  public Block getBlock() {
+    return findChildByClass(Block.class);
   }
 
 }

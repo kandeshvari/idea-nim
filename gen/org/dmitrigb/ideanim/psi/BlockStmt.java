@@ -7,10 +7,10 @@ import com.intellij.psi.PsiElement;
 
 public interface BlockStmt extends Statement {
 
-  @NotNull
-  List<Statement> getStatementList();
+  @Nullable
+  Block getBlock();
 
   @Nullable
-  Symbol getSymbol();
+  Identifier getIdentifier();
 
 }

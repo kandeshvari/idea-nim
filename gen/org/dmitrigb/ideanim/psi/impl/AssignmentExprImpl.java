@@ -16,8 +16,12 @@ public class AssignmentExprImpl extends ExpressionImpl implements AssignmentExpr
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitAssignmentExpr(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitAssignmentExpr(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 

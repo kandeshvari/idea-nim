@@ -8,9 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface WhenStmt extends Statement {
 
   @NotNull
-  List<Expression> getExpressionList();
+  List<Block> getBlockList();
 
   @NotNull
-  List<Statement> getStatementList();
+  List<Expression> getExpressionList();
 
 }

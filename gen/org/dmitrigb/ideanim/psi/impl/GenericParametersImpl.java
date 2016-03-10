@@ -11,14 +11,18 @@ import static org.dmitrigb.ideanim.psi.NimTypesBase.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import org.dmitrigb.ideanim.psi.*;
 
-public class ParamListImpl extends ASTWrapperPsiElement implements ParamList {
+public class GenericParametersImpl extends ASTWrapperPsiElement implements GenericParameters {
 
-  public ParamListImpl(ASTNode node) {
+  public GenericParametersImpl(ASTNode node) {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitGenericParameters(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitParamList(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 
@@ -30,20 +34,8 @@ public class ParamListImpl extends ASTWrapperPsiElement implements ParamList {
 
   @Override
   @NotNull
-  public List<Pragma> getPragmaList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, Pragma.class);
-  }
-
-  @Override
-  @NotNull
-  public List<Symbol> getSymbolList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, Symbol.class);
-  }
-
-  @Override
-  @NotNull
-  public List<TypeDesc> getTypeDescList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, TypeDesc.class);
+  public List<Identifier> getIdentifierList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, Identifier.class);
   }
 
 }

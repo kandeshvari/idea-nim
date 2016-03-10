@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface ConstSect extends Statement {
 
-  @Nullable
-  ConstDef getConstDef();
+  @NotNull
+  List<ConstDef> getDefinitionList();
 
 }

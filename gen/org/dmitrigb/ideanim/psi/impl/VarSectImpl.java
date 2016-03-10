@@ -8,23 +8,28 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static org.dmitrigb.ideanim.psi.NimTypesBase.*;
+import org.dmitrigb.ideanim.psi.mixins.DefSectMixin;
 import org.dmitrigb.ideanim.psi.*;
 
-public class VarSectImpl extends StatementImpl implements VarSect {
+public class VarSectImpl extends DefSectMixin<VarDef> implements VarSect {
 
   public VarSectImpl(ASTNode node) {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitVarSect(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitVarSect(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
-  @Nullable
-  public VarDef getVarDef() {
-    return findChildByClass(VarDef.class);
+  @NotNull
+  public List<VarDef> getDefinitionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, VarDef.class);
   }
 
 }

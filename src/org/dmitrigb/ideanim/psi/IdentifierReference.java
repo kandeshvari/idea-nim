@@ -6,6 +6,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveState;
+import com.intellij.psi.util.PsiTreeUtil;
 
 public class IdentifierReference extends PsiReferenceBase<Identifier> {
   public IdentifierReference(@NotNull Identifier element) {
@@ -15,16 +16,9 @@ public class IdentifierReference extends PsiReferenceBase<Identifier> {
   @Nullable
   @Override
   public PsiElement resolve() {
-    NimResolverProcessor rp = new NimResolverProcessor(getElement());
-    ResolveState state = ResolveState.initial();
-    PsiElement el = getElement();
-    PsiElement parent;
-    while ((parent = el.getParent()) != null) {
-      if (!parent.processDeclarations(rp, state, el, getElement()))
-        break;
-      el = parent;
-    }
-    return rp.getResolvedTarget();
+    SymbolResolver resolver = new SymbolResolver(getElement());
+    PsiTreeUtil.treeWalkUp(resolver, getElement(), null, ResolveState.initial());
+    return resolver.getResolvedTarget();
   }
 
   @NotNull

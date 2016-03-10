@@ -28,6 +28,7 @@
     <lang.parserDefinition language="Nim" implementationClass="org.dmitrigb.ideanim.NimParserDefinition"/>
     <lang.psiStructureViewFactory language="Nim" implementationClass="org.dmitrigb.ideanim.structureview.NimStructureViewFactory"/>
     <lang.braceMatcher language="Nim" implementationClass="org.dmitrigb.ideanim.NimBraceMatcher"/>
+    <lang.findUsagesProvider language="Nim" implementationClass="org.dmitrigb.ideanim.findUsages.NimFindUsagesProvider"/>
   </extensions>
 
   <actions>

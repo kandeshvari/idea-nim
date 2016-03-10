@@ -17,8 +17,12 @@ public class ObjectDefImpl extends ASTWrapperPsiElement implements ObjectDef {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitObjectDef(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitObjectDef(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 
@@ -30,14 +34,14 @@ public class ObjectDefImpl extends ASTWrapperPsiElement implements ObjectDef {
 
   @Override
   @NotNull
-  public List<Pragma> getPragmaList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, Pragma.class);
+  public List<IdentPragmaPair> getIdentPragmaPairList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdentPragmaPair.class);
   }
 
   @Override
-  @NotNull
-  public List<Symbol> getSymbolList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, Symbol.class);
+  @Nullable
+  public Pragma getPragma() {
+    return findChildByClass(Pragma.class);
   }
 
   @Override

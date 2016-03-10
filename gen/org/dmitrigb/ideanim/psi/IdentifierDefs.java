@@ -5,12 +5,15 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface GenericParamList extends PsiElement {
+public interface IdentifierDefs extends PsiElement {
 
   @NotNull
-  List<Expression> getExpressionList();
+  List<IdentPragmaPair> getIdentPragmaPairList();
 
-  @NotNull
-  List<Symbol> getSymbolList();
+  @Nullable
+  TypeDesc getType();
+
+  @Nullable
+  Expression getInitializer();
 
 }

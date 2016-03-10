@@ -8,24 +8,27 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static org.dmitrigb.ideanim.psi.NimTypesBase.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import org.dmitrigb.ideanim.psi.*;
 
-public class RoutineBodyImpl extends ASTWrapperPsiElement implements RoutineBody {
+public class StaticStmtImpl extends StatementImpl implements StaticStmt {
 
-  public RoutineBodyImpl(ASTNode node) {
+  public StaticStmtImpl(ASTNode node) {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitStaticStmt(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitRoutineBody(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
-  @NotNull
-  public List<Statement> getStatementList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, Statement.class);
+  @Nullable
+  public Block getBlock() {
+    return findChildByClass(Block.class);
   }
 
 }

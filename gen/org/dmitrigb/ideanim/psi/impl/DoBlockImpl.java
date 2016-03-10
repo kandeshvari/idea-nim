@@ -17,27 +17,31 @@ public class DoBlockImpl extends ASTWrapperPsiElement implements DoBlock {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitDoBlock(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitDoBlock(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
   @Nullable
-  public ParamList getParamList() {
-    return findChildByClass(ParamList.class);
+  public Block getBlock() {
+    return findChildByClass(Block.class);
+  }
+
+  @Override
+  @NotNull
+  public List<IdentifierDefs> getIdentifierDefsList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdentifierDefs.class);
   }
 
   @Override
   @Nullable
   public Pragma getPragma() {
     return findChildByClass(Pragma.class);
-  }
-
-  @Override
-  @NotNull
-  public List<Statement> getStatementList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, Statement.class);
   }
 
   @Override

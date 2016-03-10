@@ -8,17 +8,21 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static org.dmitrigb.ideanim.psi.NimTypesBase.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import org.dmitrigb.ideanim.psi.mixins.ConstDefMixin;
 import org.dmitrigb.ideanim.psi.*;
 
-public class ConstDefImpl extends ASTWrapperPsiElement implements ConstDef {
+public class ConstDefImpl extends ConstDefMixin implements ConstDef {
 
   public ConstDefImpl(ASTNode node) {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitConstDef(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitConstDef(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 
@@ -29,15 +33,15 @@ public class ConstDefImpl extends ASTWrapperPsiElement implements ConstDef {
   }
 
   @Override
-  @Nullable
-  public Pragma getPragma() {
-    return findChildByClass(Pragma.class);
+  @NotNull
+  public Identifier getIdentifier() {
+    return findNotNullChildByClass(Identifier.class);
   }
 
   @Override
-  @NotNull
-  public Symbol getSymbol() {
-    return findNotNullChildByClass(Symbol.class);
+  @Nullable
+  public Pragma getPragma() {
+    return findChildByClass(Pragma.class);
   }
 
   @Override

@@ -9,6 +9,7 @@ import org.dmitrigb.ideanim.psi.impl.*;
 public interface NimTypesBase {
 
   IElementType ASSIGNMENT_EXPR = new NimElementType("ASSIGNMENT_EXPR");
+  IElementType BLOCK = new NimElementType("BLOCK");
   IElementType BLOCK_STMT = new NimElementType("BLOCK_STMT");
   IElementType BRACKET_CTOR = new NimElementType("BRACKET_CTOR");
   IElementType BRACKET_EXPR = new NimElementType("BRACKET_EXPR");
@@ -24,11 +25,16 @@ public interface NimTypesBase {
   IElementType DOT_EXPR = new NimElementType("DOT_EXPR");
   IElementType DO_BLOCK = new NimElementType("DO_BLOCK");
   IElementType ENUM_DEF = new NimElementType("ENUM_DEF");
+  IElementType EXPRESSION = new NimElementType("EXPRESSION");
   IElementType EXPR_STMT = new NimElementType("EXPR_STMT");
   IElementType FOR_STMT = new NimElementType("FOR_STMT");
-  IElementType GENERIC_PARAM_LIST = new NimElementType("GENERIC_PARAM_LIST");
+  IElementType GENERIC_PARAMETERS = new NimElementType("GENERIC_PARAMETERS");
   IElementType GROUPED_EXPR = new NimElementType("GROUPED_EXPR");
   IElementType IDENTIFIER = new NimElementType("IDENTIFIER");
+  IElementType IDENTIFIER_DEF = new NimElementType("IDENTIFIER_DEF");
+  IElementType IDENTIFIER_DEFS = new NimElementType("IDENTIFIER_DEFS");
+  IElementType IDENTIFIER_EXPR = new NimElementType("IDENTIFIER_EXPR");
+  IElementType IDENT_PRAGMA_PAIR = new NimElementType("IDENT_PRAGMA_PAIR");
   IElementType IF_EXPR = new NimElementType("IF_EXPR");
   IElementType IF_STMT = new NimElementType("IF_STMT");
   IElementType IMPORT_STMT = new NimElementType("IMPORT_STMT");
@@ -38,7 +44,6 @@ public interface NimTypesBase {
   IElementType LITERAL = new NimElementType("LITERAL");
   IElementType NIL_TOKEN = new NimElementType("NIL_TOKEN");
   IElementType OBJECT_DEF = new NimElementType("OBJECT_DEF");
-  IElementType PARAM_LIST = new NimElementType("PARAM_LIST");
   IElementType PATTERN = new NimElementType("PATTERN");
   IElementType PRAGMA = new NimElementType("PRAGMA");
   IElementType PRAGMA_STMT = new NimElementType("PRAGMA_STMT");
@@ -46,9 +51,10 @@ public interface NimTypesBase {
   IElementType PROC_DEF = new NimElementType("PROC_DEF");
   IElementType RAISE_STMT = new NimElementType("RAISE_STMT");
   IElementType RETURN_STMT = new NimElementType("RETURN_STMT");
-  IElementType ROUTINE_BODY = new NimElementType("ROUTINE_BODY");
+  IElementType ROUTINE_DEF = new NimElementType("ROUTINE_DEF");
   IElementType SET_OR_TABLE_CTOR = new NimElementType("SET_OR_TABLE_CTOR");
-  IElementType SYMBOL = new NimElementType("SYMBOL");
+  IElementType STATEMENT = new NimElementType("STATEMENT");
+  IElementType STATIC_STMT = new NimElementType("STATIC_STMT");
   IElementType TEMPLATE_DEF = new NimElementType("TEMPLATE_DEF");
   IElementType TRY_STMT = new NimElementType("TRY_STMT");
   IElementType TYPE_DEF = new NimElementType("TYPE_DEF");
@@ -124,6 +130,7 @@ public interface NimTypesBase {
   IElementType T_SEMICOLON = new NimTokenType("T_SEMICOLON");
   IElementType T_SHL = new NimTokenType("T_SHL");
   IElementType T_SHR = new NimTokenType("T_SHR");
+  IElementType T_STATIC = new NimTokenType("T_STATIC");
   IElementType T_TEMPLATE = new NimTokenType("T_TEMPLATE");
   IElementType T_TRY = new NimTokenType("T_TRY");
   IElementType T_TUPLE = new NimTokenType("T_TUPLE");
@@ -139,6 +146,9 @@ public interface NimTypesBase {
       IElementType type = node.getElementType();
        if (type == ASSIGNMENT_EXPR) {
         return new AssignmentExprImpl(node);
+      }
+      else if (type == BLOCK) {
+        return new BlockImpl(node);
       }
       else if (type == BLOCK_STMT) {
         return new BlockStmtImpl(node);
@@ -185,20 +195,35 @@ public interface NimTypesBase {
       else if (type == ENUM_DEF) {
         return new EnumDefImpl(node);
       }
+      else if (type == EXPRESSION) {
+        return new ExpressionImpl(node);
+      }
       else if (type == EXPR_STMT) {
         return new ExprStmtImpl(node);
       }
       else if (type == FOR_STMT) {
         return new ForStmtImpl(node);
       }
-      else if (type == GENERIC_PARAM_LIST) {
-        return new GenericParamListImpl(node);
+      else if (type == GENERIC_PARAMETERS) {
+        return new GenericParametersImpl(node);
       }
       else if (type == GROUPED_EXPR) {
         return new GroupedExprImpl(node);
       }
       else if (type == IDENTIFIER) {
         return new IdentifierImpl(node);
+      }
+      else if (type == IDENTIFIER_DEF) {
+        return new IdentifierDefImpl(node);
+      }
+      else if (type == IDENTIFIER_DEFS) {
+        return new IdentifierDefsImpl(node);
+      }
+      else if (type == IDENTIFIER_EXPR) {
+        return new IdentifierExprImpl(node);
+      }
+      else if (type == IDENT_PRAGMA_PAIR) {
+        return new IdentPragmaPairImpl(node);
       }
       else if (type == IF_EXPR) {
         return new IfExprImpl(node);
@@ -227,9 +252,6 @@ public interface NimTypesBase {
       else if (type == OBJECT_DEF) {
         return new ObjectDefImpl(node);
       }
-      else if (type == PARAM_LIST) {
-        return new ParamListImpl(node);
-      }
       else if (type == PATTERN) {
         return new PatternImpl(node);
       }
@@ -251,14 +273,17 @@ public interface NimTypesBase {
       else if (type == RETURN_STMT) {
         return new ReturnStmtImpl(node);
       }
-      else if (type == ROUTINE_BODY) {
-        return new RoutineBodyImpl(node);
+      else if (type == ROUTINE_DEF) {
+        return new RoutineDefImpl(node);
       }
       else if (type == SET_OR_TABLE_CTOR) {
         return new SetOrTableCtorImpl(node);
       }
-      else if (type == SYMBOL) {
-        return new SymbolImpl(node);
+      else if (type == STATEMENT) {
+        return new StatementImpl(node);
+      }
+      else if (type == STATIC_STMT) {
+        return new StaticStmtImpl(node);
       }
       else if (type == TEMPLATE_DEF) {
         return new TemplateDefImpl(node);

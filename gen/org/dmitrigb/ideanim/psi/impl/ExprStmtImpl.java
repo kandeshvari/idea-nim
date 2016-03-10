@@ -16,8 +16,12 @@ public class ExprStmtImpl extends StatementImpl implements ExprStmt {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitExprStmt(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitExprStmt(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 
@@ -29,14 +33,14 @@ public class ExprStmtImpl extends StatementImpl implements ExprStmt {
 
   @Override
   @Nullable
-  public DoBlock getDoBlock() {
-    return findChildByClass(DoBlock.class);
+  public Block getBlock() {
+    return findChildByClass(Block.class);
   }
 
   @Override
   @Nullable
-  public Statement getStatement() {
-    return findChildByClass(Statement.class);
+  public DoBlock getDoBlock() {
+    return findChildByClass(DoBlock.class);
   }
 
 }

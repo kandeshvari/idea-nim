@@ -20,15 +20,12 @@ public interface NimTypes extends NimTypesBase {
   IElementType T_INTERFACE = new NimTokenType("T_INTERFACE");
   IElementType T_MACRO = new NimTokenType("T_MACRO");
   IElementType T_METHOD = new NimTokenType("T_METHOD");
-  IElementType T_STATIC = new NimTokenType("T_STATIC");
   IElementType T_USING = new NimTokenType("T_USING");
   IElementType T_WITH = new NimTokenType("T_WITH");
   IElementType T_WITHOUT = new NimTokenType("T_WITHOUT");
 
   IElementType BLOCK_COMMENT = new NimTokenType("BLOCK_COMMENT");
   IElementType LINE_COMMENT = new NimTokenType("LINE_COMMENT");
-
-  //IElementType INFIX_EXPR = new NimElementType("INFIEX_EXPR");
 
   TokenSet COMMENTS = TokenSet.create(BLOCK_COMMENT, LINE_COMMENT);
 
@@ -40,4 +37,6 @@ public interface NimTypes extends NimTypesBase {
       T_INTERFACE, T_IS, T_ISNOT, T_ITERATOR, T_LET, T_MACRO, T_METHOD, T_MIXIN, T_MOD, T_NIL, T_NOT, T_NOTIN, T_OBJECT,
       T_OF, T_OR, T_OUT, T_PROC, T_PTR, T_RAISE, T_REF, T_RETURN, T_SHL, T_SHR, T_STATIC, T_TEMPLATE, T_TRY, T_TUPLE,
       T_TYPE, T_USING, T_VAR, T_WHEN, T_WHILE, T_WITH, T_WITHOUT, T_XOR, T_YIELD);
+
+  TokenSet LITERALS = TokenSet.create(NUMBER_LITERAL, CHARACTER_LITERAL, STRING_LITERAL);
 }

@@ -10,11 +10,11 @@ public interface ConstDef extends PsiElement {
   @Nullable
   Expression getExpression();
 
+  @NotNull
+  Identifier getIdentifier();
+
   @Nullable
   Pragma getPragma();
-
-  @NotNull
-  Symbol getSymbol();
 
   @Nullable
   TypeDesc getTypeDesc();

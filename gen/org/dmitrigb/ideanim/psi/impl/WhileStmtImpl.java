@@ -16,21 +16,25 @@ public class WhileStmtImpl extends StatementImpl implements WhileStmt {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitWhileStmt(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitWhileStmt(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
+  }
+
+  @Override
+  @Nullable
+  public Block getBlock() {
+    return findChildByClass(Block.class);
   }
 
   @Override
   @Nullable
   public Expression getExpression() {
     return findChildByClass(Expression.class);
-  }
-
-  @Override
-  @NotNull
-  public List<Statement> getStatementList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, Statement.class);
   }
 
 }

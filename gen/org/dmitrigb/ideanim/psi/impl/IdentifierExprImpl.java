@@ -8,18 +8,27 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static org.dmitrigb.ideanim.psi.NimTypesBase.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import org.dmitrigb.ideanim.psi.*;
 
-public class SymbolImpl extends ASTWrapperPsiElement implements Symbol {
+public class IdentifierExprImpl extends ExpressionImpl implements IdentifierExpr {
 
-  public SymbolImpl(ASTNode node) {
+  public IdentifierExprImpl(ASTNode node) {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitIdentifierExpr(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitSymbol(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
+  }
+
+  @Override
+  @NotNull
+  public Identifier getIdentifier() {
+    return findNotNullChildByClass(Identifier.class);
   }
 
 }

@@ -8,28 +8,25 @@ import com.intellij.psi.PsiElement;
 public interface PrefixExpr extends Expression {
 
   @Nullable
+  Block getBlock();
+
+  @Nullable
   EnumDef getEnumDef();
 
+  @Nullable
+  Expression getExpression();
+
   @NotNull
-  List<Expression> getExpressionList();
+  List<IdentifierDef> getIdentifierDefList();
+
+  @NotNull
+  List<IdentifierDefs> getIdentifierDefsList();
 
   @Nullable
   ObjectDef getObjectDef();
 
   @Nullable
-  ParamList getParamList();
-
-  @Nullable
   Pragma getPragma();
-
-  @Nullable
-  PrefixExpr getPrefixExpr();
-
-  @NotNull
-  List<Statement> getStatementList();
-
-  @NotNull
-  List<Symbol> getSymbolList();
 
   @NotNull
   List<TypeDesc> getTypeDescList();

@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static org.dmitrigb.ideanim.psi.NimTypesBase.*;
-import org.dmitrigb.ideanim.psi.RoutineDefMixin;
+import org.dmitrigb.ideanim.psi.mixins.RoutineDefMixin;
 import org.dmitrigb.ideanim.psi.*;
 
 public class RoutineDefImpl extends RoutineDefMixin implements RoutineDef {
@@ -17,9 +17,25 @@ public class RoutineDefImpl extends RoutineDefMixin implements RoutineDef {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitRoutineDef(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitRoutineDef(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
+  }
+
+  @Override
+  @Nullable
+  public GenericParameters getGenericParameters() {
+    return findChildByClass(GenericParameters.class);
+  }
+
+  @Override
+  @Nullable
+  public Identifier getIdentifier() {
+    return findChildByClass(Identifier.class);
   }
 
   @Override
@@ -35,21 +51,9 @@ public class RoutineDefImpl extends RoutineDefMixin implements RoutineDef {
   }
 
   @Override
-  @Nullable
-  public Symbol getSymbol() {
-    return findChildByClass(Symbol.class);
-  }
-
-  @Override
-  @Nullable
-  public GenericParamList getGenericParameters() {
-    return findChildByClass(GenericParamList.class);
-  }
-
-  @Override
-  @Nullable
-  public ParamList getParameters() {
-    return findChildByClass(ParamList.class);
+  @NotNull
+  public List<IdentifierDefs> getParameterList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdentifierDefs.class);
   }
 
   @Override
@@ -60,8 +64,8 @@ public class RoutineDefImpl extends RoutineDefMixin implements RoutineDef {
 
   @Override
   @Nullable
-  public RoutineBody getBody() {
-    return findChildByClass(RoutineBody.class);
+  public Block getBody() {
+    return findChildByClass(Block.class);
   }
 
 }

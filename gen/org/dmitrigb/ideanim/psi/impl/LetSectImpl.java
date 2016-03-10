@@ -8,23 +8,28 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static org.dmitrigb.ideanim.psi.NimTypesBase.*;
+import org.dmitrigb.ideanim.psi.mixins.DefSectMixin;
 import org.dmitrigb.ideanim.psi.*;
 
-public class LetSectImpl extends StatementImpl implements LetSect {
+public class LetSectImpl extends DefSectMixin<VarDef> implements LetSect {
 
   public LetSectImpl(ASTNode node) {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitLetSect(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitLetSect(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
-  @Nullable
-  public VarDef getVarDef() {
-    return findChildByClass(VarDef.class);
+  @NotNull
+  public List<VarDef> getDefinitionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, VarDef.class);
   }
 
 }

@@ -16,8 +16,12 @@ public class SetOrTableCtorImpl extends ExpressionImpl implements SetOrTableCtor
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitSetOrTableCtor(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitSetOrTableCtor(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 

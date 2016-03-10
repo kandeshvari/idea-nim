@@ -16,8 +16,12 @@ public class BracketCtorImpl extends ExpressionImpl implements BracketCtor {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitBracketCtor(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitBracketCtor(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 

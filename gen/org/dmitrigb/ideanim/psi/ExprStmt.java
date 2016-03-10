@@ -11,9 +11,9 @@ public interface ExprStmt extends Statement {
   AssignmentExpr getAssignmentExpr();
 
   @Nullable
-  DoBlock getDoBlock();
+  Block getBlock();
 
   @Nullable
-  Statement getStatement();
+  DoBlock getDoBlock();
 
 }

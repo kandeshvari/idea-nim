@@ -11,10 +11,7 @@ public interface VarDef extends PsiElement {
   Expression getExpression();
 
   @NotNull
-  List<Pragma> getPragmaList();
-
-  @NotNull
-  List<Symbol> getSymbolList();
+  List<IdentPragmaPair> getIdentPragmaPairList();
 
   @Nullable
   TypeDesc getTypeDesc();

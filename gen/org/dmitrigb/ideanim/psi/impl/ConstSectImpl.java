@@ -8,23 +8,28 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static org.dmitrigb.ideanim.psi.NimTypesBase.*;
+import org.dmitrigb.ideanim.psi.mixins.DefSectMixin;
 import org.dmitrigb.ideanim.psi.*;
 
-public class ConstSectImpl extends StatementImpl implements ConstSect {
+public class ConstSectImpl extends DefSectMixin<ConstDef> implements ConstSect {
 
   public ConstSectImpl(ASTNode node) {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitConstSect(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitConstSect(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
-  @Nullable
-  public ConstDef getConstDef() {
-    return findChildByClass(ConstDef.class);
+  @NotNull
+  public List<ConstDef> getDefinitionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, ConstDef.class);
   }
 
 }

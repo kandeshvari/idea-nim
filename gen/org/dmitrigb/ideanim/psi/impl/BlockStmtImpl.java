@@ -16,21 +16,25 @@ public class BlockStmtImpl extends StatementImpl implements BlockStmt {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitBlockStmt(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitBlockStmt(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
-  @NotNull
-  public List<Statement> getStatementList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, Statement.class);
+  @Nullable
+  public Block getBlock() {
+    return findChildByClass(Block.class);
   }
 
   @Override
   @Nullable
-  public Symbol getSymbol() {
-    return findChildByClass(Symbol.class);
+  public Identifier getIdentifier() {
+    return findChildByClass(Identifier.class);
   }
 
 }

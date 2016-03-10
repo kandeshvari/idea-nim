@@ -8,9 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface WhileStmt extends Statement {
 
   @Nullable
-  Expression getExpression();
+  Block getBlock();
 
-  @NotNull
-  List<Statement> getStatementList();
+  @Nullable
+  Expression getExpression();
 
 }

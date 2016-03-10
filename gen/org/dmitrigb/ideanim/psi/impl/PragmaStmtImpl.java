@@ -16,21 +16,25 @@ public class PragmaStmtImpl extends StatementImpl implements PragmaStmt {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitPragmaStmt(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitPragmaStmt(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
+  }
+
+  @Override
+  @Nullable
+  public Block getBlock() {
+    return findChildByClass(Block.class);
   }
 
   @Override
   @NotNull
   public Pragma getPragma() {
     return findNotNullChildByClass(Pragma.class);
-  }
-
-  @Override
-  @NotNull
-  public List<Statement> getStatementList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, Statement.class);
   }
 
 }

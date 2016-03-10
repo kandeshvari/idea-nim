@@ -16,15 +16,19 @@ public class TypeSectImpl extends StatementImpl implements TypeSect {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitTypeSect(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitTypeSect(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
-  @Nullable
-  public TypeDef getTypeDef() {
-    return findChildByClass(TypeDef.class);
+  @NotNull
+  public List<TypeDef> getTypeDefList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, TypeDef.class);
   }
 
 }

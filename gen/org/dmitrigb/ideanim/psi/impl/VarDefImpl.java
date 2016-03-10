@@ -8,17 +8,21 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static org.dmitrigb.ideanim.psi.NimTypesBase.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import org.dmitrigb.ideanim.psi.mixins.VarDefMixin;
 import org.dmitrigb.ideanim.psi.*;
 
-public class VarDefImpl extends ASTWrapperPsiElement implements VarDef {
+public class VarDefImpl extends VarDefMixin implements VarDef {
 
   public VarDefImpl(ASTNode node) {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitVarDef(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitVarDef(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 
@@ -30,14 +34,8 @@ public class VarDefImpl extends ASTWrapperPsiElement implements VarDef {
 
   @Override
   @NotNull
-  public List<Pragma> getPragmaList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, Pragma.class);
-  }
-
-  @Override
-  @NotNull
-  public List<Symbol> getSymbolList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, Symbol.class);
+  public List<IdentPragmaPair> getIdentPragmaPairList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, IdentPragmaPair.class);
   }
 
   @Override

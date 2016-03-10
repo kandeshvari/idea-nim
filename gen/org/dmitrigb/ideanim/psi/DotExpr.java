@@ -11,6 +11,6 @@ public interface DotExpr extends Expression {
   Expression getExpression();
 
   @Nullable
-  Symbol getSymbol();
+  Identifier getIdentifier();
 
 }

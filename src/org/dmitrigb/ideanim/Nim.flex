@@ -26,7 +26,7 @@ import static org.dmitrigb.ideanim.psi.NimTypes.*;
 
 WHITE_SPACE_CHAR = [\ \n\r\t\f]
 
-IDENT = [:jletter:] [:jletterdigit:]*
+IDENT = ([:letter:] | [\u2013]) ("_"? ([:letter:] | [:digit:] | [\u2013]))*
 
 LINE_COMMENT = "#" [^\r\n]* (\r? \n [\ \t]* "#" [^\r\n]*)*
 

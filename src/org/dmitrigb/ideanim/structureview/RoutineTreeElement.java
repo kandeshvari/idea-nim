@@ -2,9 +2,9 @@ package org.dmitrigb.ideanim.structureview;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
-import org.dmitrigb.ideanim.psi.ParamList;
-import org.dmitrigb.ideanim.psi.ProcDef;
+import org.dmitrigb.ideanim.psi.IdentifierDefs;
 import org.dmitrigb.ideanim.psi.RoutineDef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,11 +26,16 @@ public class RoutineTreeElement extends PsiTreeElementBase<RoutineDef> {
   @Nullable
   @Override
   public String getPresentableText() {
-    String sig = "()";
-    ParamList params = getElement().getParameters();
-    if (params != null)
-      sig = params.getText();
+    StringBuilder sig = new StringBuilder("(");
 
-    return getElement().getSymbol().getText() + sig;
+    List<IdentifierDefs> params = getElement().getParameterList();
+    for (IdentifierDefs param : params) {
+      if (sig.length() > 1)
+        sig.append(", ");
+      sig.append(param.getText());
+    }
+    sig.append(")");
+
+    return getElement().getIdentifier().getText() + sig;
   }
 }

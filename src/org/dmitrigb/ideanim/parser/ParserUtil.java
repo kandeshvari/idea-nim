@@ -76,44 +76,48 @@ public class ParserUtil extends GeneratedParserUtilBase {
     return builder.getUserData(parserStateKey);
   }
 
-  public static boolean indented(PsiBuilder builder, int l, Parser parser) {
+  public static boolean indented(PsiBuilder builder, int level, Parser parser) {
     ParserState state = getParserState(builder);
     int tokIndent = state.getTokenIndent();
     if (tokIndent > state.currentIndent) {
       int prevIndent = state.currentIndent;
       state.currentIndent = tokIndent;
-      boolean result = parser.parse(builder, l + 1);
+      boolean result = parser.parse(builder, level + 1);
       state.currentIndent = prevIndent;
       return result;
     }
     return false;
   }
 
-  public static boolean indEq(PsiBuilder builder, int l) {
+  public static boolean indEq(PsiBuilder builder, int level) {
     ParserState state = getParserState(builder);
     return state.getTokenIndent() == state.currentIndent;
   }
 
-  public static boolean indLt(PsiBuilder builder, int l) {
+  public static boolean indLt(PsiBuilder builder, int level) {
     ParserState state = getParserState(builder);
     int tokenIndent = state.getTokenIndent();
     return tokenIndent >= 0 && tokenIndent < state.currentIndent;
   }
 
-  public static boolean indGt(PsiBuilder builder, int l) {
+  public static boolean indGt(PsiBuilder builder, int level) {
     ParserState state = getParserState(builder);
     return state.getTokenIndent() > state.currentIndent;
   }
 
-  public static boolean indNone(PsiBuilder builder, int l) {
+  public static boolean indNone(PsiBuilder builder, int level) {
     ParserState state = getParserState(builder);
     return state.getTokenIndent() == -1;
   }
 
-  public static boolean indOpt(PsiBuilder builder, int l) {
+  public static boolean indOpt(PsiBuilder builder, int level) {
     ParserState state = getParserState(builder);
     int tokInd = state.getTokenIndent();
     return tokInd == -1 || tokInd > state.currentIndent;
+  }
+
+  public static boolean never(PsiBuilder builder, int level) {
+    return false;
   }
 
   public static boolean enterPragma(PsiBuilder builder, int l, Parser parser) {

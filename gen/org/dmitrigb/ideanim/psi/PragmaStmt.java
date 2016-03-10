@@ -7,10 +7,10 @@ import com.intellij.psi.PsiElement;
 
 public interface PragmaStmt extends Statement {
 
-  @NotNull
-  Pragma getPragma();
+  @Nullable
+  Block getBlock();
 
   @NotNull
-  List<Statement> getStatementList();
+  Pragma getPragma();
 
 }

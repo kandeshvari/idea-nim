@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface TypeSect extends Statement {
 
-  @Nullable
-  TypeDef getTypeDef();
+  @NotNull
+  List<TypeDef> getTypeDefList();
 
 }

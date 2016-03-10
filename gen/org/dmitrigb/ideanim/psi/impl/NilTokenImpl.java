@@ -16,8 +16,12 @@ public class NilTokenImpl extends ExpressionImpl implements NilToken {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitNilToken(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitNilToken(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 

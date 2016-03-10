@@ -17,8 +17,12 @@ public class EnumDefImpl extends ASTWrapperPsiElement implements EnumDef {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitEnumDef(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitEnumDef(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 
@@ -30,8 +34,8 @@ public class EnumDefImpl extends ASTWrapperPsiElement implements EnumDef {
 
   @Override
   @NotNull
-  public List<Symbol> getSymbolList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, Symbol.class);
+  public List<Identifier> getIdentifierList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, Identifier.class);
   }
 
 }

@@ -17,8 +17,12 @@ public class ExpressionImpl extends ASTWrapperPsiElement implements Expression {
     super(node);
   }
 
+  public void accept(@NotNull Visitor visitor) {
+    visitor.visitExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitExpression(this);
+    if (visitor instanceof Visitor) accept((Visitor)visitor);
     else super.accept(visitor);
   }
 

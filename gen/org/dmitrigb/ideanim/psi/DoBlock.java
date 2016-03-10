@@ -8,13 +8,13 @@ import com.intellij.psi.PsiElement;
 public interface DoBlock extends PsiElement {
 
   @Nullable
-  ParamList getParamList();
+  Block getBlock();
+
+  @NotNull
+  List<IdentifierDefs> getIdentifierDefsList();
 
   @Nullable
   Pragma getPragma();
-
-  @NotNull
-  List<Statement> getStatementList();
 
   @Nullable
   TypeDesc getTypeDesc();

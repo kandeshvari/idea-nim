@@ -11,10 +11,10 @@ public interface ObjectDef extends PsiElement {
   Expression getExpression();
 
   @NotNull
-  List<Pragma> getPragmaList();
+  List<IdentPragmaPair> getIdentPragmaPairList();
 
-  @NotNull
-  List<Symbol> getSymbolList();
+  @Nullable
+  Pragma getPragma();
 
   @NotNull
   List<TypeDesc> getTypeDescList();
