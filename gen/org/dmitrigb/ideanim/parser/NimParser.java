@@ -4055,13 +4055,139 @@ public class NimParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // T_CASE &INDNONE identWithPragma T_COLON TypeDesc T_COLON? (<<indented objectCaseBranches>> | objectCaseBranches)
+  static boolean objectCase(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "objectCase")) return false;
+    if (!nextTokenIs(b, T_CASE)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, T_CASE);
+    p = r; // pin = 1
+    r = r && objectCase_1(b, l + 1);
+    r = r && identWithPragma(b, l + 1);
+    r = r && consumeToken(b, T_COLON);
+    r = r && TypeDesc(b, l + 1);
+    r = r && objectCase_5(b, l + 1);
+    r = r && objectCase_6(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // &INDNONE
+  private static boolean objectCase_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "objectCase_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _AND_);
+    r = indNone(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // T_COLON?
+  private static boolean objectCase_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "objectCase_5")) return false;
+    consumeToken(b, T_COLON);
+    return true;
+  }
+
+  // <<indented objectCaseBranches>> | objectCaseBranches
+  private static boolean objectCase_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "objectCase_6")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = indented(b, l + 1, objectCaseBranches_parser_);
+    if (!r) r = objectCaseBranches(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // (&INDEQ T_OF exprList T_COLON objectPart)* (&INDEQ T_ELSE T_COLON objectPart)?
+  static boolean objectCaseBranches(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "objectCaseBranches")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = objectCaseBranches_0(b, l + 1);
+    r = r && objectCaseBranches_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (&INDEQ T_OF exprList T_COLON objectPart)*
+  private static boolean objectCaseBranches_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "objectCaseBranches_0")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!objectCaseBranches_0_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "objectCaseBranches_0", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // &INDEQ T_OF exprList T_COLON objectPart
+  private static boolean objectCaseBranches_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "objectCaseBranches_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = objectCaseBranches_0_0_0(b, l + 1);
+    r = r && consumeToken(b, T_OF);
+    r = r && exprList(b, l + 1);
+    r = r && consumeToken(b, T_COLON);
+    r = r && objectPart(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // &INDEQ
+  private static boolean objectCaseBranches_0_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "objectCaseBranches_0_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _AND_);
+    r = indEq(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // (&INDEQ T_ELSE T_COLON objectPart)?
+  private static boolean objectCaseBranches_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "objectCaseBranches_1")) return false;
+    objectCaseBranches_1_0(b, l + 1);
+    return true;
+  }
+
+  // &INDEQ T_ELSE T_COLON objectPart
+  private static boolean objectCaseBranches_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "objectCaseBranches_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = objectCaseBranches_1_0_0(b, l + 1);
+    r = r && consumeTokens(b, 0, T_ELSE, T_COLON);
+    r = r && objectPart(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // &INDEQ
+  private static boolean objectCaseBranches_1_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "objectCaseBranches_1_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _AND_);
+    r = indEq(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
   // <<indented (&INDEQ &(T_CASE | T_WHEN | IDENT | ACCENT_QUOTED | T_NIL | T_DISCARD) objectPart)*>>
-  //                      | /*objectWhen | objectCase |*/ identColonEqualsWithPragma | NilToken
+  //                      | objectWhen | objectCase | identColonEqualsWithPragma | NilToken
   static boolean objectPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "objectPart")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = indented(b, l + 1, objectPart_0_0_parser_);
+    if (!r) r = objectWhen(b, l + 1);
+    if (!r) r = objectCase(b, l + 1);
     if (!r) r = identColonEqualsWithPragma(b, l + 1);
     if (!r) r = NilToken(b, l + 1);
     exit_section_(b, m, null, r);
@@ -4124,6 +4250,94 @@ public class NimParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, T_NIL);
     if (!r) r = consumeToken(b, T_DISCARD);
     exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // T_WHEN <<listOf (&OPTIND expr T_COLON objectPart) (&INDEQ T_ELIF)>> (&INDEQ T_ELSE T_COLON objectPart)?
+  static boolean objectWhen(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "objectWhen")) return false;
+    if (!nextTokenIs(b, T_WHEN)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, T_WHEN);
+    p = r; // pin = 1
+    r = r && report_error_(b, listOf(b, l + 1, objectWhen_1_0_parser_, objectWhen_1_1_parser_));
+    r = p && objectWhen_2(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // &OPTIND expr T_COLON objectPart
+  private static boolean objectWhen_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "objectWhen_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = objectWhen_1_0_0(b, l + 1);
+    r = r && expr(b, l + 1);
+    r = r && consumeToken(b, T_COLON);
+    r = r && objectPart(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // &OPTIND
+  private static boolean objectWhen_1_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "objectWhen_1_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _AND_);
+    r = indOpt(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // &INDEQ T_ELIF
+  private static boolean objectWhen_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "objectWhen_1_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = objectWhen_1_1_0(b, l + 1);
+    r = r && consumeToken(b, T_ELIF);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // &INDEQ
+  private static boolean objectWhen_1_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "objectWhen_1_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _AND_);
+    r = indEq(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // (&INDEQ T_ELSE T_COLON objectPart)?
+  private static boolean objectWhen_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "objectWhen_2")) return false;
+    objectWhen_2_0(b, l + 1);
+    return true;
+  }
+
+  // &INDEQ T_ELSE T_COLON objectPart
+  private static boolean objectWhen_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "objectWhen_2_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = objectWhen_2_0_0(b, l + 1);
+    r = r && consumeTokens(b, 0, T_ELSE, T_COLON);
+    r = r && objectPart(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // &INDEQ
+  private static boolean objectWhen_2_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "objectWhen_2_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _AND_);
+    r = indEq(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -4334,7 +4548,9 @@ public class NimParser implements PsiParser, LightPsiParser {
   //     | <<inTypeDefMode>> EnumDef
   //     | <<inTypeDefMode>> ObjectDef
   //     | T_VAR &OPTIND typeDescK
+  //     | T_REF &OPTIND typeDescK
   //     | T_PTR &OPTIND typeDescK
+  //     | T_DISTINCT &OPTIND typeDescK
   //     | identOrLiteral primarySuffix*
   static boolean primary(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primary")) return false;
@@ -4348,6 +4564,8 @@ public class NimParser implements PsiParser, LightPsiParser {
     if (!r) r = primary_5(b, l + 1);
     if (!r) r = primary_6(b, l + 1);
     if (!r) r = primary_7(b, l + 1);
+    if (!r) r = primary_8(b, l + 1);
+    if (!r) r = primary_9(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -4396,12 +4614,12 @@ public class NimParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // T_PTR &OPTIND typeDescK
+  // T_REF &OPTIND typeDescK
   private static boolean primary_6(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primary_6")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, T_PTR);
+    r = consumeToken(b, T_REF);
     r = r && primary_6_1(b, l + 1);
     r = r && typeDescK(b, l + 1);
     exit_section_(b, m, null, r);
@@ -4418,24 +4636,68 @@ public class NimParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // identOrLiteral primarySuffix*
+  // T_PTR &OPTIND typeDescK
   private static boolean primary_7(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primary_7")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = identOrLiteral(b, l + 1);
+    r = consumeToken(b, T_PTR);
     r = r && primary_7_1(b, l + 1);
+    r = r && typeDescK(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // &OPTIND
+  private static boolean primary_7_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primary_7_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _AND_);
+    r = indOpt(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // T_DISTINCT &OPTIND typeDescK
+  private static boolean primary_8(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primary_8")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, T_DISTINCT);
+    r = r && primary_8_1(b, l + 1);
+    r = r && typeDescK(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // &OPTIND
+  private static boolean primary_8_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primary_8_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _AND_);
+    r = indOpt(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // identOrLiteral primarySuffix*
+  private static boolean primary_9(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primary_9")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = identOrLiteral(b, l + 1);
+    r = r && primary_9_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // primarySuffix*
-  private static boolean primary_7_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "primary_7_1")) return false;
+  private static boolean primary_9_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primary_9_1")) return false;
     int c = current_position_(b);
     while (true) {
       if (!primarySuffix(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "primary_7_1", c)) break;
+      if (!empty_element_parsed_guard_(b, "primary_9_1", c)) break;
       c = current_position_(b);
     }
     return true;
@@ -5223,9 +5485,24 @@ public class NimParser implements PsiParser, LightPsiParser {
       return identColonEquals(b, l + 1);
     }
   };
+  final static Parser objectCaseBranches_parser_ = new Parser() {
+    public boolean parse(PsiBuilder b, int l) {
+      return objectCaseBranches(b, l + 1);
+    }
+  };
   final static Parser objectPart_0_0_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return objectPart_0_0(b, l + 1);
+    }
+  };
+  final static Parser objectWhen_1_0_parser_ = new Parser() {
+    public boolean parse(PsiBuilder b, int l) {
+      return objectWhen_1_0(b, l + 1);
+    }
+  };
+  final static Parser objectWhen_1_1_parser_ = new Parser() {
+    public boolean parse(PsiBuilder b, int l) {
+      return objectWhen_1_1(b, l + 1);
     }
   };
   final static Parser params_3_0_1_parser_ = new Parser() {

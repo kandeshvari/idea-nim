@@ -11,7 +11,6 @@ public interface NimTypes extends NimTypesBase {
   IElementType T_CONCEPT = new NimTokenType("T_CONCEPT");
   IElementType T_CONTINUE = new NimTokenType("T_CONTINUE");
   IElementType T_CONVERTER = new NimTokenType("T_CONVERTER");
-  IElementType T_DISTINCT = new NimTokenType("T_DISTINCT");
   IElementType T_END = new NimTokenType("T_END");
   IElementType T_EXPORT = new NimTokenType("T_EXPORT");
   IElementType T_FROM = new NimTokenType("T_FROM");

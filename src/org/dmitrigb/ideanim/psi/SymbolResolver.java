@@ -43,6 +43,12 @@ public class SymbolResolver extends BaseScopeProcessor {
           return false;
       }
     }
+    else if (element instanceof RoutineResultPsiElement) {
+      if (sourceId.equals("result")) {
+        target = element;
+        return false;
+      }
+    }
     else if (element instanceof VarDef) {
       VarDef def = (VarDef) element;
       List<IdentPragmaPair> symbols = def.getIdentPragmaPairList();

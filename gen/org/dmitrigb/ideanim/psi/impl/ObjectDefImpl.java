@@ -27,9 +27,9 @@ public class ObjectDefImpl extends ASTWrapperPsiElement implements ObjectDef {
   }
 
   @Override
-  @Nullable
-  public Expression getExpression() {
-    return findChildByClass(Expression.class);
+  @NotNull
+  public List<Expression> getExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, Expression.class);
   }
 
   @Override
@@ -40,8 +40,14 @@ public class ObjectDefImpl extends ASTWrapperPsiElement implements ObjectDef {
 
   @Override
   @Nullable
-  public Pragma getPragma() {
-    return findChildByClass(Pragma.class);
+  public Identifier getIdentifier() {
+    return findChildByClass(Identifier.class);
+  }
+
+  @Override
+  @NotNull
+  public List<Pragma> getPragmaList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, Pragma.class);
   }
 
   @Override

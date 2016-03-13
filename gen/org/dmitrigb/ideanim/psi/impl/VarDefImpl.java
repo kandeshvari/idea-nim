@@ -27,12 +27,6 @@ public class VarDefImpl extends VarDefMixin implements VarDef {
   }
 
   @Override
-  @Nullable
-  public Expression getExpression() {
-    return findChildByClass(Expression.class);
-  }
-
-  @Override
   @NotNull
   public List<IdentPragmaPair> getIdentPragmaPairList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, IdentPragmaPair.class);
@@ -42,6 +36,12 @@ public class VarDefImpl extends VarDefMixin implements VarDef {
   @Nullable
   public TypeDesc getTypeDesc() {
     return findChildByClass(TypeDesc.class);
+  }
+
+  @Override
+  @Nullable
+  public Expression getInitializer() {
+    return findChildByClass(Expression.class);
   }
 
 }

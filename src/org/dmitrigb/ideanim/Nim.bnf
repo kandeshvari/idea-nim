@@ -198,6 +198,7 @@ ConstDef ::= identWithPragma (T_COLON &OPTIND TypeDesc)? T_EQ &OPTIND expr {
 }
 VarDef ::= identColonEqualsWithPragma {
   mixin="org.dmitrigb.ideanim.psi.mixins.VarDefMixin"
+  methods=[initializer="Expression"]
 }
 
 
@@ -251,7 +252,9 @@ private primary ::=
     | <<inTypeDefMode>> EnumDef
     | <<inTypeDefMode>> ObjectDef
     | T_VAR &OPTIND typeDescK
+    | T_REF &OPTIND typeDescK
     | T_PTR &OPTIND typeDescK
+    | T_DISTINCT &OPTIND typeDescK
     | identOrLiteral primarySuffix*
 
 PrefixExpr ::= anyOperator &OPTIND primary {pin=1 extends=Expression}
@@ -264,8 +267,12 @@ EnumDef ::= T_ENUM (&OPTIND Identifier (&INDNONE T_EQ &OPTIND expr)? (&INDNONE T
 
 ObjectDef ::= T_OBJECT (&OPTIND Pragma)? (&INDNONE T_OF TypeDesc)? (&INDGT objectPart)? {pin=1}
 private objectPart ::= <<indented (&INDEQ &(T_CASE | T_WHEN | IDENT | ACCENT_QUOTED | T_NIL | T_DISCARD) objectPart)*>>
-                     | /*objectWhen | objectCase |*/ identColonEqualsWithPragma | NilToken
-//private objectWhen ::=
+                     | objectWhen | objectCase | identColonEqualsWithPragma | NilToken
+
+private objectWhen ::= T_WHEN <<listOf (&OPTIND expr T_COLON objectPart) (&INDEQ T_ELIF)>> (&INDEQ T_ELSE T_COLON objectPart)? {pin=1}
+
+private objectCase ::= T_CASE &INDNONE identWithPragma T_COLON TypeDesc T_COLON? (<<indented objectCaseBranches>> | objectCaseBranches)  {pin=1}
+private objectCaseBranches ::= (&INDEQ T_OF exprList T_COLON objectPart)* (&INDEQ T_ELSE T_COLON objectPart)?
 
 private typeDescK ::= !anyOperator &isExprStart primary
 private anyOperator ::= OPERATOR | T_DIV | T_MOD | T_SHL | T_SHR | T_IN | T_NOTIN | T_IS | T_ISNOT | T_NOT | T_OF | T_AS

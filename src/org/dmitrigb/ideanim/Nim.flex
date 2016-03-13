@@ -30,8 +30,7 @@ IDENT = ([:letter:] | [\u2013]) ("_"? ([:letter:] | [:digit:] | [\u2013]))*
 
 LINE_COMMENT = "#" [^\r\n]* (\r? \n [\ \t]* "#" [^\r\n]*)*
 
-NUMBER_LITERAL = [0-9] [0-9_]* {FLOAT_SUFFIX}?
-               | "0" ("b" [01_]+ | "o" [0-7_]+ | "x" [0-9a-fA-F_]+)
+NUMBER_LITERAL = ([0-9] [0-9_]* {FLOAT_SUFFIX}? | "0" ("b" [01_]+ | "o" [0-7_]+ | "x" [0-9a-fA-F_]+)) (\' ([uU] | [iIuU] (8 | 16 | 32 | 64)))?
 FLOAT_SUFFIX = {EXPONENT} | "." [0-9_]+ {EXPONENT}?
 EXPONENT = [Ee] [-+]? [0-9_]+
 

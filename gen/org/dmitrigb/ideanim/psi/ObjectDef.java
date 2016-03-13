@@ -7,14 +7,17 @@ import com.intellij.psi.PsiElement;
 
 public interface ObjectDef extends PsiElement {
 
-  @Nullable
-  Expression getExpression();
+  @NotNull
+  List<Expression> getExpressionList();
 
   @NotNull
   List<IdentPragmaPair> getIdentPragmaPairList();
 
   @Nullable
-  Pragma getPragma();
+  Identifier getIdentifier();
+
+  @NotNull
+  List<Pragma> getPragmaList();
 
   @NotNull
   List<TypeDesc> getTypeDescList();

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.dmitrigb.ideanim.psi.IdentifierDefs;
 import org.dmitrigb.ideanim.psi.RoutineDef;
+import org.dmitrigb.ideanim.psi.RoutineResultPsiElement;
 import org.dmitrigb.ideanim.psi.impl.StatementImpl;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -15,6 +16,9 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.util.IncorrectOperationException;
 
 public abstract class RoutineDefMixin extends StatementImpl implements RoutineDef, PsiNamedElement {
+
+  private PsiElement resultPseudoElement = new RoutineResultPsiElement(this);
+
   public RoutineDefMixin(ASTNode node) {
     super(node);
   }
@@ -22,9 +26,12 @@ public abstract class RoutineDefMixin extends StatementImpl implements RoutineDe
   @Override
   public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
     if (lastParent != null) {
+      if (!resultPseudoElement.processDeclarations(processor, state, null, place))
+        return false;
       List<IdentifierDefs> params = getParameterList();
       for (IdentifierDefs param : params) {
-        param.processDeclarations(processor, state, null, place);
+        if (!param.processDeclarations(processor, state, null, place))
+          return false;
       }
     }
     return processor.execute(this, state);

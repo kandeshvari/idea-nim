@@ -29,6 +29,7 @@
     <lang.psiStructureViewFactory language="Nim" implementationClass="org.dmitrigb.ideanim.structureview.NimStructureViewFactory"/>
     <lang.braceMatcher language="Nim" implementationClass="org.dmitrigb.ideanim.NimBraceMatcher"/>
     <lang.findUsagesProvider language="Nim" implementationClass="org.dmitrigb.ideanim.findUsages.NimFindUsagesProvider"/>
+    <readWriteAccessDetector implementation="org.dmitrigb.ideanim.findUsages.NimReadWriteAccessDetector"/>
   </extensions>
 
   <actions>

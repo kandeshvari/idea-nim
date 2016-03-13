@@ -7,13 +7,13 @@ import com.intellij.psi.PsiElement;
 
 public interface VarDef extends PsiElement {
 
-  @Nullable
-  Expression getExpression();
-
   @NotNull
   List<IdentPragmaPair> getIdentPragmaPairList();
 
   @Nullable
   TypeDesc getTypeDesc();
+
+  @Nullable
+  Expression getInitializer();
 
 }

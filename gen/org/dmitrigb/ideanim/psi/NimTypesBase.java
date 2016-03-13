@@ -87,6 +87,7 @@ public interface NimTypesBase {
   IElementType T_CONST = new NimTokenType("T_CONST");
   IElementType T_DEFER = new NimTokenType("T_DEFER");
   IElementType T_DISCARD = new NimTokenType("T_DISCARD");
+  IElementType T_DISTINCT = new NimTokenType("T_DISTINCT");
   IElementType T_DIV = new NimTokenType("T_DIV");
   IElementType T_DO = new NimTokenType("T_DO");
   IElementType T_DOT = new NimTokenType("T_DOT");
