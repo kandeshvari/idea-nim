@@ -1,10 +1,10 @@
 package org.dmitrigb.ideanim.findUsages;
 
 import org.dmitrigb.ideanim.NimLexerAdapter;
-import org.dmitrigb.ideanim.psi.ConstDef;
-import org.dmitrigb.ideanim.psi.IdentifierDef;
+import org.dmitrigb.ideanim.psi.elements.ConstDef;
+import org.dmitrigb.ideanim.psi.elements.IdentifierDef;
 import org.dmitrigb.ideanim.psi.NimTypes;
-import org.dmitrigb.ideanim.psi.RoutineDef;
+import org.dmitrigb.ideanim.psi.elements.RoutineDef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.cacheBuilder.DefaultWordsScanner;

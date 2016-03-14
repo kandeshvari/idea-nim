@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.dmitrigb.ideanim.psi.IdentifierDefs;
-import org.dmitrigb.ideanim.psi.RoutineDef;
+import org.dmitrigb.ideanim.psi.elements.IdentifierDefs;
+import org.dmitrigb.ideanim.psi.elements.RoutineDef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.ide.structureView.StructureViewTreeElement;
@@ -28,7 +28,7 @@ public class RoutineTreeElement extends PsiTreeElementBase<RoutineDef> {
   public String getPresentableText() {
     StringBuilder sig = new StringBuilder("(");
 
-    List<IdentifierDefs> params = getElement().getParameterList();
+    List<IdentifierDefs> params = getElement().getParameters();
     for (IdentifierDefs param : params) {
       if (sig.length() > 1)
         sig.append(", ");

@@ -116,10 +116,6 @@ public class ParserUtil extends GeneratedParserUtilBase {
     return tokInd == -1 || tokInd > state.currentIndent;
   }
 
-  public static boolean never(PsiBuilder builder, int level) {
-    return false;
-  }
-
   public static boolean enterPragma(PsiBuilder builder, int l, Parser parser) {
     ParserState state = getParserState(builder);
     state.pragmaCount++;

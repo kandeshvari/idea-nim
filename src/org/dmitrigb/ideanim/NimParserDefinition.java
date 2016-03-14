@@ -13,9 +13,9 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.dmitrigb.ideanim.parser.NimParser;
-import org.dmitrigb.ideanim.psi.NimTypes;
-import org.dmitrigb.ideanim.psi.NimTypesBase;
+import org.dmitrigb.ideanim.psi.ElementFactory;
 import org.dmitrigb.ideanim.psi.NimFile;
+import org.dmitrigb.ideanim.psi.NimTypes;
 import org.jetbrains.annotations.NotNull;
 
 public class NimParserDefinition implements ParserDefinition {
@@ -59,7 +59,7 @@ public class NimParserDefinition implements ParserDefinition {
   @NotNull
   @Override
   public PsiElement createElement(ASTNode node) {
-    return NimTypesBase.Factory.createElement(node);
+    return ElementFactory.createElement(node);
   }
 
   @Override

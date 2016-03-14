@@ -5,8 +5,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.dmitrigb.ideanim.psi.NimFile;
-import org.dmitrigb.ideanim.psi.ProcDef;
-import org.dmitrigb.ideanim.psi.RoutineDef;
+import org.dmitrigb.ideanim.psi.elements.RoutineDef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.ide.structureView.StructureViewTreeElement;

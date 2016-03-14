@@ -2,17 +2,13 @@
   parserClass = "org.dmitrigb.ideanim.parser.NimParser"
   extends = "com.intellij.extapi.psi.ASTWrapperPsiElement"
   
-  //psiClassPrefix = "Nim"
-  psiImplClassSuffix = "Impl"
-  psiPackage = "org.dmitrigb.ideanim.psi"
-  psiImplPackage = "org.dmitrigb.ideanim.psi.impl"
-  //psiImplUtilClass = "org.dmitrigb.ideanim.psi.NimPsiImplUtil"
-  
   elementTypeHolderClass = "org.dmitrigb.ideanim.psi.NimTypesBase"
   elementTypeClass = "org.dmitrigb.ideanim.psi.NimElementType"
   tokenTypeClass = "org.dmitrigb.ideanim.psi.NimTokenType"
 
   parserUtilClass = "org.dmitrigb.ideanim.parser.ParserUtil"
+
+  generate=[psi="no"]
 }
 
 NimFile ::= <<listOf (!<<eof>> complexOrSimpleStmt) (T_SEMICOLON (&INDNONE | &INDEQ) | &INDEQ)>>?
@@ -23,8 +19,6 @@ external INDGT ::= indGt
 external INDNONE ::= indNone
 external OPTIND ::= indOpt
 
-external NEVER ::= never // A rule that never matches anything
-
 private meta listOf ::= <<p1>> (<<p2>> <<p1>>)*
 
 
@@ -32,18 +26,15 @@ private symbol ::= IDENT | T_ADDR | T_TYPE | ACCENT_QUOTED
 
 Literal ::= NUMBER_LITERAL | CHARACTER_LITERAL | STRING_LITERAL {extends=Expression}
 
-Identifier ::= symbol {mixin="org.dmitrigb.ideanim.psi.mixins.IdentifierMixin"}
+Identifier ::= symbol
 
-IdentifierDef ::= symbol {extends=Identifier mixin="org.dmitrigb.ideanim.psi.mixins.IdentifierDefMixin"}
+IdentifierDef ::= symbol {extends=Identifier}
 
 private identWithPragma ::= Identifier OPERATOR? Pragma?
 
-IdentPragmaPair ::= IdentifierDef OPERATOR? Pragma? {methods=[identifier="IdentifierDef"]}
+IdentPragmaPair ::= IdentifierDef OPERATOR? Pragma?
 
-fake IdentifierDefs ::= IdentPragmaPair+ TypeDesc? Expression? {
-  mixin="org.dmitrigb.ideanim.psi.mixins.IdentifierDefsMixin"
-  methods=[type="TypeDesc" initializer="Expression"]
-}
+fake IdentifierDefs ::=
 
 private identColonEquals ::=
     <<listOf (&(IDENT | ACCENT_QUOTED) IdentifierDef) (T_COMMA &OPTIND)>> (T_COMMA &OPTIND)?
@@ -62,7 +53,6 @@ identColonEqualsWithBothOptionalWithPragma ::=
 Block ::= <<indented <<listOf complexOrSimpleStmt (T_SEMICOLON (&INDNONE | &INDEQ) | &INDEQ)>>>>
     | !<<inSemiStmtList>> <<listOf (&INDNONE simpleStmt) (T_SEMICOLON)>>
     | &<<inSemiStmtList>> simpleStmt
-    {mixin="org.dmitrigb.ideanim.psi.mixins.BlockMixin"}
 
 private stmt ::= Block
 
@@ -126,81 +116,25 @@ private params ::= &INDNONE T_LPAREN &OPTIND <<listOf identColonEqualsWithBothOp
 private paramListColon ::= params? (&INDNONE T_COLON &OPTIND TypeDesc)?
 private paramListArrow ::= params? (&INDNONE <<arrow>> &OPTIND TypeDesc)?
 
-fake RoutineDef ::= (T_PROC | T_TEMPLATE | T_ITERATOR) routine {
-  pin=1
-  extends=Statement
-  mixin="org.dmitrigb.ideanim.psi.mixins.RoutineDefMixin"
-  methods=[
-    parameter="IdentifierDefs"
-    returnType="TypeDesc"
-    body="Block"
-  ]
-}
+ProcDef ::= T_PROC routine {pin=1 extends=Statement}
 
-ProcDef ::= T_PROC routine {
-  pin=1
-  extends=RoutineDef
-  methods=[
-    parameter="IdentifierDefs"
-    returnType="TypeDesc"
-    body="Block"
-  ]
-}
+IteratorDef ::= T_ITERATOR routine {pin=1 extends=Statement}
 
-IteratorDef ::= T_ITERATOR routine {
-  pin=1
-  extends=RoutineDef
-  methods=[
-    parameter="IdentifierDefs"
-    returnType="TypeDesc"
-    body="Block"
-  ]
-}
-
-TemplateDef ::= T_TEMPLATE routine {
-  pin=1
-  extends=RoutineDef
-  methods=[
-    parameter="IdentifierDefs"
-    returnType="TypeDesc"
-    body="Block"
-  ]
-}
+TemplateDef ::= T_TEMPLATE routine {pin=1 extends=Statement}
 
 // The NEVER part forces GrammarKit to recognize that section can contain a list of <<p>>-s (which it fails to see
 // otherwise, probably because <<indented>> is an external rule)
-private meta section ::= &NEVER <<p>>* | &INDNONE <<p>> | <<indented <<listOf <<p>> INDEQ>>>>
+private meta section ::= &INDNONE <<p>> | <<indented <<listOf <<p>> INDEQ>>>>
 
 TypeSect ::= T_TYPE !T_LPAREN <<section TypeDef>> {pin=1 extends=Statement}
 TypeDef ::= identWithPragma (&OPTIND GenericParameters)? (T_EQ &OPTIND <<typeDefMode simpleExpr>>)?
 
-ConstSect ::= T_CONST <<section ConstDef>> {
-  pin=1
-  extends=Statement
-  mixin="org.dmitrigb.ideanim.psi.mixins.DefSectMixin<org.dmitrigb.ideanim.psi.ConstDef>"
-  methods=[definition="ConstDef"]
-}
-LetSect ::= T_LET <<section VarDef>> {
-  pin=1
-  extends=Statement
-  mixin="org.dmitrigb.ideanim.psi.mixins.DefSectMixin<org.dmitrigb.ideanim.psi.VarDef>"
-  methods=[definition="VarDef"]
-}
-VarSect ::= T_VAR <<section VarDef>> {
-  pin=1
-  extends=Statement
-  mixin="org.dmitrigb.ideanim.psi.mixins.DefSectMixin<org.dmitrigb.ideanim.psi.VarDef>"
-  methods=[definition="VarDef"]
-}
+ConstSect ::= T_CONST <<section ConstDef>> {pin=1 extends=Statement}
+LetSect ::= T_LET <<section VarDef>> {pin=1 extends=Statement}
+VarSect ::= T_VAR <<section VarDef>> {pin=1 extends=Statement}
 
-ConstDef ::= identWithPragma (T_COLON &OPTIND TypeDesc)? T_EQ &OPTIND expr {
-  mixin="org.dmitrigb.ideanim.psi.mixins.ConstDefMixin"
-}
-VarDef ::= identColonEqualsWithPragma {
-  mixin="org.dmitrigb.ideanim.psi.mixins.VarDefMixin"
-  methods=[initializer="Expression"]
-}
-
+ConstDef ::= identWithPragma (T_COLON &OPTIND TypeDesc)? T_EQ &OPTIND expr
+VarDef ::= identColonEqualsWithPragma
 
 TypeDesc ::= <<typeDescMode simpleExpr>>
 
@@ -248,9 +182,10 @@ external simpleExpr ::= parseSimpleExpr primary 0
 private primary ::=
       PrefixExpr
     | tuple
-    | procExpr
-    | <<inTypeDefMode>> EnumDef
-    | <<inTypeDefMode>> ObjectDef
+    | &<<inNormalMode>> ProcExpr
+    | !<<inNormalMode>> (T_PROC | T_ITERATOR) (&INDNONE paramListColon? Pragma?)?
+    | &<<inTypeDefMode>> EnumDef
+    | &<<inTypeDefMode>> ObjectDef
     | T_VAR &OPTIND typeDescK
     | T_REF &OPTIND typeDescK
     | T_PTR &OPTIND typeDescK
@@ -261,7 +196,7 @@ PrefixExpr ::= anyOperator &OPTIND primary {pin=1 extends=Expression}
 
 private tuple ::= T_TUPLE (T_LBRACKET &OPTIND <<listOf identColonEquals (T_COMMA | T_SEMICOLON)>> (T_COMMA | T_SEMICOLON)? T_RBRACKET) {pin=1}
 
-private procExpr ::= (T_PROC | T_ITERATOR) (&INDNONE paramListColon? Pragma?)? (&<<inNormalMode>> T_EQ stmt)? {pin=1}
+ProcExpr ::= (T_PROC | T_ITERATOR) (&INDNONE paramListColon? Pragma?)? T_EQ stmt {pin=1 extends=Expression}
 
 EnumDef ::= T_ENUM (&OPTIND Identifier (&INDNONE T_EQ &OPTIND expr)? (&INDNONE T_COMMA)?)* {pin=1}
 
@@ -316,13 +251,7 @@ left callWithDoBlocks ::= doBlocks {elementType=CallExpr}
 private doBlocks ::= <<listOf DoBlock INDEQ>>?
 DoBlock ::= T_DO paramListArrow (&OPTIND Pragma)? T_COLON stmt {pin=1}
 
-left CallExpr ::= T_LPAREN exprColonEqExprList T_RPAREN doBlocks {
-  pin=1
-  extends=Expression
-  methods=[
-    argument="Expression"
-  ]
-}
+left CallExpr ::= T_LPAREN exprColonEqExprList T_RPAREN doBlocks {pin=1 extends=Expression}
 
 left BracketExpr ::= T_LBRACKET exprColonEqExprList T_RBRACKET {pin=1 extends=Expression}
 private exprColonEqExprList ::= &OPTIND <<listOf exprColonEqExpr (T_COMMA)>>?
@@ -333,4 +262,4 @@ left CommandExpr ::= &(IDENT | Literal | ACCENT_QUOTED | T_NIL | T_CAST | T_ADDR
 left DotExpr ::= T_DOT &OPTIND Identifier {pin=1 extends=Expression}
 
 
-fake InfixExpr ::= expr {extends=Expression} // Used by ParserUtil
+fake InfixExpr ::= // Used by ParserUtil

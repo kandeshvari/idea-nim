@@ -1,7 +1,7 @@
 package org.dmitrigb.ideanim.structureview;
 
 import org.dmitrigb.ideanim.psi.NimFile;
-import org.dmitrigb.ideanim.psi.ProcDef;
+import org.dmitrigb.ideanim.psi.elements.ProcDef;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.structureView.TextEditorBasedStructureViewModel;

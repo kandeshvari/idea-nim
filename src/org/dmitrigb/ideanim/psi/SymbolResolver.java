@@ -2,6 +2,7 @@ package org.dmitrigb.ideanim.psi;
 
 import java.util.List;
 
+import org.dmitrigb.ideanim.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
@@ -43,7 +44,7 @@ public class SymbolResolver extends BaseScopeProcessor {
           return false;
       }
     }
-    else if (element instanceof RoutineResultPsiElement) {
+    else if (element instanceof ProcResultPsiElement) {
       if (sourceId.equals("result")) {
         target = element;
         return false;
@@ -51,7 +52,7 @@ public class SymbolResolver extends BaseScopeProcessor {
     }
     else if (element instanceof VarDef) {
       VarDef def = (VarDef) element;
-      List<IdentPragmaPair> symbols = def.getIdentPragmaPairList();
+      List<IdentPragmaPair> symbols = def.getIdentifiers();
       for (IdentPragmaPair pair : symbols) {
         if (symbolMatches(pair.getIdentifier())) {
           target = pair.getIdentifier();
@@ -69,7 +70,7 @@ public class SymbolResolver extends BaseScopeProcessor {
     }
     else if (element instanceof IdentifierDefs) {
       IdentifierDefs def = (IdentifierDefs) element;
-      List<IdentPragmaPair> pairs = def.getIdentPragmaPairList();
+      List<IdentPragmaPair> pairs = def.getIdentifiers();
       for (IdentPragmaPair pair : pairs) {
         if (symbolMatches(pair.getIdentifier())) {
           target = pair.getIdentifier();

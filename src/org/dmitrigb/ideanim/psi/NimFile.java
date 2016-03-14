@@ -1,7 +1,11 @@
 package org.dmitrigb.ideanim.psi;
 
+import java.util.List;
+
+import com.intellij.psi.util.PsiTreeUtil;
 import org.dmitrigb.ideanim.NimFileType;
 import org.dmitrigb.ideanim.NimLanguage;
+import org.dmitrigb.ideanim.psi.elements.Statement;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.openapi.fileTypes.FileType;
@@ -21,6 +25,10 @@ public class NimFile extends PsiFileBase {
   @Override
   public FileType getFileType() {
     return NimFileType.INSTANCE;
+  }
+
+  public List<Statement> getStatements() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, Statement.class);
   }
 
   @Override

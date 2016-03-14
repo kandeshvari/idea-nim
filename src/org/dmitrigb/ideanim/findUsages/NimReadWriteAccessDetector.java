@@ -1,10 +1,10 @@
 package org.dmitrigb.ideanim.findUsages;
 
-import org.dmitrigb.ideanim.psi.AssignmentExpr;
-import org.dmitrigb.ideanim.psi.IdentPragmaPair;
-import org.dmitrigb.ideanim.psi.Identifier;
-import org.dmitrigb.ideanim.psi.IdentifierExpr;
-import org.dmitrigb.ideanim.psi.VarDef;
+import org.dmitrigb.ideanim.psi.elements.AssignmentExpr;
+import org.dmitrigb.ideanim.psi.elements.IdentPragmaPair;
+import org.dmitrigb.ideanim.psi.elements.Identifier;
+import org.dmitrigb.ideanim.psi.elements.IdentifierExpr;
+import org.dmitrigb.ideanim.psi.elements.VarDef;
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
