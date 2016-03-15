@@ -5,6 +5,7 @@ import org.dmitrigb.ideanim.psi.elements.ConstDef;
 import org.dmitrigb.ideanim.psi.elements.IdentifierDef;
 import org.dmitrigb.ideanim.psi.NimTypes;
 import org.dmitrigb.ideanim.psi.elements.RoutineDef;
+import org.dmitrigb.ideanim.psi.elements.TypeDef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.cacheBuilder.DefaultWordsScanner;
@@ -24,7 +25,7 @@ public class NimFindUsagesProvider implements FindUsagesProvider {
 
   @Override
   public boolean canFindUsagesFor(@NotNull PsiElement el) {
-    return el instanceof RoutineDef || el instanceof IdentifierDef || el instanceof ConstDef;
+    return el instanceof RoutineDef || el instanceof IdentifierDef || el instanceof ConstDef || el instanceof TypeDef;
   }
 
   @Nullable

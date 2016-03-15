@@ -14,12 +14,18 @@ public class SymbolResolver extends BaseScopeProcessor {
 
   private Identifier source;
   private String sourceId;
+  private boolean typesOnly = false;
 
   private PsiElement target;
 
   public SymbolResolver(Identifier source) {
     this.source = source;
     sourceId = normalizeId(this.source.getText());
+  }
+
+  public SymbolResolver(Identifier source, boolean typesOnly) {
+    this(source);
+    this.typesOnly = typesOnly;
   }
 
   private String normalizeId(String identifier) {
@@ -34,6 +40,17 @@ public class SymbolResolver extends BaseScopeProcessor {
   public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
     if (target == null && state.get(IN_UNREACHABLE_SCOPE))
       return false;
+
+    if (element instanceof TypeDef) {
+      Identifier id = ((TypeDef) element).getIdentifier();
+      if (symbolMatches(id)) {
+        target = element;
+        return false;
+      }
+    }
+
+    if (typesOnly)
+      return true;
 
     if (element instanceof RoutineDef) {
       RoutineDef routine = (RoutineDef) element;

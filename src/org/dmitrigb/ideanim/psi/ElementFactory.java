@@ -60,8 +60,14 @@ public class ElementFactory {
     else if (type == CONST_SECT) {
       return new ConstSectImpl(node);
     }
+    else if (type == CTOR_ARG) {
+      return new CtorArgImpl(node);
+    }
     else if (type == DISCARD_STMT) {
       return new DiscardStmtImpl(node);
+    }
+    else if (type == DISTINCT_TYPE_EXPR) {
+      return new DistinctTypeExprImpl(node);
     }
     else if (type == DOT_EXPR) {
       return new DotExprImpl(node);
@@ -123,6 +129,9 @@ public class ElementFactory {
     else if (type == NIL_TOKEN) {
       return new NilTokenImpl(node);
     }
+    else if (type == OBJECT_CTOR) {
+      return new ObjectCtorImpl(node);
+    }
     else if (type == OBJECT_DEF) {
       return new ObjectDefImpl(node);
     }
@@ -144,8 +153,14 @@ public class ElementFactory {
     else if (type == PROC_EXPR) {
       return new ProcExprImpl(node);
     }
+    else if (type == PTR_TYPE_EXPR) {
+      return new PtrTypeExprImpl(node);
+    }
     else if (type == RAISE_STMT) {
       return new RaiseStmtImpl(node);
+    }
+    else if (type == REF_TYPE_EXPR) {
+      return new RefTypeExprImpl(node);
     }
     else if (type == RETURN_STMT) {
       return new ReturnStmtImpl(node);
@@ -156,11 +171,17 @@ public class ElementFactory {
     else if (type == STATIC_STMT) {
       return new StaticStmtImpl(node);
     }
+    else if (type == STMT_LIST_EXPR) {
+      return new StmtListExprImpl(node);
+    }
     else if (type == TEMPLATE_DEF) {
       return new TemplateDefImpl(node);
     }
     else if (type == TRY_STMT) {
       return new TryStmtImpl(node);
+    }
+    else if (type == TUPLE_CTOR) {
+      return new TupleCtorImpl(node);
     }
     else if (type == TYPE_DEF) {
       return new TypeDefImpl(node);
@@ -176,6 +197,9 @@ public class ElementFactory {
     }
     else if (type == VAR_SECT) {
       return new VarSectImpl(node);
+    }
+    else if (type == VAR_TYPE_EXPR) {
+      return new VarTypeExprImpl(node);
     }
     else if (type == WHEN_EXPR) {
       return new WhenExprImpl(node);

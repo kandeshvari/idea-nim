@@ -6,6 +6,6 @@ import org.jetbrains.annotations.*;
 public interface TypeSect extends Statement {
 
   @NotNull
-  List<TypeDef> getTypeDefList();
+  List<TypeDef> getDefinitionList();
 
 }

@@ -1,5 +1,11 @@
 package org.dmitrigb.ideanim.psi.elements.impl;
 
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.util.IncorrectOperationException;
+import org.dmitrigb.ideanim.psi.ElementFactory;
+import org.dmitrigb.ideanim.psi.NimTypes;
 import org.dmitrigb.ideanim.psi.elements.GenericParameters;
 import org.dmitrigb.ideanim.psi.elements.Identifier;
 import org.dmitrigb.ideanim.psi.elements.Pragma;
@@ -32,4 +38,21 @@ public class TypeDefImpl extends ASTWrapperPsiElement implements TypeDef {
     return findChildByClass(Pragma.class);
   }
 
+  @Override
+  public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+    return processor.execute(this, state);
+  }
+
+  @Override
+  public String getName() {
+    return getIdentifier().getText();
+  }
+
+  @Override
+  public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
+    ASTNode newNode = ElementFactory.createIdentNode(getProject(), name);
+    ASTNode idNode = getIdentifier().getNode();
+    idNode.replaceChild(idNode.findChildByType(NimTypes.IDENT), newNode);
+    return this;
+  }
 }

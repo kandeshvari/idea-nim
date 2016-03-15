@@ -16,10 +16,15 @@ public class IdentifierReference extends PsiReferenceBase<Identifier> {
     super(element, TextRange.from(0, element.getTextLength()));
   }
 
+  @NotNull
+  protected SymbolResolver getSymbolResolver() {
+    return new SymbolResolver(getElement());
+  }
+
   @Nullable
   @Override
   public PsiElement resolve() {
-    SymbolResolver resolver = new SymbolResolver(getElement());
+    SymbolResolver resolver = getSymbolResolver();
     PsiTreeUtil.treeWalkUp(resolver, getElement(), null, ResolveState.initial());
     return resolver.getResolvedTarget();
   }

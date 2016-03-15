@@ -6,7 +6,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.util.IncorrectOperationException;
 import org.dmitrigb.ideanim.psi.ElementFactory;
 import org.dmitrigb.ideanim.psi.NimTypes;
-import org.dmitrigb.ideanim.psi.elements.IdentifierDef;
+import org.dmitrigb.ideanim.psi.elements.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,6 +30,20 @@ public class IdentifierDefImpl extends IdentifierImpl implements IdentifierDef {
 
   @Override
   public PsiReference getReference() {
+    return null;
+  }
+
+  @Override
+  public TypeDesc getDeclaredType() {
+    PsiElement parent = getParent();
+    if (parent instanceof IdentPragmaPair)
+      parent = parent.getParent();
+
+    if (parent instanceof IdentifierDefs)
+      return ((IdentifierDefs) parent).getDeclaredType();
+    if (parent instanceof VarDef)
+      return ((VarDef) parent).getDeclaredType();
+
     return null;
   }
 }

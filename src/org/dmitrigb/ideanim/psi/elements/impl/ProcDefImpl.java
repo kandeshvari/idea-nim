@@ -17,10 +17,10 @@ public class ProcDefImpl extends BaseRoutineDef implements ProcDef {
   }
 
   @Override
-  public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+  protected boolean processResultDeclaration(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
     if (lastParent != null)
       if (!resultPseudoElement.processDeclarations(processor, state, null, place))
         return false;
-    return super.processDeclarations(processor, state, lastParent, place);
+    return true;
   }
 }

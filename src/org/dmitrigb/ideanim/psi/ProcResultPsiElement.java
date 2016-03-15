@@ -11,6 +11,8 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.util.IncorrectOperationException;
 import org.dmitrigb.ideanim.psi.elements.IdentifierDef;
 import org.dmitrigb.ideanim.psi.elements.ProcDef;
+import org.dmitrigb.ideanim.psi.elements.ProcExpr;
+import org.dmitrigb.ideanim.psi.elements.TypeDesc;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -111,5 +113,14 @@ public class ProcResultPsiElement extends PsiElementBase implements IdentifierDe
   @Override
   public String getName() {
     return "result";
+  }
+
+  @Override
+  public TypeDesc getDeclaredType() {
+    if (routine instanceof ProcDef)
+      return ((ProcDef) routine).getReturnType();
+    if (routine instanceof ProcExpr)
+      return ((ProcExpr) routine).getReturnType();
+    return null;
   }
 }

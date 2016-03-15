@@ -71,13 +71,20 @@ public abstract class BaseRoutineDef extends BaseStatement implements RoutineDef
         if (!param.processDeclarations(processor, state, null, place))
           return false;
       }
+      if (!processResultDeclaration(processor, state, lastParent, place))
+        return false;
     }
     return processor.execute(this, state);
   }
 
+  protected boolean processResultDeclaration(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+    return true;
+  }
+
   @Override
   public int getTextOffset() {
-    return getIdentifier().getTextOffset();
+    Identifier id = getIdentifier();
+    return id != null ? id.getTextOffset() : super.getTextOffset();
   }
 
   @Override

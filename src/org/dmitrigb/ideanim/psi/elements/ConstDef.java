@@ -1,10 +1,10 @@
 package org.dmitrigb.ideanim.psi.elements;
 
 import com.intellij.psi.PsiNamedElement;
-import org.jetbrains.annotations.*;
-import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public interface ConstDef extends PsiElement, PsiNamedElement {
+public interface ConstDef extends PsiNamedElement, TypedElement {
 
   @Nullable
   Expression getExpression();
@@ -14,8 +14,5 @@ public interface ConstDef extends PsiElement, PsiNamedElement {
 
   @Nullable
   Pragma getPragma();
-
-  @Nullable
-  TypeDesc getDeclaredType();
 
 }
