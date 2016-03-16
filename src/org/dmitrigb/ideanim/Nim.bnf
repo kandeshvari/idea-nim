@@ -196,11 +196,13 @@ private tuple ::= T_TUPLE (T_LBRACKET &OPTIND <<listOf identColonEquals (T_COMMA
 
 ProcExpr ::= (T_PROC | T_ITERATOR) (&INDNONE paramListColon? Pragma?)? T_EQ stmt {pin=1 extends=Expression}
 
-EnumDef ::= T_ENUM (&OPTIND Identifier (&INDNONE T_EQ &OPTIND expr)? (&INDNONE T_COMMA)?)* {pin=1}
+EnumDef ::= T_ENUM (&OPTIND Identifier (&INDNONE T_EQ &OPTIND expr)? (&INDNONE T_COMMA)?)* {pin=1 extends=Expression}
 
-ObjectDef ::= T_OBJECT (&OPTIND Pragma)? (&INDNONE T_OF TypeDesc)? (&INDGT objectPart)? {pin=1}
+ObjectDef ::= T_OBJECT (&OPTIND Pragma)? (&INDNONE T_OF TypeDesc)? (&INDGT objectPart)? {pin=1 extends=Expression}
 private objectPart ::= <<indented (&INDEQ &(T_CASE | T_WHEN | IDENT | ACCENT_QUOTED | T_NIL | T_DISCARD) objectPart)*>>
-                     | objectWhen | objectCase | identColonEqualsWithPragma | NilToken
+                     | objectWhen | objectCase | ObjectMember | NilToken
+
+ObjectMember ::= identColonEqualsWithPragma
 
 private objectWhen ::= T_WHEN <<listOf (&OPTIND expr T_COLON objectPart) (&INDEQ T_ELIF)>> (&INDEQ T_ELSE T_COLON objectPart)? {pin=1}
 

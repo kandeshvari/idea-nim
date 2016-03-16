@@ -1,5 +1,6 @@
 package org.dmitrigb.ideanim.psi.elements.impl;
 
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
@@ -9,7 +10,7 @@ import org.dmitrigb.ideanim.psi.MemberReference;
 import org.dmitrigb.ideanim.psi.TypeReference;
 import org.dmitrigb.ideanim.psi.elements.*;
 
-public class IdentifierImpl extends BaseExpression implements Identifier {
+public class IdentifierImpl extends ASTWrapperPsiElement implements Identifier {
 
   public IdentifierImpl(ASTNode node) {
     super(node);

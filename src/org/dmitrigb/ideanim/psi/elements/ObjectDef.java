@@ -4,21 +4,15 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface ObjectDef extends PsiElement {
-
-  @NotNull
-  List<Expression> getExpressionList();
-
-  @NotNull
-  List<IdentPragmaPair> getIdentPragmaPairList();
+public interface ObjectDef extends Expression {
 
   @Nullable
-  Identifier getIdentifier();
+  Pragma getPragma();
+
+  @Nullable
+  TypeDesc getSuperType();
 
   @NotNull
-  List<Pragma> getPragmaList();
-
-  @NotNull
-  List<TypeDesc> getTypeDescList();
+  List<ObjectPart> getParts();
 
 }

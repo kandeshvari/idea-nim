@@ -1,26 +1,45 @@
 package org.dmitrigb.ideanim.psi;
 
-import com.intellij.openapi.util.TextRange;
+import java.util.List;
+
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReferenceBase;
-import org.dmitrigb.ideanim.psi.elements.DotExpr;
-import org.dmitrigb.ideanim.psi.elements.TypeDesc;
+import org.dmitrigb.ideanim.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class MemberReference extends PsiReferenceBase<DotExpr> {
+public class MemberReference extends IdentifierReference {
+
+  private DotExpr dotExpr;
+
   public MemberReference(@NotNull DotExpr element) {
-    super(element, TextRange.create(0, element.getTextLength()));
+    super(element.getIdentifier());
+    dotExpr = element;
   }
 
   @Nullable
   @Override
   public PsiElement resolve() {
-    DotExpr dotExpr = getElement();
-    TypeDesc type = dotExpr.getExpression().resolveType();
+    TypeDef type = dotExpr.getExpression().resolveType();
     if (type == null)
       return null;
-    System.out.println("Resolved type to: " + type.getText());
+    System.out.println("Resolved type to: " + type.getIdentifier().getText());
+
+    Expression definition = type.getDefinition();
+
+    if (definition instanceof ObjectDef) {
+      ObjectDef objDef = (ObjectDef) definition;
+      List<ObjectPart> parts = objDef.getParts();
+      for (ObjectPart part : parts) {
+        if (part instanceof ObjectMember) {
+          List<IdentPragmaPair> identifiers = ((ObjectMember) part).getIdentifiers();
+          for (IdentPragmaPair ipp : identifiers) {
+            if (ipp.getIdentifier().textMatches(dotExpr.getIdentifier()))
+              return ipp.getIdentifier();
+          }
+        }
+      }
+    }
+
     return null;
   }
 

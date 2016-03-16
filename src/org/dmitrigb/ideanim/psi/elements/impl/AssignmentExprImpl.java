@@ -11,10 +11,15 @@ public class AssignmentExprImpl extends BaseExpression implements AssignmentExpr
     super(node);
   }
 
+  @NotNull
   @Override
-  @Nullable
-  public Expression getExpression() {
-    return findChildByClass(Expression.class);
+  public Expression getLeftHandSide() {
+    return (Expression) getFirstChild();
   }
 
+  @Nullable
+  @Override
+  public Expression getRightHandSide() {
+    return (Expression) getLastChild();
+  }
 }

@@ -131,6 +131,9 @@ public class NimParser implements PsiParser, LightPsiParser {
     else if (t == OBJECT_DEF) {
       r = ObjectDef(b, 0);
     }
+    else if (t == OBJECT_MEMBER) {
+      r = ObjectMember(b, 0);
+    }
     else if (t == PATTERN) {
       r = Pattern(b, 0);
     }
@@ -229,10 +232,11 @@ public class NimParser implements PsiParser, LightPsiParser {
       WHEN_STMT, WHILE_STMT, YIELD_STMT),
     create_token_set_(ASSIGNMENT_EXPR, BRACKET_CTOR, BRACKET_EXPR, CALL_EXPR,
       CASE_EXPR, CAST_EXPR, COMMAND_EXPR, DISTINCT_TYPE_EXPR,
-      DOT_EXPR, GROUPED_EXPR, IDENTIFIER_EXPR, IF_EXPR,
-      LITERAL, NIL_TOKEN, OBJECT_CTOR, PREFIX_EXPR,
-      PROC_EXPR, PTR_TYPE_EXPR, REF_TYPE_EXPR, SET_OR_TABLE_CTOR,
-      STMT_LIST_EXPR, TUPLE_CTOR, VAR_TYPE_EXPR, WHEN_EXPR),
+      DOT_EXPR, ENUM_DEF, GROUPED_EXPR, IDENTIFIER_EXPR,
+      IF_EXPR, LITERAL, NIL_TOKEN, OBJECT_CTOR,
+      OBJECT_DEF, PREFIX_EXPR, PROC_EXPR, PTR_TYPE_EXPR,
+      REF_TYPE_EXPR, SET_OR_TABLE_CTOR, STMT_LIST_EXPR, TUPLE_CTOR,
+      VAR_TYPE_EXPR, WHEN_EXPR),
   };
 
   /* ********************************************************** */
@@ -1701,6 +1705,18 @@ public class NimParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b, l, _AND_);
     r = indGt(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // identColonEqualsWithPragma
+  public static boolean ObjectMember(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ObjectMember")) return false;
+    if (!nextTokenIs(b, "<object member>", ACCENT_QUOTED, IDENT)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, OBJECT_MEMBER, "<object member>");
+    r = identColonEqualsWithPragma(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -4309,7 +4325,7 @@ public class NimParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // <<indented (&INDEQ &(T_CASE | T_WHEN | IDENT | ACCENT_QUOTED | T_NIL | T_DISCARD) objectPart)*>>
-  //                      | objectWhen | objectCase | identColonEqualsWithPragma | NilToken
+  //                      | objectWhen | objectCase | ObjectMember | NilToken
   static boolean objectPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "objectPart")) return false;
     boolean r;
@@ -4317,7 +4333,7 @@ public class NimParser implements PsiParser, LightPsiParser {
     r = indented(b, l + 1, objectPart_0_0_parser_);
     if (!r) r = objectWhen(b, l + 1);
     if (!r) r = objectCase(b, l + 1);
-    if (!r) r = identColonEqualsWithPragma(b, l + 1);
+    if (!r) r = ObjectMember(b, l + 1);
     if (!r) r = NilToken(b, l + 1);
     exit_section_(b, m, null, r);
     return r;

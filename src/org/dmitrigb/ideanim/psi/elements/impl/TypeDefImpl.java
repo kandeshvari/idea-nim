@@ -6,6 +6,7 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.util.IncorrectOperationException;
 import org.dmitrigb.ideanim.psi.ElementFactory;
 import org.dmitrigb.ideanim.psi.NimTypes;
+import org.dmitrigb.ideanim.psi.elements.Expression;
 import org.dmitrigb.ideanim.psi.elements.GenericParameters;
 import org.dmitrigb.ideanim.psi.elements.Identifier;
 import org.dmitrigb.ideanim.psi.elements.Pragma;
@@ -21,12 +22,6 @@ public class TypeDefImpl extends ASTWrapperPsiElement implements TypeDef {
   }
 
   @Override
-  @Nullable
-  public GenericParameters getGenericParameters() {
-    return findChildByClass(GenericParameters.class);
-  }
-
-  @Override
   @NotNull
   public Identifier getIdentifier() {
     return findNotNullChildByClass(Identifier.class);
@@ -34,8 +29,19 @@ public class TypeDefImpl extends ASTWrapperPsiElement implements TypeDef {
 
   @Override
   @Nullable
+  public GenericParameters getGenericParameters() {
+    return findChildByClass(GenericParameters.class);
+  }
+
+  @Override
+  @Nullable
   public Pragma getPragma() {
     return findChildByClass(Pragma.class);
+  }
+
+  @Override
+  public Expression getDefinition() {
+    return findChildByClass(Expression.class);
   }
 
   @Override

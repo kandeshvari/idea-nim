@@ -6,13 +6,14 @@ import com.intellij.psi.PsiElement;
 
 public interface TypeDef extends PsiNamedElement {
 
-  @Nullable
-  GenericParameters getGenericParameters();
-
   @NotNull
   Identifier getIdentifier();
 
   @Nullable
+  GenericParameters getGenericParameters();
+
+  @Nullable
   Pragma getPragma();
 
+  Expression getDefinition();
 }

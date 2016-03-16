@@ -10,7 +10,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 
-public class EnumDefImpl extends ASTWrapperPsiElement implements EnumDef {
+public class EnumDefImpl extends BaseExpression implements EnumDef {
 
   public EnumDefImpl(ASTNode node) {
     super(node);

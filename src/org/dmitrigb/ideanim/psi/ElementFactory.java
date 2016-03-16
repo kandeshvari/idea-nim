@@ -135,6 +135,9 @@ public class ElementFactory {
     else if (type == OBJECT_DEF) {
       return new ObjectDefImpl(node);
     }
+    else if (type == OBJECT_MEMBER) {
+      return new ObjectMemberImpl(node);
+    }
     else if (type == PATTERN) {
       return new PatternImpl(node);
     }
