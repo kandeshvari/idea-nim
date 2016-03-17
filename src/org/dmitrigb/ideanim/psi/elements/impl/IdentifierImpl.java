@@ -29,7 +29,14 @@ public class IdentifierImpl extends ASTWrapperPsiElement implements Identifier {
     }
 
     if (parent instanceof DotExpr) {
-      return new MemberReference((DotExpr) parent);
+      return new MemberReference(((DotExpr) parent).getExpression(), this);
+    }
+
+    if (parent instanceof CtorArg) {
+      PsiElement ctor = parent.getParent();
+      if (ctor instanceof ObjectCtor) {
+        return new MemberReference((Expression) ctor, this);
+      }
     }
 
     if (parent instanceof CallExpr) {

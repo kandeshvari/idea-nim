@@ -43,6 +43,9 @@ public class NimReadWriteAccessDetector extends ReadWriteAccessDetector {
             return Access.Write;
         }
       }
+      if (element instanceof CtorArg) {
+        return Access.Write;
+      }
     }
     return Access.Read;
   }

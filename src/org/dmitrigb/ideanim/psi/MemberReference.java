@@ -9,17 +9,17 @@ import org.jetbrains.annotations.Nullable;
 
 public class MemberReference extends IdentifierReference {
 
-  private DotExpr dotExpr;
+  private Expression expression;
 
-  public MemberReference(@NotNull DotExpr element) {
-    super(element.getIdentifier());
-    dotExpr = element;
+  public MemberReference(@NotNull Expression expression, @NotNull Identifier identifier) {
+    super(identifier);
+    this.expression = expression;
   }
 
   @Nullable
   @Override
   public PsiElement resolve() {
-    TypeDef type = dotExpr.getExpression().resolveType();
+    TypeDef type = expression.resolveType();
     if (type == null)
       return null;
     System.out.println("Resolved type to: " + type.getIdentifier().getText());
@@ -33,7 +33,7 @@ public class MemberReference extends IdentifierReference {
         if (part instanceof ObjectMember) {
           List<IdentPragmaPair> identifiers = ((ObjectMember) part).getIdentifiers();
           for (IdentPragmaPair ipp : identifiers) {
-            if (ipp.getIdentifier().textMatches(dotExpr.getIdentifier()))
+            if (ipp.getIdentifier().textMatches(getElement()))
               return ipp.getIdentifier();
           }
         }
