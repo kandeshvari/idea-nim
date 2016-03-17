@@ -22,11 +22,16 @@ public class MemberReference extends IdentifierReference {
     TypeDef type = expression.resolveType();
     if (type == null)
       return null;
-    System.out.println("Resolved type to: " + type.getIdentifier().getText());
 
     Expression definition = type.getDefinition();
 
-    if (definition instanceof ObjectDef) {
+    while (definition != null) {
+      if (definition instanceof RefTypeExpr)
+        definition = ((RefTypeExpr) definition).getExpression();
+
+      if (!(definition instanceof ObjectDef))
+        break;
+
       ObjectDef objDef = (ObjectDef) definition;
       List<ObjectPart> parts = objDef.getParts();
       for (ObjectPart part : parts) {
@@ -38,6 +43,13 @@ public class MemberReference extends IdentifierReference {
           }
         }
       }
+      TypeDesc superType = objDef.getSuperType();
+      if (superType == null)
+        break;
+      TypeDef superDef = superType.getExpression().evaluateType();
+      if (superDef == null)
+        break;
+      definition = superDef.getDefinition();
     }
 
     return null;
