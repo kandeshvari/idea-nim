@@ -131,8 +131,8 @@ public class NimParser implements PsiParser, LightPsiParser {
     else if (t == OBJECT_DEF) {
       r = ObjectDef(b, 0);
     }
-    else if (t == OBJECT_MEMBER) {
-      r = ObjectMember(b, 0);
+    else if (t == OBJECT_FIELDS) {
+      r = ObjectFields(b, 0);
     }
     else if (t == PATTERN) {
       r = Pattern(b, 0);
@@ -1711,11 +1711,11 @@ public class NimParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // identColonEqualsWithPragma
-  public static boolean ObjectMember(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "ObjectMember")) return false;
-    if (!nextTokenIs(b, "<object member>", ACCENT_QUOTED, IDENT)) return false;
+  public static boolean ObjectFields(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ObjectFields")) return false;
+    if (!nextTokenIs(b, "<object fields>", ACCENT_QUOTED, IDENT)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, OBJECT_MEMBER, "<object member>");
+    Marker m = enter_section_(b, l, _NONE_, OBJECT_FIELDS, "<object fields>");
     r = identColonEqualsWithPragma(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -4325,7 +4325,7 @@ public class NimParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // <<indented (&INDEQ &(T_CASE | T_WHEN | IDENT | ACCENT_QUOTED | T_NIL | T_DISCARD) objectPart)*>>
-  //                      | objectWhen | objectCase | ObjectMember | NilToken
+  //                      | objectWhen | objectCase | ObjectFields | NilToken
   static boolean objectPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "objectPart")) return false;
     boolean r;
@@ -4333,7 +4333,7 @@ public class NimParser implements PsiParser, LightPsiParser {
     r = indented(b, l + 1, objectPart_0_0_parser_);
     if (!r) r = objectWhen(b, l + 1);
     if (!r) r = objectCase(b, l + 1);
-    if (!r) r = ObjectMember(b, l + 1);
+    if (!r) r = ObjectFields(b, l + 1);
     if (!r) r = NilToken(b, l + 1);
     exit_section_(b, m, null, r);
     return r;

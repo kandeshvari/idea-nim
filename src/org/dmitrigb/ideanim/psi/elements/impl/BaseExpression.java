@@ -3,7 +3,6 @@ package org.dmitrigb.ideanim.psi.elements.impl;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import org.dmitrigb.ideanim.psi.elements.Expression;
-import org.dmitrigb.ideanim.psi.elements.TypeDef;
 
 public class BaseExpression extends ASTWrapperPsiElement implements Expression {
 
@@ -12,12 +11,12 @@ public class BaseExpression extends ASTWrapperPsiElement implements Expression {
   }
 
   @Override
-  public TypeDef resolveType() {
+  public Expression resolveType(TypeEvalMode mode) {
     return null;
   }
 
   @Override
-  public TypeDef evaluateType() {
+  public Expression evaluateType(TypeEvalMode mode) {
     return null;
   }
 }

@@ -1,8 +1,7 @@
 package org.dmitrigb.ideanim.psi;
 
-import java.util.List;
-
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.ResolveState;
 import org.dmitrigb.ideanim.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,37 +18,23 @@ public class MemberReference extends IdentifierReference {
   @Nullable
   @Override
   public PsiElement resolve() {
-    TypeDef type = expression.resolveType();
+    Expression type = expression.resolveType(Expression.TypeEvalMode.DEREF_ALL);
     if (type == null)
       return null;
 
-    Expression definition = type.getDefinition();
+    if (!(type instanceof ObjectDef))
+      return null;
 
-    while (definition != null) {
-      if (definition instanceof RefTypeExpr)
-        definition = ((RefTypeExpr) definition).getExpression();
+    ObjectDef objDef = (ObjectDef) type;
 
-      if (!(definition instanceof ObjectDef))
-        break;
+    MemberResolver resolver = new MemberResolver(getElement());
+    ResolveState state = ResolveState.initial();
 
-      ObjectDef objDef = (ObjectDef) definition;
-      List<ObjectPart> parts = objDef.getParts();
-      for (ObjectPart part : parts) {
-        if (part instanceof ObjectMember) {
-          List<IdentPragmaPair> identifiers = ((ObjectMember) part).getIdentifiers();
-          for (IdentPragmaPair ipp : identifiers) {
-            if (ipp.getIdentifier().textMatches(getElement()))
-              return ipp.getIdentifier();
-          }
-        }
-      }
-      TypeDesc superType = objDef.getSuperType();
-      if (superType == null)
-        break;
-      TypeDef superDef = superType.getExpression().evaluateType();
-      if (superDef == null)
-        break;
-      definition = superDef.getDefinition();
+    while (objDef != null) {
+      if (!objDef.processDeclarations(resolver, state, null, type))
+        return resolver.getResolvedTarget();
+
+      objDef = NimPsiTreeUtil.getSuperTypeDef(objDef);
     }
 
     return null;

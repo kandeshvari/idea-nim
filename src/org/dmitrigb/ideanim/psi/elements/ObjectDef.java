@@ -1,8 +1,9 @@
 package org.dmitrigb.ideanim.psi.elements;
 
 import java.util.List;
-import org.jetbrains.annotations.*;
-import com.intellij.psi.PsiElement;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface ObjectDef extends Expression {
 

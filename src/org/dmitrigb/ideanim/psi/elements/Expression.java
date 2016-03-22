@@ -4,8 +4,15 @@ import com.intellij.psi.PsiElement;
 
 public interface Expression extends PsiElement {
 
-  TypeDef resolveType();
+  enum TypeEvalMode {
+    NO_DEREF,
+    DEREF_ALL,
+    DEREF_OBJECT_HIERARCHY
+  }
 
-  TypeDef evaluateType();
+
+  Expression resolveType(TypeEvalMode mode);
+
+  Expression evaluateType(TypeEvalMode mode);
 
 }

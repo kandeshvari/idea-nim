@@ -44,7 +44,7 @@ public interface NimTypesBase {
   IElementType NIL_TOKEN = new NimElementType("NIL_TOKEN");
   IElementType OBJECT_CTOR = new NimElementType("OBJECT_CTOR");
   IElementType OBJECT_DEF = new NimElementType("OBJECT_DEF");
-  IElementType OBJECT_MEMBER = new NimElementType("OBJECT_MEMBER");
+  IElementType OBJECT_FIELDS = new NimElementType("OBJECT_FIELDS");
   IElementType PATTERN = new NimElementType("PATTERN");
   IElementType PRAGMA = new NimElementType("PRAGMA");
   IElementType PRAGMA_STMT = new NimElementType("PRAGMA_STMT");

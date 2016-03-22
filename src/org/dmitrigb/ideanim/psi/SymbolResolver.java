@@ -2,6 +2,7 @@ package org.dmitrigb.ideanim.psi;
 
 import java.util.List;
 
+import org.dmitrigb.ideanim.NimIdentifierUtil;
 import org.dmitrigb.ideanim.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.psi.PsiElement;
@@ -20,7 +21,7 @@ public class SymbolResolver extends BaseScopeProcessor {
 
   public SymbolResolver(Identifier source) {
     this.source = source;
-    sourceId = normalizeId(this.source.getText());
+    sourceId = NimIdentifierUtil.normalizeId(this.source.getText());
   }
 
   public SymbolResolver(Identifier source, boolean typesOnly) {
@@ -28,12 +29,8 @@ public class SymbolResolver extends BaseScopeProcessor {
     this.typesOnly = typesOnly;
   }
 
-  private String normalizeId(String identifier) {
-    return identifier.charAt(0) + identifier.substring(1).replace("_", "").replace("\u2013", "").toLowerCase();
-  }
-
   private boolean symbolMatches(Identifier symbol) {
-    return normalizeId(symbol.getText()).equals(sourceId);
+    return NimIdentifierUtil.normalizeId(symbol.getText()).equals(sourceId);
   }
 
   @Override

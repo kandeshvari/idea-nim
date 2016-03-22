@@ -2,7 +2,7 @@ package org.dmitrigb.ideanim.psi.elements;
 
 import java.util.List;
 
-public interface ObjectMember extends ObjectPart {
+public interface ObjectFields extends ObjectPart {
 
   List<IdentPragmaPair> getIdentifiers();
 

@@ -2,11 +2,13 @@ package org.dmitrigb.ideanim.psi.elements.impl;
 
 import java.util.List;
 
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
 import org.dmitrigb.ideanim.psi.elements.*;
 import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 
 public class ObjectDefImpl extends BaseExpression implements ObjectDef {
 
@@ -30,5 +32,19 @@ public class ObjectDefImpl extends BaseExpression implements ObjectDef {
   @Override
   public List<ObjectPart> getParts() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, ObjectPart.class);
+  }
+
+  @Override
+  public Expression evaluateType(TypeEvalMode mode) {
+    return this;
+  }
+
+  @Override
+  public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+    for (ObjectPart part : getParts()) {
+      if (!part.processDeclarations(processor, state, this, place))
+        return false;
+    }
+    return true;
   }
 }
