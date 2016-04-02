@@ -29,7 +29,11 @@
     <lang.psiStructureViewFactory language="Nim" implementationClass="org.dmitrigb.ideanim.structureview.NimStructureViewFactory"/>
     <lang.braceMatcher language="Nim" implementationClass="org.dmitrigb.ideanim.NimBraceMatcher"/>
     <lang.findUsagesProvider language="Nim" implementationClass="org.dmitrigb.ideanim.findUsages.NimFindUsagesProvider"/>
+    <lang.refactoringSupport language="Nim" implementationClass="org.dmitrigb.ideanim.NimRefactoringSupportProvider"/>
     <readWriteAccessDetector implementation="org.dmitrigb.ideanim.findUsages.NimReadWriteAccessDetector"/>
+    <definitionsScopedSearch implementation="org.dmitrigb.ideanim.NimDefinitionsScopedSearch"/>
+    <targetElementEvaluator language="Nim" implementationClass="org.dmitrigb.ideanim.NimTargetElementEvaluator"/>
+    <renamePsiElementProcessor implementation="org.dmitrigb.ideanim.NimRenamePsiElementProcessor"/>
   </extensions>
 
   <actions>

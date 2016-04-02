@@ -64,4 +64,10 @@ public class ConstDefImpl extends ASTWrapperPsiElement implements ConstDef {
     idNode.replaceChild(idNode.findChildByType(NimTypes.IDENT), newNode);
     return this;
   }
+
+  @Nullable
+  @Override
+  public PsiElement getNameIdentifier() {
+    return getIdentifier();
+  }
 }

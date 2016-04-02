@@ -7,6 +7,6 @@ import com.intellij.psi.PsiElement;
 public interface Block extends PsiElement {
 
   @NotNull
-  List<Statement> getStatementList();
+  List<Statement> getStatements();
 
 }

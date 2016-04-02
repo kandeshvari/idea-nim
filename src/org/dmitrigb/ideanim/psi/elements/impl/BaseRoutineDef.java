@@ -33,6 +33,12 @@ public abstract class BaseRoutineDef extends BaseStatement implements RoutineDef
     return findChildByClass(Identifier.class);
   }
 
+  @Nullable
+  @Override
+  public PsiElement getNameIdentifier() {
+    return getIdentifier();
+  }
+
   @Override
   @Nullable
   public Pattern getPattern() {
@@ -61,6 +67,11 @@ public abstract class BaseRoutineDef extends BaseStatement implements RoutineDef
   @Nullable
   public Block getBody() {
     return findChildByClass(Block.class);
+  }
+
+  @Override
+  public boolean isForwardDeclaration() {
+    return getBody() == null;
   }
 
   @Override

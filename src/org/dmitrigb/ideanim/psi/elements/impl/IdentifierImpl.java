@@ -7,6 +7,7 @@ import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiReference;
 import org.dmitrigb.ideanim.psi.IdentifierReference;
 import org.dmitrigb.ideanim.psi.MemberReference;
+import org.dmitrigb.ideanim.psi.ProcReference;
 import org.dmitrigb.ideanim.psi.TypeReference;
 import org.dmitrigb.ideanim.psi.elements.*;
 
@@ -24,8 +25,12 @@ public class IdentifierImpl extends ASTWrapperPsiElement implements Identifier {
 
     if (parent instanceof IdentifierExpr) {
       PsiElement grand = parent.getParent();
+
       if (grand instanceof SimpleTypeDesc || grand instanceof ObjectCtor)
         return new TypeReference(this);
+
+      if (grand instanceof CallExpr)
+        return new ProcReference(this, ((CallExpr) grand).getArgumentList());
     }
 
     if (parent instanceof DotExpr) {
@@ -37,12 +42,6 @@ public class IdentifierImpl extends ASTWrapperPsiElement implements Identifier {
       if (ctor instanceof ObjectCtor) {
         return new MemberReference((Expression) ctor, this);
       }
-    }
-
-    if (parent instanceof CallExpr) {
-      CallExpr callExpr = (CallExpr) parent;
-      callExpr.getArgumentList();
-      //return new ProcReference();
     }
 
     return new IdentifierReference(this);

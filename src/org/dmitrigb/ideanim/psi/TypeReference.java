@@ -11,6 +11,8 @@ public class TypeReference extends IdentifierReference {
   @NotNull
   @Override
   protected SymbolResolver getSymbolResolver() {
-    return new SymbolResolver(getElement(), true);
+    SymbolResolver resolver = new SymbolResolver(getElement());
+    resolver.setTypesOnly(true);
+    return resolver;
   }
 }

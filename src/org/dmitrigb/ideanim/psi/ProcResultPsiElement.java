@@ -123,4 +123,10 @@ public class ProcResultPsiElement extends PsiElementBase implements IdentifierDe
       return ((ProcExpr) routine).getReturnType();
     return null;
   }
+
+  @Nullable
+  @Override
+  public PsiElement getNameIdentifier() {
+    return this;
+  }
 }

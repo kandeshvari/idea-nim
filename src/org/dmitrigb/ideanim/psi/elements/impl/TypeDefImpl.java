@@ -61,4 +61,10 @@ public class TypeDefImpl extends ASTWrapperPsiElement implements TypeDef {
     idNode.replaceChild(idNode.findChildByType(NimTypes.IDENT), newNode);
     return this;
   }
+
+  @Nullable
+  @Override
+  public PsiElement getNameIdentifier() {
+    return getIdentifier();
+  }
 }

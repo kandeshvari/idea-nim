@@ -2,10 +2,11 @@ package org.dmitrigb.ideanim.psi.elements;
 
 import java.util.List;
 
-import com.intellij.psi.PsiNamedElement;
-import org.jetbrains.annotations.*;
+import com.intellij.psi.PsiNameIdentifierOwner;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public interface RoutineDef extends Statement, PsiNamedElement {
+public interface RoutineDef extends Statement, PsiNameIdentifierOwner {
 
   @Nullable
   GenericParameters getGenericParameters();
@@ -27,5 +28,7 @@ public interface RoutineDef extends Statement, PsiNamedElement {
 
   @Nullable
   Block getBody();
+
+  boolean isForwardDeclaration();
 
 }

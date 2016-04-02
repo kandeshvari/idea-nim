@@ -2,42 +2,45 @@ package org.dmitrigb.ideanim.psi;
 
 import java.util.List;
 
-import org.dmitrigb.ideanim.NimIdentifierUtil;
-import org.dmitrigb.ideanim.psi.elements.*;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.BaseScopeProcessor;
-
-import static org.dmitrigb.ideanim.ResolveStateKeys.IN_UNREACHABLE_SCOPE;
+import org.dmitrigb.ideanim.NimIdentifierUtil;
+import org.dmitrigb.ideanim.psi.elements.*;
+import org.jetbrains.annotations.NotNull;
 
 public class SymbolResolver extends BaseScopeProcessor {
 
   private Identifier source;
   private String sourceId;
   private boolean typesOnly = false;
+  private boolean fullDefinitionOnly = false;
 
   private PsiElement target;
 
   public SymbolResolver(Identifier source) {
     this.source = source;
-    sourceId = NimIdentifierUtil.normalizeId(this.source.getText());
+    String sourceText = ApplicationManager.getApplication().runReadAction((Computable<String>) this.source::getText);
+    sourceId = NimIdentifierUtil.normalizeId(sourceText);
   }
 
-  public SymbolResolver(Identifier source, boolean typesOnly) {
-    this(source);
+  public void setTypesOnly(boolean typesOnly) {
     this.typesOnly = typesOnly;
   }
 
+  public void setFullDefinitionOnly(boolean fullDefinitionOnly) {
+    this.fullDefinitionOnly = fullDefinitionOnly;
+  }
+
   private boolean symbolMatches(Identifier symbol) {
-    return NimIdentifierUtil.normalizeId(symbol.getText()).equals(sourceId);
+    String symbolText = ApplicationManager.getApplication().runReadAction((Computable<String>) symbol::getText);
+    return NimIdentifierUtil.normalizeId(symbolText).equals(sourceId);
   }
 
   @Override
   public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
-    if (target == null && state.get(IN_UNREACHABLE_SCOPE))
-      return false;
-
     if (element instanceof TypeDef) {
       Identifier id = ((TypeDef) element).getIdentifier();
       if (symbolMatches(id)) {
@@ -53,9 +56,10 @@ public class SymbolResolver extends BaseScopeProcessor {
       RoutineDef routine = (RoutineDef) element;
       Identifier symbol = routine.getIdentifier();
       if (symbol != null && symbolMatches(symbol)) {
-        target = element;
-        if (routine.getBody() != null)
+        if (!(fullDefinitionOnly && routine.isForwardDeclaration())) {
+          target = element;
           return false;
+        }
       }
     }
     else if (element instanceof ProcResultPsiElement) {

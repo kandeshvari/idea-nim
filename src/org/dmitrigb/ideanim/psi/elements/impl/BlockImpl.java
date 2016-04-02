@@ -20,13 +20,13 @@ public class BlockImpl extends ASTWrapperPsiElement implements Block {
 
   @Override
   @NotNull
-  public List<Statement> getStatementList() {
+  public List<Statement> getStatements() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, Statement.class);
   }
 
   @Override
   public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
-    for (Statement statement : getStatementList()) {
+    for (Statement statement : getStatements()) {
       if (statement == lastParent)
         return true;
       if (!statement.processDeclarations(processor, state, null, place))

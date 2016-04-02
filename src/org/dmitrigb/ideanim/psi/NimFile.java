@@ -2,19 +2,17 @@ package org.dmitrigb.ideanim.psi;
 
 import java.util.List;
 
-import com.intellij.psi.util.PsiTreeUtil;
-import org.dmitrigb.ideanim.NimFileType;
-import org.dmitrigb.ideanim.NimLanguage;
-import org.dmitrigb.ideanim.psi.elements.Statement;
-import org.jetbrains.annotations.NotNull;
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
-
-import static org.dmitrigb.ideanim.ResolveStateKeys.IN_UNREACHABLE_SCOPE;
+import com.intellij.psi.util.PsiTreeUtil;
+import org.dmitrigb.ideanim.NimFileType;
+import org.dmitrigb.ideanim.NimLanguage;
+import org.dmitrigb.ideanim.psi.elements.Statement;
+import org.jetbrains.annotations.NotNull;
 
 public class NimFile extends PsiFileBase {
   public NimFile(@NotNull FileViewProvider fileViewProvider) {
@@ -33,17 +31,11 @@ public class NimFile extends PsiFileBase {
 
   @Override
   public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
-    if (lastParent != null) {
-      PsiElement[] children = getChildren();
-      for (PsiElement child : children) {
-        if (child == lastParent) {
-          state = state.put(IN_UNREACHABLE_SCOPE, true);
-          continue;
-        }
-        boolean more = child.processDeclarations(processor, state, null, place);
-        if (!more)
-          return false;
-      }
+    for (Statement statement : getStatements()) {
+      if (statement == lastParent)
+        return true;
+      if (!statement.processDeclarations(processor, state, null, place))
+        return false;
     }
     return true;
   }
