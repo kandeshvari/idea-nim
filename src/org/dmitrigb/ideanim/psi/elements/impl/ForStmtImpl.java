@@ -2,6 +2,9 @@ package org.dmitrigb.ideanim.psi.elements.impl;
 
 import java.util.List;
 
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
 import org.dmitrigb.ideanim.psi.elements.Block;
 import org.dmitrigb.ideanim.psi.elements.Expression;
 import org.dmitrigb.ideanim.psi.elements.ForStmt;
@@ -34,4 +37,8 @@ public class ForStmtImpl extends BaseStatement implements ForStmt {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, IdentPragmaPair.class);
   }
 
+  @Override
+  public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+    return lastParent == null || processor.execute(this, state);
+  }
 }

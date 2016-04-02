@@ -96,6 +96,15 @@ public class SymbolResolver extends BaseScopeProcessor {
         }
       }
     }
+    else if (element instanceof ForStmt) {
+      List<IdentPragmaPair> pairs = ((ForStmt) element).getIdentPragmaPairList();
+      for (IdentPragmaPair pair : pairs) {
+        if (symbolMatches(pair.getIdentifier())) {
+          target = pair.getIdentifier();
+          return false;
+        }
+      }
+    }
 
     return true;
   }

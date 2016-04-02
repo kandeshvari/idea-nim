@@ -20,6 +20,8 @@ public class NimReadWriteAccessDetector extends ReadWriteAccessDetector {
         if (element instanceof VarDef)
           if (((VarDef) element).getInitializer() != null)
             return true;
+        if (element instanceof ForStmt)
+          return true;
       }
     }
     return false;
