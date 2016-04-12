@@ -106,7 +106,7 @@ public class RoutineResolver extends SymbolResolver {
     for (int i = 0; i < params.size(); i++) {
       Param param = params.get(i);
       Expression arg = arguments.get(i);
-      Type paramType = param.type.getExpression().asType();
+      Type paramType = param.type.toType();
       Type argType = arg.getType();
 
       if (argType.equals(paramType)) {

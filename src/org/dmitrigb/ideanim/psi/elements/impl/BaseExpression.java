@@ -21,13 +21,4 @@ public abstract class BaseExpression extends ASTWrapperPsiElement implements Exp
     return Type.UNKNOWN;
   }
 
-  @Override
-  public Expression resolveType(TypeEvalMode mode) {
-    return null;
-  }
-
-  @Override
-  public Expression evaluateType(TypeEvalMode mode) {
-    return null;
-  }
 }

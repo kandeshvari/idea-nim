@@ -3,6 +3,8 @@ package org.dmitrigb.ideanim.psi.elements.impl;
 import com.intellij.lang.ASTNode;
 import org.dmitrigb.ideanim.psi.elements.Expression;
 import org.dmitrigb.ideanim.psi.elements.VarTypeExpr;
+import org.dmitrigb.ideanim.types.TVar;
+import org.dmitrigb.ideanim.types.Type;
 
 public class VarTypeExprImpl extends BaseExpression implements VarTypeExpr {
   public VarTypeExprImpl(ASTNode node) {
@@ -11,11 +13,11 @@ public class VarTypeExprImpl extends BaseExpression implements VarTypeExpr {
 
   @Override
   public Expression getExpression() {
-    return findChildByClass(Expression.class);
+    return (Expression) getLastChild();
   }
 
   @Override
-  public Expression evaluateType(TypeEvalMode mode) {
-    return getExpression().evaluateType(mode);
+  public Type asType() {
+    return new TVar(getExpression());
   }
 }

@@ -2,7 +2,13 @@ package org.dmitrigb.ideanim.psi;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
-import org.dmitrigb.ideanim.psi.elements.*;
+import org.dmitrigb.ideanim.psi.elements.Expression;
+import org.dmitrigb.ideanim.psi.elements.Identifier;
+import org.dmitrigb.ideanim.psi.elements.ObjectDef;
+import org.dmitrigb.ideanim.types.TObject;
+import org.dmitrigb.ideanim.types.TRef;
+import org.dmitrigb.ideanim.types.TVar;
+import org.dmitrigb.ideanim.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,20 +24,22 @@ public class MemberReference extends IdentifierReference {
   @Nullable
   @Override
   public PsiElement resolve() {
-    Expression type = expression.resolveType(Expression.TypeEvalMode.DEREF_ALL);
-    if (type == null)
+    Type type = expression.getType();
+    if (type instanceof TRef)
+      type = ((TRef) type).getBaseType();
+    if (type instanceof TVar)
+      type = ((TVar) type).getBaseType();
+    if (!(type instanceof TObject))
       return null;
 
-    if (!(type instanceof ObjectDef))
-      return null;
-
-    ObjectDef objDef = (ObjectDef) type;
+    TObject tObj = (TObject) type;
+    ObjectDef objDef = tObj.getDefinition();
 
     MemberResolver resolver = new MemberResolver(getElement());
     ResolveState state = ResolveState.initial();
 
     while (objDef != null) {
-      if (!objDef.processDeclarations(resolver, state, null, type))
+      if (!objDef.processDeclarations(resolver, state, null, tObj.getDefinition()))
         return resolver.getResolvedTarget();
 
       objDef = NimPsiTreeUtil.getSuperTypeDef(objDef);

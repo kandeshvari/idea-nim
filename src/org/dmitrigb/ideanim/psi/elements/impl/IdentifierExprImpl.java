@@ -21,47 +21,34 @@ public class IdentifierExprImpl extends BaseExpression implements IdentifierExpr
   }
 
   @Override
+  public Type getType() {
+    PsiReference reference = getIdentifier().getReference();
+    if (reference == null)
+      return null;
+    PsiElement target = reference.resolve();
+    if (target instanceof TypedElement) {
+      TypeDesc typeDesc = ((TypedElement) target).getDeclaredType();
+      if (typeDesc != null)
+        return typeDesc.toType();
+    }
+    return null;
+  }
+
+  @Override
   public Type asType() {
     Identifier id = getIdentifier();
     PsiReference reference = id.getReference();
     if (reference != null) {
       PsiElement target = reference.resolve();
-      if (target != null)
+      if (target instanceof TypeDef)
+        return ((TypeDef) target).getDefinition().asType();
+      if (target != null) {
+        System.err.println("asType: identifier resolved to non TypeDef: this=" + this + ", target=" + target);
         return Type.UNKNOWN;
+      }
     }
 
     return TPrimitive.fromPredefinedTypeName(id.getText());
   }
 
-  @Override
-  public Expression resolveType(TypeEvalMode mode) {
-    PsiReference reference = getIdentifier().getReference();
-    if (reference == null)
-      return null;
-    PsiElement target = reference.resolve();
-    if (target == null)
-      return null;
-
-    if (target instanceof TypedElement) {
-      TypeDesc typeDesc = ((TypedElement) target).getDeclaredType();
-      if (typeDesc != null)
-        return typeDesc.getExpression().evaluateType(mode);
-    }
-
-    return null;
-  }
-
-  @Override
-  public Expression evaluateType(TypeEvalMode mode) {
-    PsiReference reference = getIdentifier().getReference();
-    if (reference == null)
-      return null;
-
-    PsiElement target = reference.resolve();
-
-    if (target instanceof TypeDef)
-      return ((TypeDef) target).getDefinition().evaluateType(mode);
-
-    return null;
-  }
 }

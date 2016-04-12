@@ -7,6 +7,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.dmitrigb.ideanim.psi.elements.CtorArg;
 import org.dmitrigb.ideanim.psi.elements.Expression;
 import org.dmitrigb.ideanim.psi.elements.ObjectCtor;
+import org.dmitrigb.ideanim.types.Type;
 import org.jetbrains.annotations.NotNull;
 
 public class ObjectCtorImpl extends BaseExpression implements ObjectCtor {
@@ -15,8 +16,8 @@ public class ObjectCtorImpl extends BaseExpression implements ObjectCtor {
   }
 
   @Override
-  public Expression resolveType(TypeEvalMode mode) {
-    return getTypeExpression().evaluateType(TypeEvalMode.DEREF_OBJECT_HIERARCHY);
+  public Type getType() {
+    return getTypeExpression().asType();
   }
 
   @NotNull

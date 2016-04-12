@@ -5,10 +5,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.dmitrigb.ideanim.psi.NimFile;
-import org.dmitrigb.ideanim.psi.elements.IdentPragmaPair;
-import org.dmitrigb.ideanim.psi.elements.IdentifierDef;
-import org.dmitrigb.ideanim.psi.elements.ProcDef;
-import org.dmitrigb.ideanim.psi.elements.VarDef;
+import org.dmitrigb.ideanim.psi.elements.*;
 
 public class ReferenceResolutionTests extends LightPlatformCodeInsightFixtureTestCase {
   @Override
@@ -19,7 +16,7 @@ public class ReferenceResolutionTests extends LightPlatformCodeInsightFixtureTes
   public void testSimpleVariableResolution1() throws Exception {
     myFixture.configureByText(NimFileType.INSTANCE, "" +
         "var a = 3\n" +
-        "<caret>a\n");
+        "discard <caret>a\n");
     PsiReference ref = myFixture.getReferenceAtCaretPositionWithAssertion();
     PsiElement target = ref.resolve();
     assertPsiAncestors(target, IdentifierDef.class, IdentPragmaPair.class, VarDef.class);
@@ -74,6 +71,55 @@ public class ReferenceResolutionTests extends LightPlatformCodeInsightFixtureTes
         "proc foo(a: string) = discard\n" +
         "proc foo[T](a: T) = discard\n" +
         "<caret>foo(42)\n");
+  }
+
+  public void testObjectMember() throws Exception {
+    assertResolvesToObjectMember("name", "" +
+        "type Foo = object\n" +
+        "  name: string\n" +
+        "var f: Foo\n" +
+        "discard f.<caret>name\n");
+  }
+
+  public void testObjectMemberRef() throws Exception {
+    assertResolvesToObjectMember("name", "" +
+        "type Foo = ref object\n" +
+        "  name: string\n" +
+        "var f: Foo\n" +
+        "discard f.<caret>name\n");
+  }
+
+  public void testObjectMemberVar() throws Exception {
+    assertResolvesToObjectMember("name", "" +
+        "type Foo = object\n" +
+        "  name: string\n" +
+        "var f: var Foo\n" +
+        "discard f.<caret>name\n");
+  }
+
+  public void testObjectMemberInherited() throws Exception {
+    assertResolvesToObjectMember("name", "" +
+        "type\n" +
+        "  Foo = object of RootObj\n" +
+        "    name: string\n" +
+        "  Bar = object of Foo\n" +
+        "var b: Bar\n" +
+        "discard b.<caret>name\n");
+  }
+
+  public void testObjectMemberInCtor() throws Exception {
+    assertResolvesToObjectMember("name", "" +
+        "type Foo = object\n" +
+        "  name: string\n" +
+        "discard Foo(<caret>name: \"sad\")\n");
+  }
+
+  private void assertResolvesToObjectMember(String memberName, String nimSource) {
+    myFixture.configureByText(NimFileType.INSTANCE, nimSource);
+    PsiReference ref = myFixture.getReferenceAtCaretPositionWithAssertion();
+    PsiElement target = ref.resolve();
+    assertPsiAncestors(target, IdentifierDef.class, IdentPragmaPair.class, ObjectFields.class);
+    assertEquals(memberName, target.getText());
   }
 
   private void assertResolvesToSecondProc(String nimSource) {

@@ -2,8 +2,9 @@ package org.dmitrigb.ideanim.psi.elements.impl;
 
 import com.intellij.lang.ASTNode;
 import org.dmitrigb.ideanim.psi.elements.Expression;
-import org.dmitrigb.ideanim.psi.elements.ObjectDef;
 import org.dmitrigb.ideanim.psi.elements.RefTypeExpr;
+import org.dmitrigb.ideanim.types.TRef;
+import org.dmitrigb.ideanim.types.Type;
 
 public class RefTypeExprImpl extends BaseExpression implements RefTypeExpr {
   public RefTypeExprImpl(ASTNode node) {
@@ -11,22 +12,13 @@ public class RefTypeExprImpl extends BaseExpression implements RefTypeExpr {
   }
 
   @Override
-  public Expression getExpression() {
-    return findChildByClass(Expression.class);
+  public Expression getBase() {
+    return (Expression) getLastChild();
   }
 
   @Override
-  public Expression evaluateType(TypeEvalMode mode) {
-    switch (mode) {
-      case DEREF_ALL:
-        return getExpression().evaluateType(mode);
-      case DEREF_OBJECT_HIERARCHY:
-        if (getExpression() instanceof ObjectDef)
-          return getExpression().evaluateType(mode);
-        else
-          return this;
-      default:
-        return this;
-    }
+  public Type asType() {
+    return new TRef(getBase());
   }
+
 }

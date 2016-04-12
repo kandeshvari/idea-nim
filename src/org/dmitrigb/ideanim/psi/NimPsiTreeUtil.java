@@ -2,19 +2,23 @@ package org.dmitrigb.ideanim.psi;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
-import org.dmitrigb.ideanim.psi.elements.*;
+import org.dmitrigb.ideanim.psi.elements.ObjectDef;
+import org.dmitrigb.ideanim.psi.elements.RoutineDef;
+import org.dmitrigb.ideanim.psi.elements.TypeDesc;
+import org.dmitrigb.ideanim.types.TObject;
+import org.dmitrigb.ideanim.types.Type;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class NimPsiTreeUtil {
 
   @Nullable
   public static ObjectDef getSuperTypeDef(ObjectDef objectDef) {
-    TypeDesc superType = objectDef.getSuperType();
-    if (superType == null)
+    TypeDesc superTypeDesc = objectDef.getSuperType();
+    if (superTypeDesc == null)
       return null;
-    Expression superDef = superType.getExpression().evaluateType(Expression.TypeEvalMode.DEREF_ALL);
-    if (superDef instanceof ObjectDef)
-      return (ObjectDef) superDef;
+    Type superType = superTypeDesc.toType();
+    if (superType instanceof TObject)
+      return ((TObject) superType).getDefinition();
 
     return null;
   }
