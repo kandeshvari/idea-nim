@@ -3,7 +3,7 @@ package org.dmitrigb.ideanim.psi;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 
-public interface NimTypes extends NimTypesBase {
+public interface ElementTypes extends ElementTypesBase {
   IElementType T_DBLCOLON = new NimTokenType("T_DBLCOLON");
 
   IElementType T_ASM = new NimTokenType("T_ASM");
@@ -37,5 +37,9 @@ public interface NimTypes extends NimTypesBase {
       T_OF, T_OR, T_OUT, T_PROC, T_PTR, T_RAISE, T_REF, T_RETURN, T_SHL, T_SHR, T_STATIC, T_TEMPLATE, T_TRY, T_TUPLE,
       T_TYPE, T_USING, T_VAR, T_WHEN, T_WHILE, T_WITH, T_WITHOUT, T_XOR, T_YIELD);
 
-  TokenSet LITERALS = TokenSet.create(NUMBER_LITERAL, CHARACTER_LITERAL, STRING_LITERAL);
+  TokenSet NUMBER_LITERALS = TokenSet.create(FLOAT64_LITERAL, FLOAT32_LITERAL, FLOAT_LITERAL,
+      UINT64_LITERAL, UINT32_LITERAL, UINT16_LITERAL, UINT8_LITERAL, UINT_LITERAL,
+      INT64_LITERAL, INT32_LITERAL, INT16_LITERAL, INT8_LITERAL, INT_LITERAL);
+
+  TokenSet LITERALS = TokenSet.orSet(TokenSet.create(CHARACTER_LITERAL, STRING_LITERAL), NUMBER_LITERALS);
 }

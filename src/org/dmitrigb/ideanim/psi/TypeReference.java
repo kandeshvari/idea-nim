@@ -1,6 +1,9 @@
 package org.dmitrigb.ideanim.psi;
 
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.ResolveState;
 import org.dmitrigb.ideanim.psi.elements.Identifier;
+import org.dmitrigb.ideanim.psi.elements.TypeDef;
 import org.jetbrains.annotations.NotNull;
 
 public class TypeReference extends IdentifierReference {
@@ -11,8 +14,11 @@ public class TypeReference extends IdentifierReference {
   @NotNull
   @Override
   protected SymbolResolver getSymbolResolver() {
-    SymbolResolver resolver = new SymbolResolver(getElement());
-    resolver.setTypesOnly(true);
-    return resolver;
+    return new SymbolResolver(getElement()) {
+      @Override
+      protected boolean accept(PsiElement element, ResolveState state) {
+        return element instanceof TypeDef;
+      }
+    };
   }
 }

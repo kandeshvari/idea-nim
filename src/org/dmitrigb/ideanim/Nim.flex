@@ -3,7 +3,7 @@ package org.dmitrigb.ideanim;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
 import static com.intellij.psi.TokenType.*;
-import static org.dmitrigb.ideanim.psi.NimTypes.*;
+import static org.dmitrigb.ideanim.psi.ElementTypes.*;
 
 /**
  * A lexer for lexing Nim source.
@@ -30,9 +30,32 @@ IDENT = ([:letter:] | [\u2013]) ("_"? ([:letter:] | [:digit:] | [\u2013]))*
 
 LINE_COMMENT = "#" [^\r\n]* (\r? \n [\ \t]* "#" [^\r\n]*)*
 
-NUMBER_LITERAL = ([0-9] [0-9_]* {FLOAT_SUFFIX}? | "0" ("b" [01_]+ | "o" [0-7_]+ | "x" [0-9a-fA-F_]+)) (\' ([uU] | [iIuU] (8 | 16 | 32 | 64)))?
-FLOAT_SUFFIX = {EXPONENT} | "." [0-9_]+ {EXPONENT}?
-EXPONENT = [Ee] [-+]? [0-9_]+
+HEX_LIT = "0" [xX] [0-9A-Fa-f] [0-9A-Fa-f_]*
+DEC_LIT = [0-9] [0-9_]*
+OCT_LIT = "0" [ocC] [0-7] [0-7_]*
+BIN_LIT = "0" [bB] [01] [01_]*
+
+INT_LITERAL     = {HEX_LIT} | {DEC_LIT} | {OCT_LIT} | {BIN_LIT}
+INT8_LITERAL    = {INT_LITERAL} \'? [iI] "8"
+INT16_LITERAL   = {INT_LITERAL} \'? [iI] "16"
+INT32_LITERAL   = {INT_LITERAL} \'? [iI] "32"
+INT64_LITERAL   = {INT_LITERAL} \'? [iI] "64"
+UINT_LITERAL    = {INT_LITERAL} \'? [uU]
+UINT8_LITERAL   = {UINT_LITERAL} "8"
+UINT16_LITERAL  = {UINT_LITERAL} "16"
+UINT32_LITERAL  = {UINT_LITERAL} "32"
+UINT64_LITERAL  = {UINT_LITERAL} "64"
+
+EXPONENT = [Ee] [-+]? [0-9] [0-9_]*
+FLOAT_LITERAL   = [0-9] [0-9_]* (("." [0-9_]* {EXPONENT}?) | {EXPONENT})
+FLOAT32_SUFFIX = [fF] "32"?
+FLOAT32_LITERAL = {HEX_LIT} \' {FLOAT32_SUFFIX}
+                | ({FLOAT_LITERAL} | {DEC_LIT} | {OCT_LIT} | {BIN_LIT}) \'? {FLOAT32_SUFFIX}
+FLOAT64_SUFFIX = [fF] "64" | [dD]
+FLOAT64_LITERAL = {HEX_LIT} \' {FLOAT64_SUFFIX}
+                | ({FLOAT_LITERAL} | {DEC_LIT} | {OCT_LIT} | {BIN_LIT}) \'? {FLOAT64_SUFFIX}
+
+BOOL_LITERAL = "true" | "false"
 
 CHARACTER_LITERAL = \' (\\. | [^\\\'\r\n])* \'?
 STRING_LITERAL = \" (\\. | [^\\\"\r\n])* \"?
@@ -52,7 +75,21 @@ OP_CHAR = [\+\-\*\/\\\<\>\!\?\^\.\|=%&\$@\~:]
   
   {LINE_COMMENT} { return LINE_COMMENT; }
 
-  {NUMBER_LITERAL} { return NUMBER_LITERAL; }
+  {FLOAT64_LITERAL} { return FLOAT64_LITERAL; }
+  {FLOAT32_LITERAL} { return FLOAT32_LITERAL; }
+  {FLOAT_LITERAL}   { return FLOAT_LITERAL; }
+  {UINT64_LITERAL}  { return UINT64_LITERAL; }
+  {UINT32_LITERAL}  { return UINT32_LITERAL; }
+  {UINT16_LITERAL}  { return UINT16_LITERAL; }
+  {UINT8_LITERAL}   { return UINT8_LITERAL; }
+  {UINT_LITERAL}    { return UINT_LITERAL; }
+  {INT64_LITERAL}   { return INT64_LITERAL; }
+  {INT32_LITERAL}   { return INT32_LITERAL; }
+  {INT16_LITERAL}   { return INT16_LITERAL; }
+  {INT8_LITERAL}    { return INT8_LITERAL; }
+  {INT_LITERAL}     { return INT_LITERAL; }
+
+  {BOOL_LITERAL} { return BOOL_LITERAL; }
   {CHARACTER_LITERAL} { return CHARACTER_LITERAL; }
   {STRING_LITERAL} { return STRING_LITERAL; }
 

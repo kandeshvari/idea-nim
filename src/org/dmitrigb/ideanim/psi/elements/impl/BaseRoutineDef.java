@@ -9,7 +9,7 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.dmitrigb.ideanim.psi.ElementFactory;
-import org.dmitrigb.ideanim.psi.NimTypes;
+import org.dmitrigb.ideanim.psi.ElementTypes;
 import org.dmitrigb.ideanim.psi.elements.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -107,7 +107,7 @@ public abstract class BaseRoutineDef extends BaseStatement implements RoutineDef
   public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
     ASTNode newNode = ElementFactory.createIdentNode(getProject(), name);
     ASTNode node = getIdentifier().getNode();
-    node.replaceChild(node.findChildByType(NimTypes.IDENT), newNode);
+    node.replaceChild(node.findChildByType(ElementTypes.IDENT), newNode);
     return this;
   }
 }

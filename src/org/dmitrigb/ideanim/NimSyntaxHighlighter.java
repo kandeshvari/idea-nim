@@ -1,6 +1,6 @@
 package org.dmitrigb.ideanim;
 
-import org.dmitrigb.ideanim.psi.NimTypes;
+import org.dmitrigb.ideanim.psi.ElementTypes;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
@@ -38,15 +38,15 @@ public class NimSyntaxHighlighter extends SyntaxHighlighterBase {
   @NotNull
   @Override
   public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
-    if (tokenType.equals(NimTypes.LINE_COMMENT))
+    if (tokenType.equals(ElementTypes.LINE_COMMENT))
       return LINE_COMMENT_KEYS;
-    if (tokenType.equals(NimTypes.BLOCK_COMMENT))
+    if (tokenType.equals(ElementTypes.BLOCK_COMMENT))
       return BLOCK_COMMENT_KEYS;
-    if (NimTypes.KEYWORDS.contains(tokenType))
+    if (ElementTypes.KEYWORDS.contains(tokenType))
       return KEYWORD_KEYS;
-    if (NimTypes.STRINGS.contains(tokenType))
+    if (ElementTypes.STRINGS.contains(tokenType))
       return STRINGLIT_KEYS;
-    if (tokenType.equals(NimTypes.NUMBER_LITERAL))
+    if (ElementTypes.NUMBER_LITERALS.contains(tokenType))
       return NUMBERLIT_KEYS;
     return EMPTY_KEYS;
   }

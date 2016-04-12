@@ -11,7 +11,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.IntIntHashMap;
 
-import static org.dmitrigb.ideanim.psi.NimTypes.*;
+import static org.dmitrigb.ideanim.psi.ElementTypes.*;
 
 public class ParserUtil extends GeneratedParserUtilBase {
   private static class ParserState {

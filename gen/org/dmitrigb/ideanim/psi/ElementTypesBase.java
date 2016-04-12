@@ -3,7 +3,7 @@ package org.dmitrigb.ideanim.psi;
 
 import com.intellij.psi.tree.IElementType;
 
-public interface NimTypesBase {
+public interface ElementTypesBase {
 
   IElementType ASSIGNMENT_EXPR = new NimElementType("ASSIGNMENT_EXPR");
   IElementType BLOCK = new NimElementType("BLOCK");
@@ -74,9 +74,17 @@ public interface NimTypesBase {
   IElementType YIELD_STMT = new NimElementType("YIELD_STMT");
 
   IElementType ACCENT_QUOTED = new NimTokenType("ACCENT_QUOTED");
+  IElementType BOOL_LITERAL = new NimTokenType("BOOL_LITERAL");
   IElementType CHARACTER_LITERAL = new NimTokenType("CHARACTER_LITERAL");
+  IElementType FLOAT32_LITERAL = new NimTokenType("FLOAT32_LITERAL");
+  IElementType FLOAT64_LITERAL = new NimTokenType("FLOAT64_LITERAL");
+  IElementType FLOAT_LITERAL = new NimTokenType("FLOAT_LITERAL");
   IElementType IDENT = new NimTokenType("IDENT");
-  IElementType NUMBER_LITERAL = new NimTokenType("NUMBER_LITERAL");
+  IElementType INT16_LITERAL = new NimTokenType("INT16_LITERAL");
+  IElementType INT32_LITERAL = new NimTokenType("INT32_LITERAL");
+  IElementType INT64_LITERAL = new NimTokenType("INT64_LITERAL");
+  IElementType INT8_LITERAL = new NimTokenType("INT8_LITERAL");
+  IElementType INT_LITERAL = new NimTokenType("INT_LITERAL");
   IElementType OPERATOR = new NimTokenType("OPERATOR");
   IElementType STRING_LITERAL = new NimTokenType("STRING_LITERAL");
   IElementType T_ADDR = new NimTokenType("T_ADDR");
@@ -147,4 +155,9 @@ public interface NimTypesBase {
   IElementType T_WHILE = new NimTokenType("T_WHILE");
   IElementType T_XOR = new NimTokenType("T_XOR");
   IElementType T_YIELD = new NimTokenType("T_YIELD");
+  IElementType UINT16_LITERAL = new NimTokenType("UINT16_LITERAL");
+  IElementType UINT32_LITERAL = new NimTokenType("UINT32_LITERAL");
+  IElementType UINT64_LITERAL = new NimTokenType("UINT64_LITERAL");
+  IElementType UINT8_LITERAL = new NimTokenType("UINT8_LITERAL");
+  IElementType UINT_LITERAL = new NimTokenType("UINT_LITERAL");
 }

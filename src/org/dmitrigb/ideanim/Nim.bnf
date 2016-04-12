@@ -2,7 +2,7 @@
   parserClass = "org.dmitrigb.ideanim.parser.NimParser"
   extends = "com.intellij.extapi.psi.ASTWrapperPsiElement"
   
-  elementTypeHolderClass = "org.dmitrigb.ideanim.psi.NimTypesBase"
+  elementTypeHolderClass = "org.dmitrigb.ideanim.psi.ElementTypesBase"
   elementTypeClass = "org.dmitrigb.ideanim.psi.NimElementType"
   tokenTypeClass = "org.dmitrigb.ideanim.psi.NimTokenType"
 
@@ -24,7 +24,23 @@ private meta listOf ::= <<p1>> (<<p2>> <<p1>>)*
 
 private symbol ::= IDENT | T_ADDR | T_TYPE | ACCENT_QUOTED
 
-Literal ::= NUMBER_LITERAL | CHARACTER_LITERAL | STRING_LITERAL {extends=Expression}
+Literal ::= FLOAT64_LITERAL
+          | FLOAT32_LITERAL
+          | FLOAT_LITERAL
+          | UINT64_LITERAL
+          | UINT32_LITERAL
+          | UINT16_LITERAL
+          | UINT8_LITERAL
+          | UINT_LITERAL
+          | INT64_LITERAL
+          | INT32_LITERAL
+          | INT16_LITERAL
+          | INT8_LITERAL
+          | INT_LITERAL
+          | BOOL_LITERAL
+          | CHARACTER_LITERAL
+          | STRING_LITERAL
+          {extends=Expression}
 
 Identifier ::= symbol
 

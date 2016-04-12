@@ -3,7 +3,7 @@ package org.dmitrigb.ideanim.findUsages;
 import org.dmitrigb.ideanim.NimLexerAdapter;
 import org.dmitrigb.ideanim.psi.elements.ConstDef;
 import org.dmitrigb.ideanim.psi.elements.IdentifierDef;
-import org.dmitrigb.ideanim.psi.NimTypes;
+import org.dmitrigb.ideanim.psi.ElementTypes;
 import org.dmitrigb.ideanim.psi.elements.RoutineDef;
 import org.dmitrigb.ideanim.psi.elements.TypeDef;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +20,7 @@ public class NimFindUsagesProvider implements FindUsagesProvider {
   @Override
   public WordsScanner getWordsScanner() {
     // TODO: use a custom words scanner to support Nim style identifier matching
-    return new DefaultWordsScanner(new NimLexerAdapter(), TokenSet.create(NimTypes.IDENT), NimTypes.COMMENTS, NimTypes.LITERALS);
+    return new DefaultWordsScanner(new NimLexerAdapter(), TokenSet.create(ElementTypes.IDENT), ElementTypes.COMMENTS, ElementTypes.LITERALS);
   }
 
   @Override

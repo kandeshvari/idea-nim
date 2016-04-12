@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.IncorrectOperationException;
 import org.dmitrigb.ideanim.psi.ElementFactory;
-import org.dmitrigb.ideanim.psi.NimTypes;
+import org.dmitrigb.ideanim.psi.ElementTypes;
 import org.dmitrigb.ideanim.psi.elements.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ public class IdentifierDefImpl extends IdentifierImpl implements IdentifierDef {
   @Override
   public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
     ASTNode newNode = ElementFactory.createIdentNode(getProject(), name);
-    getNode().replaceChild(getNode().findChildByType(NimTypes.IDENT), newNode);
+    getNode().replaceChild(getNode().findChildByType(ElementTypes.IDENT), newNode);
     return this;
   }
 

@@ -10,11 +10,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ProcReference extends IdentifierReference {
+
   private List<Expression> arguments;
 
   public ProcReference(@NotNull Identifier procId, List<Expression> arguments) {
     super(procId);
     this.arguments = arguments;
+  }
+
+  @NotNull
+  @Override
+  protected SymbolResolver getSymbolResolver() {
+    return new RoutineResolver(getElement(), arguments);
   }
 
   @Override

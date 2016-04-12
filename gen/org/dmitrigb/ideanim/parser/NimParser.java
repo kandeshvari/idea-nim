@@ -3,7 +3,7 @@ package org.dmitrigb.ideanim.parser;
 
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
-import static org.dmitrigb.ideanim.psi.NimTypesBase.*;
+import static org.dmitrigb.ideanim.psi.ElementTypesBase.*;
 import static org.dmitrigb.ideanim.parser.ParserUtil.*;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.lang.ASTNode;
@@ -1457,12 +1457,40 @@ public class NimParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // NUMBER_LITERAL | CHARACTER_LITERAL | STRING_LITERAL
+  // FLOAT64_LITERAL
+  //           | FLOAT32_LITERAL
+  //           | FLOAT_LITERAL
+  //           | UINT64_LITERAL
+  //           | UINT32_LITERAL
+  //           | UINT16_LITERAL
+  //           | UINT8_LITERAL
+  //           | UINT_LITERAL
+  //           | INT64_LITERAL
+  //           | INT32_LITERAL
+  //           | INT16_LITERAL
+  //           | INT8_LITERAL
+  //           | INT_LITERAL
+  //           | BOOL_LITERAL
+  //           | CHARACTER_LITERAL
+  //           | STRING_LITERAL
   public static boolean Literal(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Literal")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, LITERAL, "<literal>");
-    r = consumeToken(b, NUMBER_LITERAL);
+    r = consumeToken(b, FLOAT64_LITERAL);
+    if (!r) r = consumeToken(b, FLOAT32_LITERAL);
+    if (!r) r = consumeToken(b, FLOAT_LITERAL);
+    if (!r) r = consumeToken(b, UINT64_LITERAL);
+    if (!r) r = consumeToken(b, UINT32_LITERAL);
+    if (!r) r = consumeToken(b, UINT16_LITERAL);
+    if (!r) r = consumeToken(b, UINT8_LITERAL);
+    if (!r) r = consumeToken(b, UINT_LITERAL);
+    if (!r) r = consumeToken(b, INT64_LITERAL);
+    if (!r) r = consumeToken(b, INT32_LITERAL);
+    if (!r) r = consumeToken(b, INT16_LITERAL);
+    if (!r) r = consumeToken(b, INT8_LITERAL);
+    if (!r) r = consumeToken(b, INT_LITERAL);
+    if (!r) r = consumeToken(b, BOOL_LITERAL);
     if (!r) r = consumeToken(b, CHARACTER_LITERAL);
     if (!r) r = consumeToken(b, STRING_LITERAL);
     exit_section_(b, l, m, r, false, null);

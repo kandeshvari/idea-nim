@@ -29,8 +29,12 @@ public abstract class NimPsiTreeUtil {
   }
 
   public static RoutineDef getFullDefinition(RoutineDef routine) {
-    SymbolResolver resolver = new SymbolResolver(routine.getIdentifier());
-    resolver.setFullDefinitionOnly(true);
+    SymbolResolver resolver = new SymbolResolver(routine.getIdentifier()) {
+      @Override
+      protected boolean accept(PsiElement element, ResolveState state) {
+        return element instanceof RoutineDef && !((RoutineDef) element).isForwardDeclaration();
+      }
+    };
     routine.getContext().processDeclarations(resolver, ResolveState.initial(), null, routine);
     PsiElement target = resolver.getResolvedTarget();
     if (target instanceof RoutineDef)

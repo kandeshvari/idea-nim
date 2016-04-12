@@ -5,7 +5,7 @@ import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.util.IncorrectOperationException;
 import org.dmitrigb.ideanim.psi.ElementFactory;
-import org.dmitrigb.ideanim.psi.NimTypes;
+import org.dmitrigb.ideanim.psi.ElementTypes;
 import org.dmitrigb.ideanim.psi.elements.Expression;
 import org.dmitrigb.ideanim.psi.elements.GenericParameters;
 import org.dmitrigb.ideanim.psi.elements.Identifier;
@@ -58,7 +58,7 @@ public class TypeDefImpl extends ASTWrapperPsiElement implements TypeDef {
   public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
     ASTNode newNode = ElementFactory.createIdentNode(getProject(), name);
     ASTNode idNode = getIdentifier().getNode();
-    idNode.replaceChild(idNode.findChildByType(NimTypes.IDENT), newNode);
+    idNode.replaceChild(idNode.findChildByType(ElementTypes.IDENT), newNode);
     return this;
   }
 

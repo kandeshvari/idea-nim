@@ -15,7 +15,7 @@ import com.intellij.psi.tree.TokenSet;
 import org.dmitrigb.ideanim.parser.NimParser;
 import org.dmitrigb.ideanim.psi.ElementFactory;
 import org.dmitrigb.ideanim.psi.NimFile;
-import org.dmitrigb.ideanim.psi.NimTypes;
+import org.dmitrigb.ideanim.psi.ElementTypes;
 import org.jetbrains.annotations.NotNull;
 
 public class NimParserDefinition implements ParserDefinition {
@@ -47,13 +47,13 @@ public class NimParserDefinition implements ParserDefinition {
   @NotNull
   @Override
   public TokenSet getCommentTokens() {
-    return TokenSet.create(NimTypes.BLOCK_COMMENT, NimTypes.LINE_COMMENT);
+    return TokenSet.create(ElementTypes.BLOCK_COMMENT, ElementTypes.LINE_COMMENT);
   }
 
   @NotNull
   @Override
   public TokenSet getStringLiteralElements() {
-    return NimTypes.STRINGS;
+    return ElementTypes.STRINGS;
   }
 
   @NotNull

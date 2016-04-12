@@ -24,7 +24,8 @@ public class CallExprImpl extends BaseExpression implements CallExpr {
   @Override
   @NotNull
   public List<Expression> getArgumentList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, Expression.class);
+    List<Expression> args = PsiTreeUtil.getChildrenOfTypeAsList(this, Expression.class);
+    return args.subList(1, args.size());
   }
 
 }

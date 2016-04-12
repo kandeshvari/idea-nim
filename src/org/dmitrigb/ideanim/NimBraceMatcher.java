@@ -7,12 +7,12 @@ import com.intellij.lang.PairedBraceMatcher;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 
-import static org.dmitrigb.ideanim.psi.NimTypesBase.T_LBRACE;
-import static org.dmitrigb.ideanim.psi.NimTypesBase.T_LBRACKET;
-import static org.dmitrigb.ideanim.psi.NimTypesBase.T_LPAREN;
-import static org.dmitrigb.ideanim.psi.NimTypesBase.T_RBRACE;
-import static org.dmitrigb.ideanim.psi.NimTypesBase.T_RBRACKET;
-import static org.dmitrigb.ideanim.psi.NimTypesBase.T_RPAREN;
+import static org.dmitrigb.ideanim.psi.ElementTypesBase.T_LBRACE;
+import static org.dmitrigb.ideanim.psi.ElementTypesBase.T_LBRACKET;
+import static org.dmitrigb.ideanim.psi.ElementTypesBase.T_LPAREN;
+import static org.dmitrigb.ideanim.psi.ElementTypesBase.T_RBRACE;
+import static org.dmitrigb.ideanim.psi.ElementTypesBase.T_RBRACKET;
+import static org.dmitrigb.ideanim.psi.ElementTypesBase.T_RPAREN;
 
 public class NimBraceMatcher implements PairedBraceMatcher {
 

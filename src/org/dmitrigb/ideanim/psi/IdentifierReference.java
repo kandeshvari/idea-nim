@@ -42,7 +42,7 @@ public class IdentifierReference extends PsiReferenceBase<Identifier> {
 
     ASTNode newNode = ElementFactory.createIdentNode(getElement().getProject(), newElementName);
     ASTNode elemNode = getElement().getNode();
-    elemNode.replaceChild(elemNode.findChildByType(NimTypes.IDENT), newNode);
+    elemNode.replaceChild(elemNode.findChildByType(ElementTypes.IDENT), newNode);
     return getElement();
   }
 }
