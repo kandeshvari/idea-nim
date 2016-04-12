@@ -16,10 +16,19 @@ public class ReferenceResolutionTests extends LightPlatformCodeInsightFixtureTes
     return null;
   }
 
-  public void testSimpleVariableResolution() throws Exception {
+  public void testSimpleVariableResolution1() throws Exception {
     myFixture.configureByText(NimFileType.INSTANCE, "" +
         "var a = 3\n" +
-        "echo <caret>a\n");
+        "<caret>a\n");
+    PsiReference ref = myFixture.getReferenceAtCaretPositionWithAssertion();
+    PsiElement target = ref.resolve();
+    assertPsiAncestors(target, IdentifierDef.class, IdentPragmaPair.class, VarDef.class);
+  }
+
+  public void testSimpleVariableResolution2() throws Exception {
+    myFixture.configureByText(NimFileType.INSTANCE, "" +
+        "var a = 3\n" +
+        "echo(<caret>a)\n");
     PsiReference ref = myFixture.getReferenceAtCaretPositionWithAssertion();
     PsiElement target = ref.resolve();
     assertPsiAncestors(target, IdentifierDef.class, IdentPragmaPair.class, VarDef.class);

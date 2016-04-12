@@ -29,7 +29,7 @@ public class IdentifierImpl extends ASTWrapperPsiElement implements Identifier {
       if (grand instanceof SimpleTypeDesc || grand instanceof ObjectCtor)
         return new TypeReference(this);
 
-      if (grand instanceof CallExpr)
+      if (grand instanceof CallExpr && parent == grand.getFirstChild())
         return new ProcReference(this, ((CallExpr) grand).getArgumentList());
     }
 
