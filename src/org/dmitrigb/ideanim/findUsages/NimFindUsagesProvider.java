@@ -1,19 +1,16 @@
 package org.dmitrigb.ideanim.findUsages;
 
-import org.dmitrigb.ideanim.NimLexerAdapter;
-import org.dmitrigb.ideanim.psi.elements.ConstDef;
-import org.dmitrigb.ideanim.psi.elements.IdentifierDef;
-import org.dmitrigb.ideanim.psi.ElementTypes;
-import org.dmitrigb.ideanim.psi.elements.RoutineDef;
-import org.dmitrigb.ideanim.psi.elements.TypeDef;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.cacheBuilder.DefaultWordsScanner;
 import com.intellij.lang.cacheBuilder.WordsScanner;
 import com.intellij.lang.findUsages.FindUsagesProvider;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.tree.TokenSet;
+import org.dmitrigb.ideanim.NimLexerAdapter;
+import org.dmitrigb.ideanim.psi.ElementTypes;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class NimFindUsagesProvider implements FindUsagesProvider {
   @Nullable
@@ -25,7 +22,7 @@ public class NimFindUsagesProvider implements FindUsagesProvider {
 
   @Override
   public boolean canFindUsagesFor(@NotNull PsiElement el) {
-    return el instanceof RoutineDef || el instanceof IdentifierDef || el instanceof ConstDef || el instanceof TypeDef;
+    return el instanceof PsiNameIdentifierOwner;
   }
 
   @Nullable

@@ -8,8 +8,8 @@ import org.jetbrains.annotations.Nullable;
 
 public interface RoutineDef extends Statement, PsiNameIdentifierOwner {
 
-  @Nullable
-  GenericParameters getGenericParameters();
+  @NotNull
+  List<GenericParam> getGenericParameters();
 
   @Nullable
   Identifier getIdentifier();

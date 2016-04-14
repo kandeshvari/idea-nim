@@ -18,7 +18,7 @@ public abstract class NimPsiTreeUtil {
       return null;
     Type superType = superTypeDesc.toType();
     if (superType instanceof TObject)
-      return ((TObject) superType).getDefinition();
+      return ((TObject) superType).getObject();
 
     return null;
   }

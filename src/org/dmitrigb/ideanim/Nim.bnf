@@ -44,6 +44,8 @@ Literal ::= FLOAT64_LITERAL
 
 Identifier ::= symbol
 
+// Used when the identifier is the sole element that represents a definition.
+// Mostly used in cases like "a, b, c: SomeType" where the only way to uniquely refer to "a" is through the identifier.
 IdentifierDef ::= symbol {extends=Identifier}
 
 private identWithPragma ::= Identifier OPERATOR? Pragma?
@@ -121,12 +123,12 @@ BlockStmt ::= T_BLOCK &INDNONE Identifier? T_COLON stmt {pin=1 extends=Statement
 StaticStmt ::= T_STATIC T_COLON stmt {pin=1 extends=Statement}
 
 
-private routine ::= &OPTIND Identifier OPERATOR? (&OPTIND Pattern)? (&OPTIND GenericParameters)? &INDNONE paramListColon (&OPTIND Pragma)? (&OPTIND T_EQ stmt)?
+private routine ::= &OPTIND Identifier OPERATOR? (&OPTIND Pattern)? (&OPTIND genericParameters)? &INDNONE paramListColon (&OPTIND Pragma)? (&OPTIND T_EQ stmt)?
 
 Pattern ::= T_LBRACE stmt T_RBRACE {pin=1}
 
-GenericParameters ::= T_LBRACKET &OPTIND <<listOf genericParam (T_COMMA | T_SEMICOLON)>>? T_RBRACKET {pin=1}
-private genericParam ::= <<listOf ((&IDENT | &ACCENT_QUOTED) Identifier) (T_COMMA &OPTIND)>> (T_COLON &OPTIND expr)? (T_EQ &OPTIND expr)?
+private genericParameters ::= T_LBRACKET &OPTIND <<listOf GenericParam (T_COMMA | T_SEMICOLON)>>? T_RBRACKET {pin=1}
+GenericParam ::= <<listOf ((&IDENT | &ACCENT_QUOTED) IdentifierDef) (T_COMMA &OPTIND)>> (T_COLON &OPTIND expr)? (T_EQ &OPTIND expr)?
 
 private params ::= &INDNONE T_LPAREN &OPTIND <<listOf identColonEqualsWithBothOptionalWithPragma (T_COMMA | T_SEMICOLON)>>? T_RPAREN {pin=2}
 private paramListColon ::= params? (&INDNONE T_COLON &OPTIND TypeDesc)?
@@ -141,7 +143,7 @@ TemplateDef ::= T_TEMPLATE routine {pin=1 extends=Statement}
 private meta section ::= &INDNONE <<p>> | <<indented <<listOf <<p>> INDEQ>>>>
 
 TypeSect ::= T_TYPE !T_LPAREN <<section TypeDef>> {pin=1 extends=Statement}
-TypeDef ::= identWithPragma (&OPTIND GenericParameters)? (T_EQ &OPTIND <<typeDefMode simpleExpr>>)?
+TypeDef ::= identWithPragma (&OPTIND genericParameters)? (T_EQ &OPTIND <<typeDefMode simpleExpr>>)?
 
 ConstSect ::= T_CONST <<section ConstDef>> {pin=1 extends=Statement}
 LetSect ::= T_LET <<section VarDef>> {pin=1 extends=Statement}
@@ -212,7 +214,8 @@ private tuple ::= T_TUPLE (T_LBRACKET &OPTIND <<listOf identColonEquals (T_COMMA
 
 ProcExpr ::= (T_PROC | T_ITERATOR) (&INDNONE paramListColon? Pragma?)? T_EQ stmt {pin=1 extends=Expression}
 
-EnumDef ::= T_ENUM (&OPTIND Identifier (&INDNONE T_EQ &OPTIND expr)? (&INDNONE T_COMMA)?)* {pin=1 extends=Expression}
+EnumDef ::= T_ENUM (&OPTIND EnumMember (&INDNONE T_COMMA)?)* {pin=1 extends=Expression}
+EnumMember ::= Identifier (&INDNONE T_EQ &OPTIND expr)?
 
 ObjectDef ::= T_OBJECT (&OPTIND Pragma)? (&INDNONE T_OF TypeDesc)? (&INDGT objectPart)? {pin=1 extends=Expression}
 private objectPart ::= <<indented (&INDEQ &(T_CASE | T_WHEN | IDENT | ACCENT_QUOTED | T_NIL | T_DISCARD) objectPart)*>>

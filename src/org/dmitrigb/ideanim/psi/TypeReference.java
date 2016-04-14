@@ -2,6 +2,7 @@ package org.dmitrigb.ideanim.psi;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
+import org.dmitrigb.ideanim.psi.elements.GenericParam;
 import org.dmitrigb.ideanim.psi.elements.Identifier;
 import org.dmitrigb.ideanim.psi.elements.TypeDef;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +18,7 @@ public class TypeReference extends IdentifierReference {
     return new SymbolResolver(getElement()) {
       @Override
       protected boolean accept(PsiElement element, ResolveState state) {
-        return element instanceof TypeDef;
+        return element instanceof TypeDef || element instanceof GenericParam;
       }
     };
   }

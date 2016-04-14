@@ -34,6 +34,7 @@
     <definitionsScopedSearch implementation="org.dmitrigb.ideanim.NimDefinitionsScopedSearch"/>
     <targetElementEvaluator language="Nim" implementationClass="org.dmitrigb.ideanim.NimTargetElementEvaluator"/>
     <renamePsiElementProcessor implementation="org.dmitrigb.ideanim.NimRenamePsiElementProcessor"/>
+    <typeDeclarationProvider implementation="org.dmitrigb.ideanim.NimTypeDeclarationProvider"/>
   </extensions>
 
   <actions>

@@ -24,10 +24,11 @@ public interface ElementTypesBase {
   IElementType DOT_EXPR = new NimElementType("DOT_EXPR");
   IElementType DO_BLOCK = new NimElementType("DO_BLOCK");
   IElementType ENUM_DEF = new NimElementType("ENUM_DEF");
+  IElementType ENUM_MEMBER = new NimElementType("ENUM_MEMBER");
   IElementType EXPRESSION = new NimElementType("EXPRESSION");
   IElementType EXPR_STMT = new NimElementType("EXPR_STMT");
   IElementType FOR_STMT = new NimElementType("FOR_STMT");
-  IElementType GENERIC_PARAMETERS = new NimElementType("GENERIC_PARAMETERS");
+  IElementType GENERIC_PARAM = new NimElementType("GENERIC_PARAM");
   IElementType GROUPED_EXPR = new NimElementType("GROUPED_EXPR");
   IElementType IDENTIFIER = new NimElementType("IDENTIFIER");
   IElementType IDENTIFIER_DEF = new NimElementType("IDENTIFIER_DEF");

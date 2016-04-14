@@ -3,9 +3,25 @@ package org.dmitrigb.ideanim.types;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.dmitrigb.ideanim.psi.elements.TypeDef;
+
 public class Type {
 
   public static final Type UNKNOWN = new Type();
+
+  private final TypeDef definition;
+
+  public Type() {
+    definition = null;
+  }
+
+  public Type(TypeDef definition) {
+    this.definition = definition;
+  }
+
+  public TypeDef getDefinition() {
+    return definition;
+  }
 
   @Override
   public boolean equals(Object o) {

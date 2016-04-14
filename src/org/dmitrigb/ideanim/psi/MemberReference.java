@@ -33,13 +33,13 @@ public class MemberReference extends IdentifierReference {
       return null;
 
     TObject tObj = (TObject) type;
-    ObjectDef objDef = tObj.getDefinition();
+    ObjectDef objDef = tObj.getObject();
 
     MemberResolver resolver = new MemberResolver(getElement());
     ResolveState state = ResolveState.initial();
 
     while (objDef != null) {
-      if (!objDef.processDeclarations(resolver, state, null, tObj.getDefinition()))
+      if (!objDef.processDeclarations(resolver, state, null, tObj.getObject()))
         return resolver.getResolvedTarget();
 
       objDef = NimPsiTreeUtil.getSuperTypeDef(objDef);

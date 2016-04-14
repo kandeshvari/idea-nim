@@ -31,6 +31,19 @@ public class ReferenceResolutionTests extends LightPlatformCodeInsightFixtureTes
     assertPsiAncestors(target, IdentifierDef.class, IdentPragmaPair.class, VarDef.class);
   }
 
+  public void testGenericType() throws Exception {
+    PsiElement target = resolveReferenceIn("proc foo[T](a: <caret>T) = discard");
+    assertPsiAncestors(target, IdentifierDef.class, GenericParam.class);
+  }
+
+  public void testEnum() throws Exception {
+    PsiElement target = resolveReferenceIn("" +
+        "type E = enum\n" +
+        "  e1, e2\n" +
+        "discard <caret>e2");
+    assertPsiAncestors(target, EnumMember.class);
+  }
+
   public void testSimpleProcResolution() throws Exception {
     assertResolvesToSecondProc("" +
         "proc bar() = discard\n" +
@@ -112,6 +125,11 @@ public class ReferenceResolutionTests extends LightPlatformCodeInsightFixtureTes
         "type Foo = object\n" +
         "  name: string\n" +
         "discard Foo(<caret>name: \"sad\")\n");
+  }
+
+  private PsiElement resolveReferenceIn(String nimSource) {
+    myFixture.configureByText(NimFileType.INSTANCE, nimSource);
+    return myFixture.getReferenceAtCaretPositionWithAssertion().resolve();
   }
 
   private void assertResolvesToObjectMember(String memberName, String nimSource) {

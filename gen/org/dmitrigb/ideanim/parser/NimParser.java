@@ -80,14 +80,17 @@ public class NimParser implements PsiParser, LightPsiParser {
     else if (t == ENUM_DEF) {
       r = EnumDef(b, 0);
     }
+    else if (t == ENUM_MEMBER) {
+      r = EnumMember(b, 0);
+    }
     else if (t == EXPR_STMT) {
       r = ExprStmt(b, 0);
     }
     else if (t == FOR_STMT) {
       r = ForStmt(b, 0);
     }
-    else if (t == GENERIC_PARAMETERS) {
-      r = GenericParameters(b, 0);
+    else if (t == GENERIC_PARAM) {
+      r = GenericParam(b, 0);
     }
     else if (t == GROUPED_EXPR) {
       r = GroupedExpr(b, 0);
@@ -880,7 +883,7 @@ public class NimParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // T_ENUM (&OPTIND Identifier (&INDNONE T_EQ &OPTIND expr)? (&INDNONE T_COMMA)?)*
+  // T_ENUM (&OPTIND EnumMember (&INDNONE T_COMMA)?)*
   public static boolean EnumDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "EnumDef")) return false;
     if (!nextTokenIs(b, T_ENUM)) return false;
@@ -893,7 +896,7 @@ public class NimParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // (&OPTIND Identifier (&INDNONE T_EQ &OPTIND expr)? (&INDNONE T_COMMA)?)*
+  // (&OPTIND EnumMember (&INDNONE T_COMMA)?)*
   private static boolean EnumDef_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "EnumDef_1")) return false;
     int c = current_position_(b);
@@ -905,15 +908,14 @@ public class NimParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // &OPTIND Identifier (&INDNONE T_EQ &OPTIND expr)? (&INDNONE T_COMMA)?
+  // &OPTIND EnumMember (&INDNONE T_COMMA)?
   private static boolean EnumDef_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "EnumDef_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = EnumDef_1_0_0(b, l + 1);
-    r = r && Identifier(b, l + 1);
+    r = r && EnumMember(b, l + 1);
     r = r && EnumDef_1_0_2(b, l + 1);
-    r = r && EnumDef_1_0_3(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -928,22 +930,20 @@ public class NimParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // (&INDNONE T_EQ &OPTIND expr)?
+  // (&INDNONE T_COMMA)?
   private static boolean EnumDef_1_0_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "EnumDef_1_0_2")) return false;
     EnumDef_1_0_2_0(b, l + 1);
     return true;
   }
 
-  // &INDNONE T_EQ &OPTIND expr
+  // &INDNONE T_COMMA
   private static boolean EnumDef_1_0_2_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "EnumDef_1_0_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = EnumDef_1_0_2_0_0(b, l + 1);
-    r = r && consumeToken(b, T_EQ);
-    r = r && EnumDef_1_0_2_0_2(b, l + 1);
-    r = r && expr(b, l + 1);
+    r = r && consumeToken(b, T_COMMA);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -958,40 +958,54 @@ public class NimParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // &OPTIND
-  private static boolean EnumDef_1_0_2_0_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "EnumDef_1_0_2_0_2")) return false;
+  /* ********************************************************** */
+  // Identifier (&INDNONE T_EQ &OPTIND expr)?
+  public static boolean EnumMember(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "EnumMember")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _AND_);
-    r = indOpt(b, l + 1);
+    Marker m = enter_section_(b, l, _NONE_, ENUM_MEMBER, "<enum member>");
+    r = Identifier(b, l + 1);
+    r = r && EnumMember_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // (&INDNONE T_COMMA)?
-  private static boolean EnumDef_1_0_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "EnumDef_1_0_3")) return false;
-    EnumDef_1_0_3_0(b, l + 1);
+  // (&INDNONE T_EQ &OPTIND expr)?
+  private static boolean EnumMember_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "EnumMember_1")) return false;
+    EnumMember_1_0(b, l + 1);
     return true;
   }
 
-  // &INDNONE T_COMMA
-  private static boolean EnumDef_1_0_3_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "EnumDef_1_0_3_0")) return false;
+  // &INDNONE T_EQ &OPTIND expr
+  private static boolean EnumMember_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "EnumMember_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = EnumDef_1_0_3_0_0(b, l + 1);
-    r = r && consumeToken(b, T_COMMA);
+    r = EnumMember_1_0_0(b, l + 1);
+    r = r && consumeToken(b, T_EQ);
+    r = r && EnumMember_1_0_2(b, l + 1);
+    r = r && expr(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // &INDNONE
-  private static boolean EnumDef_1_0_3_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "EnumDef_1_0_3_0_0")) return false;
+  private static boolean EnumMember_1_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "EnumMember_1_0_0")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _AND_);
     r = indNone(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // &OPTIND
+  private static boolean EnumMember_1_0_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "EnumMember_1_0_2")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _AND_);
+    r = indOpt(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -1193,24 +1207,75 @@ public class NimParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // T_LBRACKET &OPTIND <<listOf genericParam (T_COMMA | T_SEMICOLON)>>? T_RBRACKET
-  public static boolean GenericParameters(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "GenericParameters")) return false;
-    if (!nextTokenIs(b, T_LBRACKET)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, GENERIC_PARAMETERS, null);
-    r = consumeToken(b, T_LBRACKET);
-    p = r; // pin = 1
-    r = r && GenericParameters_1(b, l + 1);
-    r = r && GenericParameters_2(b, l + 1);
-    r = r && consumeToken(b, T_RBRACKET);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
+  // <<listOf ((&IDENT | &ACCENT_QUOTED) IdentifierDef) (T_COMMA &OPTIND)>> (T_COLON &OPTIND expr)? (T_EQ &OPTIND expr)?
+  public static boolean GenericParam(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "GenericParam")) return false;
+    if (!nextTokenIs(b, "<generic param>", ACCENT_QUOTED, IDENT)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, GENERIC_PARAM, "<generic param>");
+    r = listOf(b, l + 1, GenericParam_0_0_parser_, GenericParam_0_1_parser_);
+    r = r && GenericParam_1(b, l + 1);
+    r = r && GenericParam_2(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // (&IDENT | &ACCENT_QUOTED) IdentifierDef
+  private static boolean GenericParam_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "GenericParam_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = GenericParam_0_0_0(b, l + 1);
+    r = r && IdentifierDef(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // &IDENT | &ACCENT_QUOTED
+  private static boolean GenericParam_0_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "GenericParam_0_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = GenericParam_0_0_0_0(b, l + 1);
+    if (!r) r = GenericParam_0_0_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // &IDENT
+  private static boolean GenericParam_0_0_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "GenericParam_0_0_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _AND_);
+    r = consumeToken(b, IDENT);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // &ACCENT_QUOTED
+  private static boolean GenericParam_0_0_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "GenericParam_0_0_0_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _AND_);
+    r = consumeToken(b, ACCENT_QUOTED);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // T_COMMA &OPTIND
+  private static boolean GenericParam_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "GenericParam_0_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, T_COMMA);
+    r = r && GenericParam_0_1_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   // &OPTIND
-  private static boolean GenericParameters_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "GenericParameters_1")) return false;
+  private static boolean GenericParam_0_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "GenericParam_0_1_1")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _AND_);
     r = indOpt(b, l + 1);
@@ -1218,21 +1283,61 @@ public class NimParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // <<listOf genericParam (T_COMMA | T_SEMICOLON)>>?
-  private static boolean GenericParameters_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "GenericParameters_2")) return false;
-    listOf(b, l + 1, genericParam_parser_, GenericParameters_2_0_1_parser_);
+  // (T_COLON &OPTIND expr)?
+  private static boolean GenericParam_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "GenericParam_1")) return false;
+    GenericParam_1_0(b, l + 1);
     return true;
   }
 
-  // T_COMMA | T_SEMICOLON
-  private static boolean GenericParameters_2_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "GenericParameters_2_0_1")) return false;
+  // T_COLON &OPTIND expr
+  private static boolean GenericParam_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "GenericParam_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, T_COMMA);
-    if (!r) r = consumeToken(b, T_SEMICOLON);
+    r = consumeToken(b, T_COLON);
+    r = r && GenericParam_1_0_1(b, l + 1);
+    r = r && expr(b, l + 1);
     exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // &OPTIND
+  private static boolean GenericParam_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "GenericParam_1_0_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _AND_);
+    r = indOpt(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // (T_EQ &OPTIND expr)?
+  private static boolean GenericParam_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "GenericParam_2")) return false;
+    GenericParam_2_0(b, l + 1);
+    return true;
+  }
+
+  // T_EQ &OPTIND expr
+  private static boolean GenericParam_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "GenericParam_2_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, T_EQ);
+    r = r && GenericParam_2_0_1(b, l + 1);
+    r = r && expr(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // &OPTIND
+  private static boolean GenericParam_2_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "GenericParam_2_0_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _AND_);
+    r = indOpt(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -2447,7 +2552,7 @@ public class NimParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // identWithPragma (&OPTIND GenericParameters)? (T_EQ &OPTIND <<typeDefMode simpleExpr>>)?
+  // identWithPragma (&OPTIND genericParameters)? (T_EQ &OPTIND <<typeDefMode simpleExpr>>)?
   public static boolean TypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TypeDef")) return false;
     boolean r;
@@ -2459,20 +2564,20 @@ public class NimParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // (&OPTIND GenericParameters)?
+  // (&OPTIND genericParameters)?
   private static boolean TypeDef_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TypeDef_1")) return false;
     TypeDef_1_0(b, l + 1);
     return true;
   }
 
-  // &OPTIND GenericParameters
+  // &OPTIND genericParameters
   private static boolean TypeDef_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TypeDef_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = TypeDef_1_0_0(b, l + 1);
-    r = r && GenericParameters(b, l + 1);
+    r = r && genericParameters(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -3297,137 +3402,46 @@ public class NimParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // <<listOf ((&IDENT | &ACCENT_QUOTED) Identifier) (T_COMMA &OPTIND)>> (T_COLON &OPTIND expr)? (T_EQ &OPTIND expr)?
-  static boolean genericParam(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "genericParam")) return false;
-    if (!nextTokenIs(b, "", ACCENT_QUOTED, IDENT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = listOf(b, l + 1, genericParam_0_0_parser_, genericParam_0_1_parser_);
-    r = r && genericParam_1(b, l + 1);
-    r = r && genericParam_2(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
+  // T_LBRACKET &OPTIND <<listOf GenericParam (T_COMMA | T_SEMICOLON)>>? T_RBRACKET
+  static boolean genericParameters(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "genericParameters")) return false;
+    if (!nextTokenIs(b, T_LBRACKET)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, T_LBRACKET);
+    p = r; // pin = 1
+    r = r && genericParameters_1(b, l + 1);
+    r = r && genericParameters_2(b, l + 1);
+    r = r && consumeToken(b, T_RBRACKET);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
-  // (&IDENT | &ACCENT_QUOTED) Identifier
-  private static boolean genericParam_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "genericParam_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = genericParam_0_0_0(b, l + 1);
-    r = r && Identifier(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // &IDENT | &ACCENT_QUOTED
-  private static boolean genericParam_0_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "genericParam_0_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = genericParam_0_0_0_0(b, l + 1);
-    if (!r) r = genericParam_0_0_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // &IDENT
-  private static boolean genericParam_0_0_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "genericParam_0_0_0_0")) return false;
+  // &OPTIND
+  private static boolean genericParameters_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "genericParameters_1")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _AND_);
-    r = consumeToken(b, IDENT);
+    r = indOpt(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // &ACCENT_QUOTED
-  private static boolean genericParam_0_0_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "genericParam_0_0_0_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _AND_);
-    r = consumeToken(b, ACCENT_QUOTED);
-    exit_section_(b, l, m, r, false, null);
-    return r;
+  // <<listOf GenericParam (T_COMMA | T_SEMICOLON)>>?
+  private static boolean genericParameters_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "genericParameters_2")) return false;
+    listOf(b, l + 1, GenericParam_parser_, genericParameters_2_0_1_parser_);
+    return true;
   }
 
-  // T_COMMA &OPTIND
-  private static boolean genericParam_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "genericParam_0_1")) return false;
+  // T_COMMA | T_SEMICOLON
+  private static boolean genericParameters_2_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "genericParameters_2_0_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, T_COMMA);
-    r = r && genericParam_0_1_1(b, l + 1);
+    if (!r) r = consumeToken(b, T_SEMICOLON);
     exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // &OPTIND
-  private static boolean genericParam_0_1_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "genericParam_0_1_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _AND_);
-    r = indOpt(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // (T_COLON &OPTIND expr)?
-  private static boolean genericParam_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "genericParam_1")) return false;
-    genericParam_1_0(b, l + 1);
-    return true;
-  }
-
-  // T_COLON &OPTIND expr
-  private static boolean genericParam_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "genericParam_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, T_COLON);
-    r = r && genericParam_1_0_1(b, l + 1);
-    r = r && expr(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // &OPTIND
-  private static boolean genericParam_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "genericParam_1_0_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _AND_);
-    r = indOpt(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // (T_EQ &OPTIND expr)?
-  private static boolean genericParam_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "genericParam_2")) return false;
-    genericParam_2_0(b, l + 1);
-    return true;
-  }
-
-  // T_EQ &OPTIND expr
-  private static boolean genericParam_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "genericParam_2_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, T_EQ);
-    r = r && genericParam_2_0_1(b, l + 1);
-    r = r && expr(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // &OPTIND
-  private static boolean genericParam_2_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "genericParam_2_0_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _AND_);
-    r = indOpt(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -4963,7 +4977,7 @@ public class NimParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // &OPTIND Identifier OPERATOR? (&OPTIND Pattern)? (&OPTIND GenericParameters)? &INDNONE paramListColon (&OPTIND Pragma)? (&OPTIND T_EQ stmt)?
+  // &OPTIND Identifier OPERATOR? (&OPTIND Pattern)? (&OPTIND genericParameters)? &INDNONE paramListColon (&OPTIND Pragma)? (&OPTIND T_EQ stmt)?
   static boolean routine(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "routine")) return false;
     boolean r;
@@ -5026,20 +5040,20 @@ public class NimParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // (&OPTIND GenericParameters)?
+  // (&OPTIND genericParameters)?
   private static boolean routine_4(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "routine_4")) return false;
     routine_4_0(b, l + 1);
     return true;
   }
 
-  // &OPTIND GenericParameters
+  // &OPTIND genericParameters
   private static boolean routine_4_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "routine_4_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = routine_4_0_0(b, l + 1);
-    r = r && GenericParameters(b, l + 1);
+    r = r && genericParameters(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -5519,9 +5533,19 @@ public class NimParser implements PsiParser, LightPsiParser {
       return consumeToken(b, T_COMMA);
     }
   };
-  final static Parser GenericParameters_2_0_1_parser_ = new Parser() {
+  final static Parser GenericParam_0_0_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
-      return GenericParameters_2_0_1(b, l + 1);
+      return GenericParam_0_0(b, l + 1);
+    }
+  };
+  final static Parser GenericParam_0_1_parser_ = new Parser() {
+    public boolean parse(PsiBuilder b, int l) {
+      return GenericParam_0_1(b, l + 1);
+    }
+  };
+  final static Parser GenericParam_parser_ = new Parser() {
+    public boolean parse(PsiBuilder b, int l) {
+      return GenericParam(b, l + 1);
     }
   };
   final static Parser INDEQ_parser_ = new Parser() {
@@ -5608,19 +5632,9 @@ public class NimParser implements PsiParser, LightPsiParser {
       return expr(b, l + 1);
     }
   };
-  final static Parser genericParam_0_0_parser_ = new Parser() {
+  final static Parser genericParameters_2_0_1_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
-      return genericParam_0_0(b, l + 1);
-    }
-  };
-  final static Parser genericParam_0_1_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return genericParam_0_1(b, l + 1);
-    }
-  };
-  final static Parser genericParam_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return genericParam(b, l + 1);
+      return genericParameters_2_0_1(b, l + 1);
     }
   };
   final static Parser identColonEqualsWithBothOptionalWithPragma_0_0_parser_ = new Parser() {

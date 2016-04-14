@@ -41,7 +41,7 @@ public class IdentifierExprImpl extends BaseExpression implements IdentifierExpr
     if (reference != null) {
       PsiElement target = reference.resolve();
       if (target instanceof TypeDef)
-        return ((TypeDef) target).getDefinition().asType();
+        return ((TypeDef) target).toType();
       if (target != null) {
         System.err.println("asType: identifier resolved to non TypeDef: this=" + this + ", target=" + target);
         return Type.UNKNOWN;

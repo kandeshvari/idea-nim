@@ -78,14 +78,17 @@ public class ElementFactory {
     else if (type == ENUM_DEF) {
       return new EnumDefImpl(node);
     }
+    else if (type == ENUM_MEMBER) {
+      return new EnumMemberImpl(node);
+    }
     else if (type == EXPR_STMT) {
       return new ExprStmtImpl(node);
     }
     else if (type == FOR_STMT) {
       return new ForStmtImpl(node);
     }
-    else if (type == GENERIC_PARAMETERS) {
-      return new GenericParametersImpl(node);
+    else if (type == GENERIC_PARAM) {
+      return new GenericParamImpl(node);
     }
     else if (type == GROUPED_EXPR) {
       return new GroupedExprImpl(node);

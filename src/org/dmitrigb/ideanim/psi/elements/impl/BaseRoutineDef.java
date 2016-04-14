@@ -22,9 +22,9 @@ public abstract class BaseRoutineDef extends BaseStatement implements RoutineDef
   }
 
   @Override
-  @Nullable
-  public GenericParameters getGenericParameters() {
-    return findChildByClass(GenericParameters.class);
+  @NotNull
+  public List<GenericParam> getGenericParameters() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, GenericParam.class);
   }
 
   @Override
@@ -79,6 +79,11 @@ public abstract class BaseRoutineDef extends BaseStatement implements RoutineDef
     if (lastParent != null) {
       List<IdentifierDefs> params = getParameters();
       for (IdentifierDefs param : params) {
+        if (!param.processDeclarations(processor, state, null, place))
+          return false;
+      }
+      List<GenericParam> genericParams = getGenericParameters();
+      for (GenericParam param : genericParams) {
         if (!param.processDeclarations(processor, state, null, place))
           return false;
       }

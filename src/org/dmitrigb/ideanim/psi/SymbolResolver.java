@@ -1,8 +1,6 @@
 package org.dmitrigb.ideanim.psi;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Computable;
@@ -46,9 +44,17 @@ public class SymbolResolver extends BaseScopeProcessor {
         target = element;
         return false;
       }
+      Expression def = ((TypeDef) element).getDefinition();
+      if (def instanceof EnumDef) {
+        for (EnumMember member : ((EnumDef) def).getMembers()) {
+          if (symbolMatches(member.getIdentifier())) {
+            target = member;
+            return false;
+          }
+        }
+      }
     }
-
-    if (element instanceof RoutineDef) {
+    else if (element instanceof RoutineDef) {
       RoutineDef routine = (RoutineDef) element;
       Identifier symbol = routine.getIdentifier();
       if (symbol != null && symbolMatches(symbol)) {
@@ -95,6 +101,15 @@ public class SymbolResolver extends BaseScopeProcessor {
       for (IdentPragmaPair pair : pairs) {
         if (symbolMatches(pair.getIdentifier())) {
           target = pair.getIdentifier();
+          return false;
+        }
+      }
+    }
+    else if (element instanceof GenericParam) {
+      List<IdentifierDef> ids = ((GenericParam) element).getIdentifers();
+      for (Identifier id : ids) {
+        if (symbolMatches(id)) {
+          target = id;
           return false;
         }
       }
