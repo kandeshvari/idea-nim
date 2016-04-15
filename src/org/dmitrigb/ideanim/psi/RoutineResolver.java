@@ -8,8 +8,11 @@ import java.util.stream.Collectors;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import org.dmitrigb.ideanim.psi.elements.*;
+import org.dmitrigb.ideanim.types.TGeneric;
+import org.dmitrigb.ideanim.types.TObject;
 import org.dmitrigb.ideanim.types.TPrimitive;
 import org.dmitrigb.ideanim.types.Type;
+import org.dmitrigb.ideanim.types.Types;
 import org.jetbrains.annotations.NotNull;
 
 public class RoutineResolver extends SymbolResolver {
@@ -122,6 +125,17 @@ public class RoutineResolver extends SymbolResolver {
           counts.addMatch(MatchCategory.LITERAL);
           continue;
         }
+      }
+
+      if (paramType instanceof TGeneric) {
+        // TODO: check constraints
+        counts.addMatch(MatchCategory.GENERIC);
+        continue;
+      }
+
+      if (Types.isSubtype(paramType, argType)) {
+        counts.addMatch(MatchCategory.SUBTYPE);
+        continue;
       }
     }
     return counts;

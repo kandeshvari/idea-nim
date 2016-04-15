@@ -12,4 +12,18 @@ public abstract class Types {
       return type.getDefinition();
     return null;
   }
+
+  public static boolean isSubtype(Type type, Type subtype) {
+    if (type instanceof TObject && subtype instanceof TObject) {
+      Type superType = ((TObject) subtype).getSuperType();
+      while (superType instanceof TObject && !type.equals(superType))
+        superType = ((TObject) superType).getSuperType();
+      return type.equals(superType);
+    }
+    if (type instanceof TVar && subtype instanceof TVar)
+      return isSubtype(((TVar) type).getBaseType(), ((TVar) subtype).getBaseType());
+    if (type instanceof TRef && subtype instanceof TRef)
+      return isSubtype(((TRef) type).getBaseType(), ((TRef) subtype).getBaseType());
+    return false;
+  }
 }

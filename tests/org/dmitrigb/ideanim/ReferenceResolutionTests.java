@@ -1,5 +1,8 @@
 package org.dmitrigb.ideanim;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.LightProjectDescriptor;
@@ -86,6 +89,17 @@ public class ReferenceResolutionTests extends LightPlatformCodeInsightFixtureTes
         "<caret>foo(42)\n");
   }
 
+  public void testOverloadedProcBySubtype() throws Exception {
+    assertResolvesToSecondProc("" +
+        "type\n" +
+        "  A = object of RootObj\n" +
+        "  B = object of A\n" +
+        "proc foo(a: string) = discard\n" +
+        "proc foo(a: A) = discard\n" +
+        "var b: B\n" +
+        "<caret>foo(b)\n");
+  }
+
   public void testObjectMember() throws Exception {
     assertResolvesToObjectMember("name", "" +
         "type Foo = object\n" +
@@ -145,7 +159,9 @@ public class ReferenceResolutionTests extends LightPlatformCodeInsightFixtureTes
     PsiReference ref = myFixture.getReferenceAtCaretPositionWithAssertion();
     PsiElement target = ref.resolve();
     assertPsiAncestors(target, ProcDef.class);
-    if (target != ((NimFile) myFixture.getFile()).getStatements().get(1))
+    List<Statement> procs = ((NimFile) myFixture.getFile()).getStatements().stream()
+        .filter(s -> s instanceof ProcDef).collect(Collectors.toList());
+    if (target != procs.get(1))
       fail("Reference at caret did not resolve to the correct procedure definition.");
   }
 
