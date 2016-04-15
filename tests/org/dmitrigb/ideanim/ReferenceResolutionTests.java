@@ -141,6 +141,14 @@ public class ReferenceResolutionTests extends LightPlatformCodeInsightFixtureTes
         "discard Foo(<caret>name: \"sad\")\n");
   }
 
+  public void testObjectMemberInCtorIgnoreProcs() throws Exception {
+    PsiElement target = resolveReferenceIn("" +
+        "type A = object\n" +
+        "proc foo(a: A) = discard\n" +
+        "discard A(<caret>foo: 1)\n");
+    assertNull(target);
+  }
+
   public void testMethodCall() throws Exception {
     PsiElement target = resolveReferenceIn("" +
         "proc foo(a: string) = discard\n" +

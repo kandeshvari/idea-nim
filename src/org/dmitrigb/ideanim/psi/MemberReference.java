@@ -20,16 +20,28 @@ public class MemberReference extends IdentifierReference {
 
   private Expression expression;
   private List<Expression> callArgs;
+  private final boolean fieldsOnly;
 
+  /**
+   * A reference to a member of an object.
+   * Using this constructor will create a reference that only resolves to fields, and not to procedures.
+   * This is useful when resolving field references inside an object constructor.
+   */
   public MemberReference(@NotNull Expression expression, @NotNull Identifier identifier) {
     super(identifier);
     this.expression = expression;
+    fieldsOnly = true;
   }
 
-  public MemberReference(@NotNull Expression expression, @NotNull Identifier identifier, List<Expression> callArgs) {
+  /**
+   * A reference to a member of an object.
+   * Using this constructor will create a reference that resolves to both - fields as well as procedures.
+   */
+  public MemberReference(@NotNull Expression expression, @NotNull Identifier identifier, @Nullable List<Expression> callArgs) {
     super(identifier);
     this.expression = expression;
     this.callArgs = callArgs;
+    fieldsOnly = false;
   }
 
   @Nullable
@@ -53,13 +65,17 @@ public class MemberReference extends IdentifierReference {
     }
 
     // No matching field found, try to resolve to a proc
-    List<Expression> args = new ArrayList<>();
-    args.add(expression);
-    if (callArgs != null)
-      args.addAll(callArgs);
-    RoutineResolver resolver = new RoutineResolver(getElement(), args);
-    PsiTreeUtil.treeWalkUp(resolver, getElement(), null, ResolveState.initial());
-    return resolver.getResolvedTarget();
+    if (!fieldsOnly) {
+      List<Expression> args = new ArrayList<>();
+      args.add(expression);
+      if (callArgs != null)
+        args.addAll(callArgs);
+      RoutineResolver resolver = new RoutineResolver(getElement(), args);
+      PsiTreeUtil.treeWalkUp(resolver, getElement(), null, ResolveState.initial());
+      return resolver.getResolvedTarget();
+    }
+
+    return null;
   }
 
   @NotNull
