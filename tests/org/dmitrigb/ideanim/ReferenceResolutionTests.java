@@ -141,6 +141,13 @@ public class ReferenceResolutionTests extends LightPlatformCodeInsightFixtureTes
         "discard Foo(<caret>name: \"sad\")\n");
   }
 
+  public void testMethodCall() throws Exception {
+    PsiElement target = resolveReferenceIn("" +
+        "proc foo(a: string) = discard\n" +
+        "\"bar\".<caret>foo()\n");
+    assertPsiAncestors(target, ProcDef.class);
+  }
+
   private PsiElement resolveReferenceIn(String nimSource) {
     myFixture.configureByText(NimFileType.INSTANCE, nimSource);
     return myFixture.getReferenceAtCaretPositionWithAssertion().resolve();

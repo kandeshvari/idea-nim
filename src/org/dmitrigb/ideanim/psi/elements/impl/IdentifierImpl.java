@@ -1,5 +1,7 @@
 package org.dmitrigb.ideanim.psi.elements.impl;
 
+import java.util.List;
+
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -34,7 +36,11 @@ public class IdentifierImpl extends ASTWrapperPsiElement implements Identifier {
     }
 
     if (parent instanceof DotExpr) {
-      return new MemberReference(((DotExpr) parent).getExpression(), this);
+      PsiElement grand = parent.getParent();
+      List<Expression> args = null;
+      if (grand instanceof CallExpr)
+        args = ((CallExpr) grand).getArgumentList();
+      return new MemberReference(((DotExpr) parent).getExpression(), this, args);
     }
 
     if (parent instanceof CtorArg) {
