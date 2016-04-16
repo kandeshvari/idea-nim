@@ -1,12 +1,18 @@
 package org.dmitrigb.ideanim.psi;
 
+import java.util.List;
+
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
-import org.dmitrigb.ideanim.psi.elements.ObjectDef;
-import org.dmitrigb.ideanim.psi.elements.RoutineDef;
-import org.dmitrigb.ideanim.psi.elements.TypeDesc;
+import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.PsiSearchHelper;
+import com.intellij.psi.util.PsiTreeUtil;
+import org.dmitrigb.ideanim.psi.elements.*;
 import org.dmitrigb.ideanim.types.TObject;
 import org.dmitrigb.ideanim.types.Type;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class NimPsiTreeUtil {
@@ -43,6 +49,51 @@ public abstract class NimPsiTreeUtil {
     PsiElement target = resolver.getResolvedTarget();
     if (target instanceof RoutineDef)
       return (RoutineDef) target;
+    return null;
+  }
+
+  public static boolean walkUp(@NotNull PsiScopeProcessor processor,
+                               @NotNull PsiElement entrance,
+                               @Nullable PsiElement maxScope,
+                               String searchWord) {
+    if (!PsiTreeUtil.treeWalkUp(processor, entrance, maxScope, ResolveState.initial()))
+      return false;
+
+    Project project = entrance.getContainingFile().getProject();
+    PsiSearchHelper helper = PsiSearchHelper.SERVICE.getInstance(project);
+    return helper.processAllFilesWithWord(searchWord, GlobalSearchScope.projectScope(project), file -> {
+      if (!(file instanceof NimFile))
+        return true;
+      List<Statement> stmts = ((NimFile) file).getStatements();
+      for (Statement stmt : stmts) {
+        if (!stmt.processDeclarations(processor, ResolveState.initial(), null, entrance))
+          return false;
+      }
+      return true;
+    }, false);
+  }
+
+  /**
+   * If the given element has a declared type, then this method returns the corresponding {@link TypeDesc}.
+   * Elements that can have a declared type include: object fields, routine parameters, variables and constants.
+   */
+  public static TypeDesc getDeclaredType(PsiElement element) {
+    if (element instanceof Identifier)
+      element = element.getParent();
+    if (element instanceof IdentPragmaPair)
+      element = element.getParent();
+
+    if (element instanceof ProcResultPsiElement)
+      return ((ProcResultPsiElement) element).getProcReturnType();
+    if (element instanceof IdentifierDefs)
+      return ((IdentifierDefs) element).getDeclaredType();
+    if (element instanceof VarDef)
+      return ((VarDef) element).getDeclaredType();
+    if (element instanceof ConstDef)
+      return ((ConstDef) element).getDeclaredType();
+    if (element instanceof ObjectFields)
+      return ((ObjectFields) element).getDeclaredType();
+
     return null;
   }
 }

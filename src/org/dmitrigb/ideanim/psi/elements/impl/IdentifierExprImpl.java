@@ -3,6 +3,7 @@ package org.dmitrigb.ideanim.psi.elements.impl;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import org.dmitrigb.ideanim.psi.NimPsiTreeUtil;
 import org.dmitrigb.ideanim.types.TGeneric;
 import org.dmitrigb.ideanim.types.TPrimitive;
 import org.dmitrigb.ideanim.types.Type;
@@ -27,11 +28,9 @@ public class IdentifierExprImpl extends BaseExpression implements IdentifierExpr
     if (reference == null)
       return null;
     PsiElement target = reference.resolve();
-    if (target instanceof TypedElement) {
-      TypeDesc typeDesc = ((TypedElement) target).getDeclaredType();
-      if (typeDesc != null)
-        return typeDesc.toType();
-    }
+    TypeDesc typeDesc = NimPsiTreeUtil.getDeclaredType(target);
+    if (typeDesc != null)
+      return typeDesc.toType();
     return null;
   }
 

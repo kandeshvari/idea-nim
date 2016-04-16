@@ -25,7 +25,7 @@ public class IdentifierReference extends PsiReferenceBase<Identifier> {
   @Override
   public PsiElement resolve() {
     SymbolResolver resolver = getSymbolResolver();
-    PsiTreeUtil.treeWalkUp(resolver, getElement(), null, ResolveState.initial());
+    NimPsiTreeUtil.walkUp(resolver, getElement(), null, getElement().getText());
     return resolver.getResolvedTarget();
   }
 

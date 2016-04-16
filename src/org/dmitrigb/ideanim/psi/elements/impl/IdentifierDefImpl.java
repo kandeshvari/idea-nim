@@ -34,20 +34,6 @@ public class IdentifierDefImpl extends IdentifierImpl implements IdentifierDef {
     return null;
   }
 
-  @Override
-  public TypeDesc getDeclaredType() {
-    PsiElement parent = getParent();
-    if (parent instanceof IdentPragmaPair)
-      parent = parent.getParent();
-
-    if (parent instanceof IdentifierDefs)
-      return ((IdentifierDefs) parent).getDeclaredType();
-    if (parent instanceof VarDef)
-      return ((VarDef) parent).getDeclaredType();
-
-    return null;
-  }
-
   @Nullable
   @Override
   public PsiElement getNameIdentifier() {

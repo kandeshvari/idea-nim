@@ -71,7 +71,7 @@ public class MemberReference extends IdentifierReference {
       if (callArgs != null)
         args.addAll(callArgs);
       RoutineResolver resolver = new RoutineResolver(getElement(), args);
-      PsiTreeUtil.treeWalkUp(resolver, getElement(), null, ResolveState.initial());
+      NimPsiTreeUtil.walkUp(resolver, getElement(), null, getElement().getText());
       return resolver.getResolvedTarget();
     }
 

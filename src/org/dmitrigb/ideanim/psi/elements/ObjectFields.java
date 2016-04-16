@@ -6,7 +6,7 @@ public interface ObjectFields extends ObjectPart {
 
   List<IdentPragmaPair> getIdentifiers();
 
-  TypeDesc getTypeDesc();
+  TypeDesc getDeclaredType();
 
   Expression getInitializer();
 }

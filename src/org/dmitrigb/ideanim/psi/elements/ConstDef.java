@@ -4,7 +4,7 @@ import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface ConstDef extends PsiNameIdentifierOwner, TypedElement {
+public interface ConstDef extends PsiNameIdentifierOwner {
 
   @Nullable
   Expression getExpression();
@@ -14,5 +14,8 @@ public interface ConstDef extends PsiNameIdentifierOwner, TypedElement {
 
   @Nullable
   Pragma getPragma();
+
+  @Nullable
+  TypeDesc getDeclaredType();
 
 }

@@ -25,7 +25,7 @@ public class ObjectFieldsImpl extends ASTWrapperPsiElement implements ObjectFiel
   }
 
   @Override
-  public TypeDesc getTypeDesc() {
+  public TypeDesc getDeclaredType() {
     return findChildByClass(TypeDesc.class);
   }
 
