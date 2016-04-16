@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.ResolveState;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.scope.PsiScopeProcessor;
 import org.dmitrigb.ideanim.psi.elements.Expression;
 import org.dmitrigb.ideanim.psi.elements.Identifier;
 import org.dmitrigb.ideanim.psi.elements.ObjectDef;
 import org.dmitrigb.ideanim.types.TObject;
-import org.dmitrigb.ideanim.types.TRef;
-import org.dmitrigb.ideanim.types.TVar;
 import org.dmitrigb.ideanim.types.Type;
+import org.dmitrigb.ideanim.types.Types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,22 +47,9 @@ public class MemberReference extends IdentifierReference {
   @Nullable
   @Override
   public PsiElement resolve() {
-    Type type = expression.getType();
-    if (type instanceof TVar)
-      type = ((TVar) type).getBaseType();
-    if (type instanceof TRef)
-      type = ((TRef) type).getBaseType();
-    if ((type instanceof TObject)) {
-      MemberResolver resolver = new MemberResolver(getElement());
-      ResolveState state = ResolveState.initial();
-      TObject tObj = (TObject) type;
-      ObjectDef objDef = tObj.getObject();
-      while (objDef != null) {
-        if (!objDef.processDeclarations(resolver, state, null, tObj.getObject()))
-          return resolver.getResolvedTarget();
-        objDef = NimPsiTreeUtil.getSuperTypeDef(objDef);
-      }
-    }
+    MemberResolver memberResolver = new MemberResolver(getElement());
+    if (!walkUpHierarchy(memberResolver, expression.getType()))
+      return memberResolver.getResolvedTarget();
 
     // No matching field found, try to resolve to a proc
     if (!fieldsOnly) {
@@ -81,6 +68,37 @@ public class MemberReference extends IdentifierReference {
   @NotNull
   @Override
   public Object[] getVariants() {
-    return new Object[0];
+    List<PsiElement> results = new ArrayList<>();
+
+    MemberCollector memberCollector = new MemberCollector();
+    Type type = expression.getType();
+    walkUpHierarchy(memberCollector, type);
+    results.addAll(memberCollector.getCandidates());
+
+    if (!fieldsOnly) {
+      RoutineCollector routineCollector = new RoutineCollector(expression);
+      PsiElement def = Types.resolveDefinition(type);
+      // TODO: take files of all objects in the hierarchy
+      PsiFile file = def == null ? null : def.getContainingFile();
+      NimPsiTreeUtil.walkUpWithFiles(routineCollector, getElement(), null, file == null ? new PsiFile[0] : new PsiFile[]{file});
+      results.addAll(routineCollector.getCandidates());
+    }
+
+    return results.toArray();
+  }
+
+  private boolean walkUpHierarchy(PsiScopeProcessor processor, Type type) {
+    type = Types.unwrapBaseType(type);
+    if (type instanceof TObject) {
+      ResolveState state = ResolveState.initial();
+      TObject tObj = (TObject) type;
+      ObjectDef objDef = tObj.getObject();
+      while (objDef != null) {
+        if (!objDef.processDeclarations(processor, state, null, tObj.getObject()))
+          return false;
+        objDef = NimPsiTreeUtil.getSuperTypeDef(objDef);
+      }
+    }
+    return true;
   }
 }

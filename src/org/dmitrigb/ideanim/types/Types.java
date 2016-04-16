@@ -3,14 +3,22 @@ package org.dmitrigb.ideanim.types;
 import com.intellij.psi.PsiElement;
 
 public abstract class Types {
-  public static PsiElement resolveDefinition(Type type) {
+  public static Type unwrapBaseType(Type type) {
     if (type instanceof TVar)
-      type = ((TVar) type).getBaseType();
-    if (type instanceof TRef)
-      type = ((TRef) type).getBaseType();
-    if (type instanceof TObject)
-      return type.getDefinition();
-    return null;
+      return ((TVar) type).getBaseType();
+
+    while (true) {
+      if (type instanceof TRef) {
+        type = ((TRef) type).getBaseType();
+        continue;
+      }
+      break;
+    }
+    return type;
+  }
+
+  public static PsiElement resolveDefinition(Type type) {
+    return unwrapBaseType(type).getDefinition();
   }
 
   public static boolean isSubtype(Type type, Type subtype) {

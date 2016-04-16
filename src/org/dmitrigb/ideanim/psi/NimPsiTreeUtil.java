@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -71,6 +72,25 @@ public abstract class NimPsiTreeUtil {
       }
       return true;
     }, false);
+  }
+
+  public static boolean walkUpWithFiles(@NotNull PsiScopeProcessor processor,
+                                        @NotNull PsiElement entrance,
+                                        @Nullable PsiElement maxScope,
+                                        PsiFile[] files) {
+    if (!PsiTreeUtil.treeWalkUp(processor, entrance, maxScope, ResolveState.initial()))
+      return false;
+
+    for (PsiFile file : files) {
+      if (!(file instanceof NimFile))
+        continue;
+      List<Statement> stmts = ((NimFile) file).getStatements();
+      for (Statement stmt : stmts) {
+        if (!stmt.processDeclarations(processor, ResolveState.initial(), null, entrance))
+          return false;
+      }
+    }
+    return true;
   }
 
   /**

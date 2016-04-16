@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import org.dmitrigb.ideanim.psi.elements.*;
 import org.dmitrigb.ideanim.types.TGeneric;
-import org.dmitrigb.ideanim.types.TObject;
 import org.dmitrigb.ideanim.types.TPrimitive;
 import org.dmitrigb.ideanim.types.Type;
 import org.dmitrigb.ideanim.types.Types;
@@ -17,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class RoutineResolver extends SymbolResolver {
 
-  private enum MatchCategory {
+  enum MatchCategory {
     EXACT, LITERAL, GENERIC, SUBTYPE, INTEGRAL, CONVERSION
   }
 
@@ -42,7 +41,7 @@ public class RoutineResolver extends SymbolResolver {
     }
   }
 
-  private class Param {
+  private static class Param {
     IdentifierDef id;
     Pragma pragma;
     TypeDesc type;
@@ -108,40 +107,41 @@ public class RoutineResolver extends SymbolResolver {
     MatchCounts counts = new MatchCounts();
     for (int i = 0; i < params.size(); i++) {
       Param param = params.get(i);
-      Expression arg = arguments.get(i);
       Type paramType = param.type == null ? null : param.type.toType();
-      Type argType = arg.getType();
-
-      if (paramType == null || argType == null)
+      if (paramType == null)
         continue;
 
-      if (argType.equals(paramType)) {
-        counts.addMatch(MatchCategory.EXACT);
-        continue;
-      }
-
-      if (arg instanceof Literal && paramType instanceof TPrimitive) {
-        Literal lit = (Literal) arg;
-        TPrimitive litType = (TPrimitive) argType;
-        TPrimitive primType = (TPrimitive) paramType;
-        if (litType.isInteger() && primType.isInteger() && primType.isInRange(lit.integerValue(), litType.isUnsignedInteger())) {
-          counts.addMatch(MatchCategory.LITERAL);
-          continue;
-        }
-      }
-
-      if (paramType instanceof TGeneric) {
-        // TODO: check constraints
-        counts.addMatch(MatchCategory.GENERIC);
-        continue;
-      }
-
-      if (Types.isSubtype(paramType, argType)) {
-        counts.addMatch(MatchCategory.SUBTYPE);
-        continue;
-      }
+      MatchCategory match = matchArgument(arguments.get(i), paramType);
+      if (match != null)
+        counts.addMatch(match);
     }
     return counts;
+  }
+
+  static MatchCategory matchArgument(Expression arg, Type paramType) {
+    Type argType = arg.getType();
+    if (argType == null)
+      return null;
+
+    if (argType.equals(paramType))
+      return MatchCategory.EXACT;
+
+    if (arg instanceof Literal && paramType instanceof TPrimitive) {
+      Literal lit = (Literal) arg;
+      TPrimitive litType = (TPrimitive) argType;
+      TPrimitive primType = (TPrimitive) paramType;
+      if (litType.isInteger() && primType.isInteger() && primType.isInRange(lit.integerValue(), litType.isUnsignedInteger()))
+        return MatchCategory.LITERAL;
+    }
+
+    if (paramType instanceof TGeneric)
+      // TODO: check constraints
+      return MatchCategory.GENERIC;
+
+    if (Types.isSubtype(paramType, argType))
+      return MatchCategory.SUBTYPE;
+
+    return null;
   }
 
   @Override
