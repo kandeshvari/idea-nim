@@ -62,6 +62,9 @@ public class NimParser implements PsiParser, LightPsiParser {
     else if (t == CONST_SECT) {
       r = ConstSect(b, 0);
     }
+    else if (t == CONTINUE_STMT) {
+      r = ContinueStmt(b, 0);
+    }
     else if (t == CTOR_ARG) {
       r = CtorArg(b, 0);
     }
@@ -124,6 +127,9 @@ public class NimParser implements PsiParser, LightPsiParser {
     }
     else if (t == LITERAL) {
       r = Literal(b, 0);
+    }
+    else if (t == MACRO_DEF) {
+      r = MacroDef(b, 0);
     }
     else if (t == NIL_TOKEN) {
       r = NilToken(b, 0);
@@ -228,11 +234,12 @@ public class NimParser implements PsiParser, LightPsiParser {
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
     create_token_set_(IDENTIFIER, IDENTIFIER_DEF),
     create_token_set_(BLOCK_STMT, BREAK_STMT, CASE_STMT, CONST_SECT,
-      DISCARD_STMT, EXPR_STMT, FOR_STMT, IF_STMT,
-      IMPORT_STMT, ITERATOR_DEF, LET_SECT, PRAGMA_STMT,
-      PROC_DEF, RAISE_STMT, RETURN_STMT, STATIC_STMT,
-      TEMPLATE_DEF, TRY_STMT, TYPE_SECT, VAR_SECT,
-      WHEN_STMT, WHILE_STMT, YIELD_STMT),
+      CONTINUE_STMT, DISCARD_STMT, EXPR_STMT, FOR_STMT,
+      IF_STMT, IMPORT_STMT, ITERATOR_DEF, LET_SECT,
+      MACRO_DEF, PRAGMA_STMT, PROC_DEF, RAISE_STMT,
+      RETURN_STMT, STATIC_STMT, TEMPLATE_DEF, TRY_STMT,
+      TYPE_SECT, VAR_SECT, WHEN_STMT, WHILE_STMT,
+      YIELD_STMT),
     create_token_set_(ASSIGNMENT_EXPR, BRACKET_CTOR, BRACKET_EXPR, CALL_EXPR,
       CASE_EXPR, CAST_EXPR, COMMAND_EXPR, DISTINCT_TYPE_EXPR,
       DOT_EXPR, ENUM_DEF, GROUPED_EXPR, IDENTIFIER_EXPR,
@@ -718,6 +725,59 @@ public class NimParser implements PsiParser, LightPsiParser {
     r = r && section(b, l + 1, ConstDef_parser_);
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  /* ********************************************************** */
+  // T_CONTINUE (&OPTIND &isExprStart expr)?
+  public static boolean ContinueStmt(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ContinueStmt")) return false;
+    if (!nextTokenIs(b, T_CONTINUE)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, CONTINUE_STMT, null);
+    r = consumeToken(b, T_CONTINUE);
+    p = r; // pin = 1
+    r = r && ContinueStmt_1(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // (&OPTIND &isExprStart expr)?
+  private static boolean ContinueStmt_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ContinueStmt_1")) return false;
+    ContinueStmt_1_0(b, l + 1);
+    return true;
+  }
+
+  // &OPTIND &isExprStart expr
+  private static boolean ContinueStmt_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ContinueStmt_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = ContinueStmt_1_0_0(b, l + 1);
+    r = r && ContinueStmt_1_0_1(b, l + 1);
+    r = r && expr(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // &OPTIND
+  private static boolean ContinueStmt_1_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ContinueStmt_1_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _AND_);
+    r = indOpt(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // &isExprStart
+  private static boolean ContinueStmt_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ContinueStmt_1_0_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _AND_);
+    r = isExprStart(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
   }
 
   /* ********************************************************** */
@@ -1346,16 +1406,15 @@ public class NimParser implements PsiParser, LightPsiParser {
   public static boolean GroupedExpr(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "GroupedExpr")) return false;
     if (!nextTokenIs(b, T_LPAREN)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _COLLAPSE_, GROUPED_EXPR, null);
+    boolean r;
+    Marker m = enter_section_(b);
     r = consumeToken(b, T_LPAREN);
-    p = r; // pin = 1
     r = r && GroupedExpr_1(b, l + 1);
     r = r && parseSimpleExpr(b, l + 1, primary_parser_, 0);
     r = r && GroupedExpr_3(b, l + 1);
     r = r && consumeToken(b, T_RPAREN);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
+    exit_section_(b, m, GROUPED_EXPR, r);
+    return r;
   }
 
   // &OPTIND
@@ -1603,6 +1662,20 @@ public class NimParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // T_MACRO routine
+  public static boolean MacroDef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "MacroDef")) return false;
+    if (!nextTokenIs(b, T_MACRO)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, MACRO_DEF, null);
+    r = consumeToken(b, T_MACRO);
+    p = r; // pin = 1
+    r = r && routine(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
   // T_NIL
   public static boolean NilToken(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "NilToken")) return false;
@@ -1707,7 +1780,7 @@ public class NimParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // T_LPAREN &OPTIND <<listOf CtorArg (T_COMMA)>> T_RPAREN
+  // T_LPAREN &OPTIND namedArgs T_RPAREN
   public static boolean ObjectCtor(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ObjectCtor")) return false;
     if (!nextTokenIs(b, T_LPAREN)) return false;
@@ -1715,7 +1788,7 @@ public class NimParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _LEFT_, OBJECT_CTOR, null);
     r = consumeToken(b, T_LPAREN);
     r = r && ObjectCtor_1(b, l + 1);
-    r = r && listOf(b, l + 1, CtorArg_parser_, ObjectCtor_2_1_parser_);
+    r = r && namedArgs(b, l + 1);
     r = r && consumeToken(b, T_RPAREN);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -1728,16 +1801,6 @@ public class NimParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _AND_);
     r = indOpt(b, l + 1);
     exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // (T_COMMA)
-  private static boolean ObjectCtor_2_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "ObjectCtor_2_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, T_COMMA);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -2389,7 +2452,7 @@ public class NimParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // T_TRY T_COLON stmt (&(INDNONE | INDEQ) T_EXCEPT &OPTIND exprList T_COLON stmt)*
+  // T_TRY T_COLON stmt (&(INDNONE | INDEQ) T_EXCEPT &OPTIND exprList? T_COLON stmt)*
   //             (&(INDNONE | INDEQ) T_FINALLY &OPTIND exprList T_COLON stmt)?
   public static boolean TryStmt(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TryStmt")) return false;
@@ -2405,7 +2468,7 @@ public class NimParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // (&(INDNONE | INDEQ) T_EXCEPT &OPTIND exprList T_COLON stmt)*
+  // (&(INDNONE | INDEQ) T_EXCEPT &OPTIND exprList? T_COLON stmt)*
   private static boolean TryStmt_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TryStmt_3")) return false;
     int c = current_position_(b);
@@ -2417,7 +2480,7 @@ public class NimParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // &(INDNONE | INDEQ) T_EXCEPT &OPTIND exprList T_COLON stmt
+  // &(INDNONE | INDEQ) T_EXCEPT &OPTIND exprList? T_COLON stmt
   private static boolean TryStmt_3_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TryStmt_3_0")) return false;
     boolean r;
@@ -2425,7 +2488,7 @@ public class NimParser implements PsiParser, LightPsiParser {
     r = TryStmt_3_0_0(b, l + 1);
     r = r && consumeToken(b, T_EXCEPT);
     r = r && TryStmt_3_0_2(b, l + 1);
-    r = r && exprList(b, l + 1);
+    r = r && TryStmt_3_0_3(b, l + 1);
     r = r && consumeToken(b, T_COLON);
     r = r && stmt(b, l + 1);
     exit_section_(b, m, null, r);
@@ -2461,6 +2524,13 @@ public class NimParser implements PsiParser, LightPsiParser {
     r = indOpt(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
+  }
+
+  // exprList?
+  private static boolean TryStmt_3_0_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "TryStmt_3_0_3")) return false;
+    exprList(b, l + 1);
+    return true;
   }
 
   // (&(INDNONE | INDEQ) T_FINALLY &OPTIND exprList T_COLON stmt)?
@@ -2517,7 +2587,7 @@ public class NimParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // T_LPAREN &OPTIND <<listOf CtorArg (T_COMMA)>> T_RPAREN
+  // T_LPAREN &OPTIND (namedArgs | simpleExpr T_COMMA <<listOf expr (T_COMMA)>>) T_RPAREN
   public static boolean TupleCtor(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TupleCtor")) return false;
     if (!nextTokenIs(b, T_LPAREN)) return false;
@@ -2525,7 +2595,7 @@ public class NimParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, T_LPAREN);
     r = r && TupleCtor_1(b, l + 1);
-    r = r && listOf(b, l + 1, CtorArg_parser_, TupleCtor_2_1_parser_);
+    r = r && TupleCtor_2(b, l + 1);
     r = r && consumeToken(b, T_RPAREN);
     exit_section_(b, m, TUPLE_CTOR, r);
     return r;
@@ -2541,9 +2611,32 @@ public class NimParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // (T_COMMA)
+  // namedArgs | simpleExpr T_COMMA <<listOf expr (T_COMMA)>>
+  private static boolean TupleCtor_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "TupleCtor_2")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = namedArgs(b, l + 1);
+    if (!r) r = TupleCtor_2_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // simpleExpr T_COMMA <<listOf expr (T_COMMA)>>
   private static boolean TupleCtor_2_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TupleCtor_2_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = parseSimpleExpr(b, l + 1, primary_parser_, 0);
+    r = r && consumeToken(b, T_COMMA);
+    r = r && listOf(b, l + 1, expr_parser_, TupleCtor_2_1_2_1_parser_);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (T_COMMA)
+  private static boolean TupleCtor_2_1_2_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "TupleCtor_2_1_2_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, T_COMMA);
@@ -3044,6 +3137,7 @@ public class NimParser implements PsiParser, LightPsiParser {
   //   | StaticStmt
   //   | ProcDef
   //   | IteratorDef
+  //   | MacroDef
   //   | TemplateDef
   //   | TypeSect
   //   | ConstSect
@@ -3064,6 +3158,7 @@ public class NimParser implements PsiParser, LightPsiParser {
     if (!r) r = StaticStmt(b, l + 1);
     if (!r) r = ProcDef(b, l + 1);
     if (!r) r = IteratorDef(b, l + 1);
+    if (!r) r = MacroDef(b, l + 1);
     if (!r) r = TemplateDef(b, l + 1);
     if (!r) r = TypeSect(b, l + 1);
     if (!r) r = ConstSect(b, l + 1);
@@ -4242,6 +4337,22 @@ public class NimParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // <<listOf CtorArg (T_COMMA)>>
+  static boolean namedArgs(PsiBuilder b, int l) {
+    return listOf(b, l + 1, CtorArg_parser_, namedArgs_0_1_parser_);
+  }
+
+  // (T_COMMA)
+  private static boolean namedArgs_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namedArgs_0_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, T_COMMA);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // T_CASE &INDNONE identWithPragma T_COLON TypeDesc T_COLON? (<<indented objectCaseBranches>> | objectCaseBranches)
   static boolean objectCase(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "objectCase")) return false;
@@ -4529,10 +4640,32 @@ public class NimParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // StmtListExpr | TupleCtor | GroupedExpr
+  // &T_LPAREN (StmtListExpr | TupleCtor | GroupedExpr)
   static boolean par(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "par")) return false;
     if (!nextTokenIs(b, T_LPAREN)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = par_0(b, l + 1);
+    p = r; // pin = 1
+    r = r && par_1(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // &T_LPAREN
+  private static boolean par_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "par_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _AND_);
+    r = consumeToken(b, T_LPAREN);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // StmtListExpr | TupleCtor | GroupedExpr
+  private static boolean par_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "par_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = StmtListExpr(b, l + 1);
@@ -5205,6 +5338,7 @@ public class NimParser implements PsiParser, LightPsiParser {
   //   | YieldStmt
   //   | DiscardStmt
   //   | BreakStmt
+  //   | ContinueStmt
   //   | PragmaStmt
   //   | ImportStmt
   //   | (&isExprStart ExprStmt)?
@@ -5217,34 +5351,35 @@ public class NimParser implements PsiParser, LightPsiParser {
     if (!r) r = YieldStmt(b, l + 1);
     if (!r) r = DiscardStmt(b, l + 1);
     if (!r) r = BreakStmt(b, l + 1);
+    if (!r) r = ContinueStmt(b, l + 1);
     if (!r) r = PragmaStmt(b, l + 1);
     if (!r) r = ImportStmt(b, l + 1);
-    if (!r) r = simpleStmt_7(b, l + 1);
+    if (!r) r = simpleStmt_8(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // (&isExprStart ExprStmt)?
-  private static boolean simpleStmt_7(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "simpleStmt_7")) return false;
-    simpleStmt_7_0(b, l + 1);
+  private static boolean simpleStmt_8(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "simpleStmt_8")) return false;
+    simpleStmt_8_0(b, l + 1);
     return true;
   }
 
   // &isExprStart ExprStmt
-  private static boolean simpleStmt_7_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "simpleStmt_7_0")) return false;
+  private static boolean simpleStmt_8_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "simpleStmt_8_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = simpleStmt_7_0_0(b, l + 1);
+    r = simpleStmt_8_0_0(b, l + 1);
     r = r && ExprStmt(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // &isExprStart
-  private static boolean simpleStmt_7_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "simpleStmt_7_0_0")) return false;
+  private static boolean simpleStmt_8_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "simpleStmt_8_0_0")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _AND_);
     r = isExprStart(b, l + 1);
@@ -5334,7 +5469,7 @@ public class NimParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // &(simpleExpr AssignmentExpr) ExprStmt T_SEMICOLON semiStmtList
+  // &(simpleExpr (AssignmentExpr | T_SEMICOLON)) ExprStmt T_SEMICOLON semiStmtList
   static boolean stmtListExpr2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "stmtListExpr2")) return false;
     boolean r, p;
@@ -5348,7 +5483,7 @@ public class NimParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // &(simpleExpr AssignmentExpr)
+  // &(simpleExpr (AssignmentExpr | T_SEMICOLON))
   private static boolean stmtListExpr2_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "stmtListExpr2_0")) return false;
     boolean r;
@@ -5358,13 +5493,24 @@ public class NimParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // simpleExpr AssignmentExpr
+  // simpleExpr (AssignmentExpr | T_SEMICOLON)
   private static boolean stmtListExpr2_0_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "stmtListExpr2_0_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = parseSimpleExpr(b, l + 1, primary_parser_, 0);
-    r = r && AssignmentExpr(b, l + 1);
+    r = r && stmtListExpr2_0_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // AssignmentExpr | T_SEMICOLON
+  private static boolean stmtListExpr2_0_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "stmtListExpr2_0_0_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = AssignmentExpr(b, l + 1);
+    if (!r) r = consumeToken(b, T_SEMICOLON);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -5563,14 +5709,13 @@ public class NimParser implements PsiParser, LightPsiParser {
       return NimFile_0_1(b, l + 1);
     }
   };
-  final static Parser ObjectCtor_2_1_parser_ = ForStmt_2_1_parser_;
   final static Parser Pragma_1_0_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return Pragma_1_0(b, l + 1);
     }
   };
   final static Parser SetOrTableCtor_2_1_0_0_1_parser_ = ForStmt_2_1_parser_;
-  final static Parser TupleCtor_2_1_parser_ = ForStmt_2_1_parser_;
+  final static Parser TupleCtor_2_1_2_1_parser_ = ForStmt_2_1_parser_;
   final static Parser TypeDef_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return TypeDef(b, l + 1);
@@ -5677,6 +5822,7 @@ public class NimParser implements PsiParser, LightPsiParser {
       return identColonEquals(b, l + 1);
     }
   };
+  final static Parser namedArgs_0_1_parser_ = ForStmt_2_1_parser_;
   final static Parser objectCaseBranches_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return objectCaseBranches(b, l + 1);

@@ -5,8 +5,8 @@ import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.impl.FakePsiElement;
 import com.intellij.psi.scope.PsiScopeProcessor;
-import org.dmitrigb.ideanim.psi.elements.ProcDef;
 import org.dmitrigb.ideanim.psi.elements.ProcExpr;
+import org.dmitrigb.ideanim.psi.elements.RoutineDef;
 import org.dmitrigb.ideanim.psi.elements.TypeDesc;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,7 +14,8 @@ import org.jetbrains.annotations.Nullable;
 /**
  * A pseudo PSI-element that represents the "declaration" of the implicit <i>result</i> variable.
  * Used as a target when resolving a reference to <i>result</i>.
- * Every {@link ProcDef proc} has a unique instance of this class.
+ * Every {@link org.dmitrigb.ideanim.psi.elements.ProcDef proc}, {@link org.dmitrigb.ideanim.psi.elements.MacroDef macro}
+ * etc has a unique instance of this class.
  */
 public class ProcResultPsiElement extends FakePsiElement implements PsiNameIdentifierOwner {
 
@@ -46,8 +47,8 @@ public class ProcResultPsiElement extends FakePsiElement implements PsiNameIdent
   }
 
   public TypeDesc getProcReturnType() {
-    if (routine instanceof ProcDef)
-      return ((ProcDef) routine).getReturnType();
+    if (routine instanceof RoutineDef)
+      return ((RoutineDef) routine).getReturnType();
     if (routine instanceof ProcExpr)
       return ((ProcExpr) routine).getReturnType();
     return null;

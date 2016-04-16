@@ -18,6 +18,7 @@ public interface ElementTypesBase {
   IElementType COMMAND_EXPR = new NimElementType("COMMAND_EXPR");
   IElementType CONST_DEF = new NimElementType("CONST_DEF");
   IElementType CONST_SECT = new NimElementType("CONST_SECT");
+  IElementType CONTINUE_STMT = new NimElementType("CONTINUE_STMT");
   IElementType CTOR_ARG = new NimElementType("CTOR_ARG");
   IElementType DISCARD_STMT = new NimElementType("DISCARD_STMT");
   IElementType DISTINCT_TYPE_EXPR = new NimElementType("DISTINCT_TYPE_EXPR");
@@ -42,6 +43,7 @@ public interface ElementTypesBase {
   IElementType ITERATOR_DEF = new NimElementType("ITERATOR_DEF");
   IElementType LET_SECT = new NimElementType("LET_SECT");
   IElementType LITERAL = new NimElementType("LITERAL");
+  IElementType MACRO_DEF = new NimElementType("MACRO_DEF");
   IElementType NIL_TOKEN = new NimElementType("NIL_TOKEN");
   IElementType OBJECT_CTOR = new NimElementType("OBJECT_CTOR");
   IElementType OBJECT_DEF = new NimElementType("OBJECT_DEF");
@@ -100,6 +102,7 @@ public interface ElementTypesBase {
   IElementType T_COLON = new NimTokenType("T_COLON");
   IElementType T_COMMA = new NimTokenType("T_COMMA");
   IElementType T_CONST = new NimTokenType("T_CONST");
+  IElementType T_CONTINUE = new NimTokenType("T_CONTINUE");
   IElementType T_DEFER = new NimTokenType("T_DEFER");
   IElementType T_DISCARD = new NimTokenType("T_DISCARD");
   IElementType T_DISTINCT = new NimTokenType("T_DISTINCT");
@@ -126,6 +129,7 @@ public interface ElementTypesBase {
   IElementType T_LBRACKET = new NimTokenType("T_LBRACKET");
   IElementType T_LET = new NimTokenType("T_LET");
   IElementType T_LPAREN = new NimTokenType("T_LPAREN");
+  IElementType T_MACRO = new NimTokenType("T_MACRO");
   IElementType T_MIXIN = new NimTokenType("T_MIXIN");
   IElementType T_MOD = new NimTokenType("T_MOD");
   IElementType T_NIL = new NimTokenType("T_NIL");

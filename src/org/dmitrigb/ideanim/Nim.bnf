@@ -86,6 +86,7 @@ private complexOrSimpleStmt ::=
   | StaticStmt
   | ProcDef
   | IteratorDef
+  | MacroDef
   | TemplateDef
   | TypeSect
   | ConstSect
@@ -111,7 +112,7 @@ private caseStmtOrExpr ::= T_CASE expr T_COLON? (<<indented caseBranches>> | cas
 private caseBranches ::= (&INDEQ T_OF &OPTIND exprList T_COLON stmt)* (&INDEQ T_ELIF &OPTIND expr T_COLON stmt)* (&INDEQ T_ELSE T_COLON stmt)?
 private exprList ::= <<listOf expr (T_COMMA &OPTIND)>>
 
-TryStmt ::= T_TRY T_COLON stmt (&(INDNONE | INDEQ) T_EXCEPT &OPTIND exprList T_COLON stmt)*
+TryStmt ::= T_TRY T_COLON stmt (&(INDNONE | INDEQ) T_EXCEPT &OPTIND exprList? T_COLON stmt)*
             (&(INDNONE | INDEQ) T_FINALLY &OPTIND exprList T_COLON stmt)? {pin=1 extends=Statement}
 
 ForStmt ::= T_FOR &INDNONE <<listOf (&OPTIND IdentPragmaPair) (T_COMMA)>> T_IN expr T_COLON stmt {pin=1 extends=Statement}
@@ -138,6 +139,8 @@ ProcDef ::= T_PROC routine {pin=1 extends=Statement}
 
 IteratorDef ::= T_ITERATOR routine {pin=1 extends=Statement}
 
+MacroDef ::= T_MACRO routine {pin=1 extends=Statement}
+
 TemplateDef ::= T_TEMPLATE routine {pin=1 extends=Statement}
 
 private meta section ::= &INDNONE <<p>> | <<indented <<listOf <<p>> INDEQ>>>>
@@ -160,6 +163,7 @@ private simpleStmt ::=
   | YieldStmt
   | DiscardStmt
   | BreakStmt
+  | ContinueStmt
   | PragmaStmt
   | ImportStmt
   | (&isExprStart ExprStmt)?
@@ -173,6 +177,8 @@ YieldStmt ::= T_YIELD (&OPTIND &isExprStart expr)? {pin=1 extends=Statement}
 DiscardStmt ::= T_DISCARD (&OPTIND &isExprStart expr)? {pin=1 extends=Statement}
 
 BreakStmt ::= T_BREAK (&OPTIND &isExprStart expr)? {pin=1 extends=Statement}
+
+ContinueStmt ::= T_CONTINUE (&OPTIND &isExprStart expr)? {pin=1 extends=Statement}
 
 PragmaStmt ::= Pragma (&INDNONE T_COLON stmt)? {extends=Statement}
 
@@ -255,7 +261,7 @@ NilToken ::= T_NIL {extends=Expression}
 BracketCtor ::= T_LBRACKET exprColonEqExprList T_RBRACKET {pin=1 extends=Expression}
 CastExpr ::= T_CAST T_LBRACKET &OPTIND TypeDesc T_RBRACKET T_LPAREN &OPTIND expr T_RPAREN {pin=1 extends=Expression}
 
-private par ::= StmtListExpr | TupleCtor | GroupedExpr
+private par ::= &T_LPAREN (StmtListExpr | TupleCtor | GroupedExpr) {pin=1}
 
 StmtListExpr ::= T_LPAREN &OPTIND (stmtListExpr0 | stmtListExpr1 | stmtListExpr2) T_RPAREN {extends=Expression}
 
@@ -265,20 +271,21 @@ private stmtKeyw ::= T_DISCARD | T_INCLUDE | T_IF | T_WHILE | T_CASE | T_TRY | T
 
 private stmtListExpr1 ::= T_SEMICOLON &OPTIND semiStmtList {pin=1}
 
-private stmtListExpr2 ::= &(simpleExpr AssignmentExpr) ExprStmt T_SEMICOLON semiStmtList {pin=3}
+private stmtListExpr2 ::= &(simpleExpr (AssignmentExpr | T_SEMICOLON)) ExprStmt T_SEMICOLON semiStmtList {pin=3}
 
 private semiStmtList ::= <<enterSemiStmtList <<listOf complexOrSimpleStmt (T_SEMICOLON &OPTIND)>>>>
 
-TupleCtor ::= T_LPAREN &OPTIND <<listOf CtorArg (T_COMMA)>> T_RPAREN {extends=Expression}
+TupleCtor ::= T_LPAREN &OPTIND (namedArgs | simpleExpr T_COMMA <<listOf expr (T_COMMA)>>) T_RPAREN {extends=Expression}
+private namedArgs ::= <<listOf CtorArg (T_COMMA)>>
 CtorArg ::= Identifier T_COLON expr {pin=2}
 
-GroupedExpr ::= T_LPAREN &OPTIND simpleExpr AssignmentExpr? T_RPAREN {pin=1 extends=Expression}
+GroupedExpr ::= T_LPAREN &OPTIND simpleExpr AssignmentExpr? T_RPAREN {extends=Expression}
 
 SetOrTableCtor ::= T_LBRACE &OPTIND (T_COLON | <<listOf exprColonEqExpr (T_COMMA)>>? T_COMMA?) T_RBRACE {extends=Expression}
 
 private primarySuffix ::= &INDNONE (ObjectCtor | CallExpr | &T_DO callWithDoBlocks | BracketExpr | CommandExpr) | DotExpr
 
-left ObjectCtor ::= T_LPAREN &OPTIND <<listOf CtorArg (T_COMMA)>> T_RPAREN {extends=Expression}
+left ObjectCtor ::= T_LPAREN &OPTIND namedArgs T_RPAREN {extends=Expression}
 
 left callWithDoBlocks ::= doBlocks {elementType=CallExpr}
 private doBlocks ::= <<listOf DoBlock INDEQ>>?

@@ -9,7 +9,6 @@ public interface ElementTypes extends ElementTypesBase {
   IElementType T_ASM = new NimTokenType("T_ASM");
   IElementType T_ATOMIC = new NimTokenType("T_ATOMIC");
   IElementType T_CONCEPT = new NimTokenType("T_CONCEPT");
-  IElementType T_CONTINUE = new NimTokenType("T_CONTINUE");
   IElementType T_CONVERTER = new NimTokenType("T_CONVERTER");
   IElementType T_END = new NimTokenType("T_END");
   IElementType T_EXPORT = new NimTokenType("T_EXPORT");
@@ -17,7 +16,6 @@ public interface ElementTypes extends ElementTypesBase {
   IElementType T_FUNC = new NimTokenType("T_FUNC");
   IElementType T_GENERIC = new NimTokenType("T_GENERIC");
   IElementType T_INTERFACE = new NimTokenType("T_INTERFACE");
-  IElementType T_MACRO = new NimTokenType("T_MACRO");
   IElementType T_METHOD = new NimTokenType("T_METHOD");
   IElementType T_USING = new NimTokenType("T_USING");
   IElementType T_WITH = new NimTokenType("T_WITH");

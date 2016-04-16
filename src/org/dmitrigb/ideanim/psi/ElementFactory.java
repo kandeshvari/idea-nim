@@ -60,6 +60,9 @@ public class ElementFactory {
     else if (type == CONST_SECT) {
       return new ConstSectImpl(node);
     }
+    else if (type == CONTINUE_STMT) {
+      return new ContinueStmtImpl(node);
+    }
     else if (type == CTOR_ARG) {
       return new CtorArgImpl(node);
     }
@@ -128,6 +131,9 @@ public class ElementFactory {
     }
     else if (type == LITERAL) {
       return new LiteralImpl(node);
+    }
+    else if (type == MACRO_DEF) {
+      return new MacroDefImpl(node);
     }
     else if (type == NIL_TOKEN) {
       return new NilTokenImpl(node);
