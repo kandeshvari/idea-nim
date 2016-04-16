@@ -120,6 +120,9 @@ public class ElementFactory {
     else if (type == IMPORT_STMT) {
       return new ImportStmtImpl(node);
     }
+    else if (type == INCLUDE_STMT) {
+      return new IncludeStmtImpl(node);
+    }
     else if (type == INFIX_EXPR) {
       return new InfixExprImpl(node);
     }
@@ -182,6 +185,9 @@ public class ElementFactory {
     }
     else if (type == STATIC_STMT) {
       return new StaticStmtImpl(node);
+    }
+    else if (type == STATIC_TYPE_EXPR) {
+      return new StaticTypeExprImpl(node);
     }
     else if (type == STMT_LIST_EXPR) {
       return new StmtListExprImpl(node);

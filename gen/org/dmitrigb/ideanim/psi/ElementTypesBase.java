@@ -39,6 +39,7 @@ public interface ElementTypesBase {
   IElementType IF_EXPR = new NimElementType("IF_EXPR");
   IElementType IF_STMT = new NimElementType("IF_STMT");
   IElementType IMPORT_STMT = new NimElementType("IMPORT_STMT");
+  IElementType INCLUDE_STMT = new NimElementType("INCLUDE_STMT");
   IElementType INFIX_EXPR = new NimElementType("INFIX_EXPR");
   IElementType ITERATOR_DEF = new NimElementType("ITERATOR_DEF");
   IElementType LET_SECT = new NimElementType("LET_SECT");
@@ -61,6 +62,7 @@ public interface ElementTypesBase {
   IElementType SET_OR_TABLE_CTOR = new NimElementType("SET_OR_TABLE_CTOR");
   IElementType STATEMENT = new NimElementType("STATEMENT");
   IElementType STATIC_STMT = new NimElementType("STATIC_STMT");
+  IElementType STATIC_TYPE_EXPR = new NimElementType("STATIC_TYPE_EXPR");
   IElementType STMT_LIST_EXPR = new NimElementType("STMT_LIST_EXPR");
   IElementType TEMPLATE_DEF = new NimElementType("TEMPLATE_DEF");
   IElementType TRY_STMT = new NimElementType("TRY_STMT");

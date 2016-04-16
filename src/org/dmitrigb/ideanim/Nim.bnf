@@ -1,3 +1,12 @@
+/*
+  This BNF grammar is largely based on the parser.nim file from the Nim compiler repository. The structure of this file
+  tries to follow the structure of the parser.nim file as closely as possible. This is done to facilitate easier
+  maintenance of the grammar.
+  Names of many production rules match the names of corresponding procedures defined there. However, there are also some
+  deviations that one must keep in mind when changing this grammar (e.g. the 'symbol' rule is never used directly,
+  instead it must be used through the rules 'Identifier' and 'IdentifierDef').
+  The parts that are not directly portable to BNF are implemented using external rules.
+*/
 {
   parserClass = "org.dmitrigb.ideanim.parser.NimParser"
   extends = "com.intellij.extapi.psi.ASTWrapperPsiElement"
@@ -46,6 +55,9 @@ Identifier ::= symbol
 
 // Used when the identifier is the sole element that represents a definition.
 // Mostly used in cases like "a, b, c: SomeType" where the only way to uniquely refer to "a" is through the identifier.
+// On the other hand, in "proc foo() = discard" the symbol "foo" doesn't need to be an IdentifierDef, because we can
+// refer to the procedure as a whole (i.e. we can refer to the ProcDef).
+// The underlying difference is that IdentifierDef implements PsiNamedElement.
 IdentifierDef ::= symbol {extends=Identifier}
 
 private identWithPragma ::= Identifier OPERATOR? Pragma?
@@ -166,6 +178,7 @@ private simpleStmt ::=
   | ContinueStmt
   | PragmaStmt
   | ImportStmt
+  | IncludeStmt
   | (&isExprStart ExprStmt)?
 
 ReturnStmt ::= T_RETURN (&OPTIND &isExprStart expr)? {pin=1 extends=Statement}
@@ -182,7 +195,10 @@ ContinueStmt ::= T_CONTINUE (&OPTIND &isExprStart expr)? {pin=1 extends=Statemen
 
 PragmaStmt ::= Pragma (&INDNONE T_COLON stmt)? {extends=Statement}
 
-ImportStmt ::= T_IMPORT &OPTIND expr (T_COMMA &OPTIND expr)* {pin=1 extends=Statement}
+ImportStmt ::= T_IMPORT &OPTIND moduleName (T_EXCEPT <<listOf (&OPTIND moduleName) (T_COMMA)>> | (T_COMMA &OPTIND moduleName)*) {pin=1 extends=Statement}
+private moduleName ::= expr
+
+IncludeStmt ::= T_INCLUDE <<listOf (&OPTIND expr) (T_COMMA)>> {pin=1}
 
 ExprStmt ::= simpleExpr (AssignmentExpr | &INDNONE <<extendCommand (T_COMMA &OPTIND expr)+>>? (&T_DO doBlocks | macroColon)? )?
   {extends=Statement}
@@ -208,6 +224,7 @@ private primary ::=
     | !<<inNormalMode>> (T_PROC | T_ITERATOR) (&INDNONE paramListColon? Pragma?)?
     | &<<inTypeDefMode>> EnumDef
     | &<<inTypeDefMode>> ObjectDef
+    | StaticTypeExpr
     | VarTypeExpr
     | RefTypeExpr
     | PtrTypeExpr
@@ -233,6 +250,8 @@ private objectWhen ::= T_WHEN <<listOf (&OPTIND expr T_COLON objectPart) (&INDEQ
 
 private objectCase ::= T_CASE &INDNONE identWithPragma T_COLON TypeDesc T_COLON? (<<indented objectCaseBranches>> | objectCaseBranches)  {pin=1}
 private objectCaseBranches ::= (&INDEQ T_OF exprList T_COLON objectPart)* (&INDEQ T_ELSE T_COLON objectPart)?
+
+StaticTypeExpr ::= T_STATIC &INDNONE T_LBRACKET expr T_RBRACKET
 
 VarTypeExpr ::= T_VAR &OPTIND typeDescK {pin=1 extends=Expression}
 RefTypeExpr ::= T_REF &OPTIND typeDescK {pin=1 extends=Expression}
