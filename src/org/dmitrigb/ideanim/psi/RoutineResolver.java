@@ -109,8 +109,11 @@ public class RoutineResolver extends SymbolResolver {
     for (int i = 0; i < params.size(); i++) {
       Param param = params.get(i);
       Expression arg = arguments.get(i);
-      Type paramType = param.type.toType();
+      Type paramType = param.type == null ? null : param.type.toType();
       Type argType = arg.getType();
+
+      if (paramType == null || argType == null)
+        continue;
 
       if (argType.equals(paramType)) {
         counts.addMatch(MatchCategory.EXACT);
