@@ -88,16 +88,13 @@ public class MemberReference extends IdentifierReference {
   }
 
   private boolean walkUpHierarchy(PsiScopeProcessor processor, Type type) {
-    type = Types.unwrapBaseType(type);
-    if (type instanceof TObject) {
-      ResolveState state = ResolveState.initial();
+    ResolveState state = ResolveState.initial();
+    type = Types.unwrapNamedAndDeref(type);
+    while (type instanceof TObject) {
       TObject tObj = (TObject) type;
-      ObjectDef objDef = tObj.getObject();
-      while (objDef != null) {
-        if (!objDef.processDeclarations(processor, state, null, tObj.getObject()))
-          return false;
-        objDef = NimPsiTreeUtil.getSuperTypeDef(objDef);
-      }
+      if (!tObj.getObject().processDeclarations(processor, state, null, getElement()))
+        return false;
+      type = Types.unwrapNamedAndDeref(tObj.getSuperType());
     }
     return true;
   }

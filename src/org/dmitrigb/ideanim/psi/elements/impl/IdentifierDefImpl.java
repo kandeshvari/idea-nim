@@ -3,6 +3,8 @@ package org.dmitrigb.ideanim.psi.elements.impl;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.search.LocalSearchScope;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.util.IncorrectOperationException;
 import org.dmitrigb.ideanim.psi.ElementFactory;
 import org.dmitrigb.ideanim.psi.ElementTypes;
@@ -38,5 +40,25 @@ public class IdentifierDefImpl extends IdentifierImpl implements IdentifierDef {
   @Override
   public PsiElement getNameIdentifier() {
     return this;
+  }
+
+  @NotNull
+  @Override
+  public SearchScope getUseScope() {
+    PsiElement context = getContext();
+    if (context instanceof IdentifierDefs) {
+      context = context.getContext();
+      if (context instanceof RoutineDef)
+        return new LocalSearchScope(context);
+    }
+    return super.getUseScope();
+  }
+
+  @Override
+  public PsiElement getContext() {
+    PsiElement context = super.getContext();
+    if (context instanceof IdentPragmaPair)
+      return context.getParent();
+    return context;
   }
 }

@@ -31,16 +31,16 @@ public class IdentifierImpl extends ASTWrapperPsiElement implements Identifier {
       if (grand instanceof SimpleTypeDesc || grand instanceof ObjectCtor)
         return new TypeReference(this);
 
-      if (grand instanceof CallExpr && parent == grand.getFirstChild())
+      if (grand instanceof CallExpr && parent == ((CallExpr) grand).getCallee())
         return new ProcReference(this, ((CallExpr) grand).getArgumentList());
     }
 
     if (parent instanceof DotExpr) {
       PsiElement grand = parent.getParent();
       List<Expression> args = null;
-      if (grand instanceof CallExpr)
+      if (grand instanceof CallExpr && ((CallExpr) grand).getCallee() == parent)
         args = ((CallExpr) grand).getArgumentList();
-      return new MemberReference(((DotExpr) parent).getExpression(), this, args);
+      return new MemberReference(((DotExpr) parent).getReceiver(), this, args);
     }
 
     if (parent instanceof CtorArg) {

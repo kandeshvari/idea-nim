@@ -5,7 +5,7 @@ import org.jetbrains.annotations.*;
 public interface DotExpr extends Expression {
 
   @NotNull
-  Expression getExpression();
+  Expression getReceiver();
 
   @Nullable
   Identifier getIdentifier();

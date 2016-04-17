@@ -8,6 +8,7 @@ import org.dmitrigb.ideanim.types.TGeneric;
 import org.dmitrigb.ideanim.types.TPrimitive;
 import org.dmitrigb.ideanim.types.Type;
 import org.dmitrigb.ideanim.psi.elements.*;
+import org.dmitrigb.ideanim.types.Types;
 import org.jetbrains.annotations.NotNull;
 
 public class IdentifierExprImpl extends BaseExpression implements IdentifierExpr {
@@ -26,12 +27,9 @@ public class IdentifierExprImpl extends BaseExpression implements IdentifierExpr
   public Type getType() {
     PsiReference reference = getIdentifier().getReference();
     if (reference == null)
-      return null;
+      return Type.UNKNOWN;
     PsiElement target = reference.resolve();
-    TypeDesc typeDesc = NimPsiTreeUtil.getDeclaredType(target);
-    if (typeDesc != null)
-      return typeDesc.toType();
-    return null;
+    return Types.getDeclarationType(target);
   }
 
   @Override

@@ -9,20 +9,6 @@ public class Type {
 
   public static final Type UNKNOWN = new Type();
 
-  private final TypeDef definition;
-
-  public Type() {
-    definition = null;
-  }
-
-  public Type(TypeDef definition) {
-    this.definition = definition;
-  }
-
-  public TypeDef getDefinition() {
-    return definition;
-  }
-
   @Override
   public boolean equals(Object o) {
     return this == o || o instanceof Type && equals((Type) o, new HashSet<>());

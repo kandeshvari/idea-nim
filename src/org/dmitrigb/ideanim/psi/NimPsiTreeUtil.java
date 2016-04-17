@@ -99,9 +99,7 @@ public abstract class NimPsiTreeUtil {
    */
   public static TypeDesc getDeclaredType(PsiElement element) {
     if (element instanceof Identifier)
-      element = element.getParent();
-    if (element instanceof IdentPragmaPair)
-      element = element.getParent();
+      element = element.getContext();
 
     if (element instanceof ProcResultPsiElement)
       return ((ProcResultPsiElement) element).getProcReturnType();

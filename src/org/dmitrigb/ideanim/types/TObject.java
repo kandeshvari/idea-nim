@@ -14,11 +14,6 @@ public class TObject extends Type {
     this.object = object;
   }
 
-  public TObject(TypeDef definition) {
-    super(definition);
-    object = (ObjectDef) definition.getDefinition();
-  }
-
   public ObjectDef getObject() {
     return object;
   }
@@ -37,7 +32,6 @@ public class TObject extends Type {
 
   @Override
   public String toString() {
-    TypeDef def = getDefinition();
-    return "object" + (def != null ? " (" + def.getName() + ")" : "");
+    return "object";
   }
 }

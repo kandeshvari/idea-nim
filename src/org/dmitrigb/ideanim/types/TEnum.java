@@ -9,11 +9,6 @@ public class TEnum extends Type {
 
   private EnumDef enumDef;
 
-  public TEnum(TypeDef definition) {
-    super(definition);
-    enumDef = (EnumDef) definition.getDefinition();
-  }
-
   public TEnum(EnumDef enumDef) {
     this.enumDef = enumDef;
   }
@@ -29,7 +24,6 @@ public class TEnum extends Type {
 
   @Override
   public String toString() {
-    TypeDef def = getDefinition();
-    return "enum" + (def != null ? " (" + def.getName() + ")" : "");
+    return "enum";
   }
 }
