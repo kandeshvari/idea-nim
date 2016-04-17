@@ -31,4 +31,6 @@ public interface RoutineDef extends Statement, PsiNameIdentifierOwner {
 
   boolean isForwardDeclaration();
 
+  int getParameterCount();
+
 }

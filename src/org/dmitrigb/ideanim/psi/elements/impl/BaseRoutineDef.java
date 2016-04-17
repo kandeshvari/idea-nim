@@ -75,6 +75,11 @@ public abstract class BaseRoutineDef extends BaseStatement implements RoutineDef
   }
 
   @Override
+  public int getParameterCount() {
+    return (int) getParameters().stream().flatMap(def -> def.getIdentifiers().stream()).count();
+  }
+
+  @Override
   public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
     if (lastParent != null) {
       List<IdentifierDefs> params = getParameters();

@@ -8,13 +8,13 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.BaseScopeProcessor;
 import org.dmitrigb.ideanim.psi.elements.IdentPragmaPair;
-import org.dmitrigb.ideanim.psi.elements.Identifier;
+import org.dmitrigb.ideanim.psi.elements.IdentifierDef;
 import org.dmitrigb.ideanim.psi.elements.ObjectFields;
 import org.jetbrains.annotations.NotNull;
 
 public class MemberCollector extends BaseScopeProcessor {
 
-  private List<Identifier> candidates = new ArrayList<>();
+  private List<IdentifierDef> candidates = new ArrayList<>();
 
   @Override
   public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
@@ -25,7 +25,7 @@ public class MemberCollector extends BaseScopeProcessor {
     return true;
   }
 
-  public List<Identifier> getCandidates() {
+  public List<IdentifierDef> getCandidates() {
     return candidates;
   }
 }
