@@ -10,7 +10,7 @@ import org.dmitrigb.ideanim.psi.elements.Literal;
 import org.dmitrigb.ideanim.types.TPrimitive;
 import org.jetbrains.annotations.NotNull;
 
-import static org.dmitrigb.ideanim.psi.ElementTypesBase.*;
+import static org.dmitrigb.ideanim.psi.ElementTypes.*;
 
 public class LiteralImpl extends BaseExpression implements Literal {
 

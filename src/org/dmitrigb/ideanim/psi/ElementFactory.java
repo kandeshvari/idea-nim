@@ -15,7 +15,7 @@ import org.dmitrigb.ideanim.psi.elements.IdentifierExpr;
 import org.dmitrigb.ideanim.psi.elements.Statement;
 import org.dmitrigb.ideanim.psi.elements.impl.*;
 
-import static org.dmitrigb.ideanim.psi.ElementTypesBase.*;
+import static org.dmitrigb.ideanim.psi.ElementTypes.*;
 
 public class ElementFactory {
 

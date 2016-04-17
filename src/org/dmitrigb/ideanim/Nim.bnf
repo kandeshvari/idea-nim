@@ -11,13 +11,13 @@
   parserClass = "org.dmitrigb.ideanim.parser.NimParser"
   extends = "com.intellij.extapi.psi.ASTWrapperPsiElement"
   
-  elementTypeHolderClass = "org.dmitrigb.ideanim.psi.ElementTypesBase"
+  elementTypeHolderClass = "org.dmitrigb.ideanim.psi.ElementTypes"
   elementTypeClass = "org.dmitrigb.ideanim.psi.NimElementType"
   tokenTypeClass = "org.dmitrigb.ideanim.psi.NimTokenType"
 
   parserUtilClass = "org.dmitrigb.ideanim.parser.ParserUtil"
 
-  generate=[psi="no"]
+  generate=[psi="no" elements="no" tokens="no"]
 }
 
 NimFile ::= <<listOf (!<<eof>> complexOrSimpleStmt) (T_SEMICOLON (&INDNONE | &INDEQ) | &INDEQ)>>?

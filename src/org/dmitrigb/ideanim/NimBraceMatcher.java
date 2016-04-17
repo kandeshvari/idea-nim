@@ -1,18 +1,13 @@
 package org.dmitrigb.ideanim;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.BracePair;
 import com.intellij.lang.PairedBraceMatcher;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import static org.dmitrigb.ideanim.psi.ElementTypesBase.T_LBRACE;
-import static org.dmitrigb.ideanim.psi.ElementTypesBase.T_LBRACKET;
-import static org.dmitrigb.ideanim.psi.ElementTypesBase.T_LPAREN;
-import static org.dmitrigb.ideanim.psi.ElementTypesBase.T_RBRACE;
-import static org.dmitrigb.ideanim.psi.ElementTypesBase.T_RBRACKET;
-import static org.dmitrigb.ideanim.psi.ElementTypesBase.T_RPAREN;
+import static org.dmitrigb.ideanim.psi.ElementTypes.*;
 
 public class NimBraceMatcher implements PairedBraceMatcher {
 

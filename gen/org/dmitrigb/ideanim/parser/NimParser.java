@@ -3,7 +3,7 @@ package org.dmitrigb.ideanim.parser;
 
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
-import static org.dmitrigb.ideanim.psi.ElementTypesBase.*;
+import static org.dmitrigb.ideanim.psi.ElementTypes.*;
 import static org.dmitrigb.ideanim.parser.ParserUtil.*;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.lang.ASTNode;
