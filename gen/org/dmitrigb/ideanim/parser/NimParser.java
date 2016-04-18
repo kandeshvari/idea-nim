@@ -2883,13 +2883,13 @@ public class NimParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // identColonEqualsWithPragma
+  // identColonEqualsWithPragma | varTuple
   public static boolean VarDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "VarDef")) return false;
-    if (!nextTokenIs(b, "<var def>", ACCENT_QUOTED, IDENT)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, VAR_DEF, "<var def>");
     r = identColonEqualsWithPragma(b, l + 1);
+    if (!r) r = varTuple(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -5771,6 +5771,104 @@ public class NimParser implements PsiParser, LightPsiParser {
     return r;
   }
 
+  /* ********************************************************** */
+  // T_LPAREN &OPTIND <<listOf (&(IDENT | ACCENT_QUOTED) IdentPragmaPair) (T_COMMA)>>? !INDLT T_RPAREN T_EQ &OPTIND expr
+  static boolean varTuple(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTuple")) return false;
+    if (!nextTokenIs(b, T_LPAREN)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, T_LPAREN);
+    p = r; // pin = 1
+    r = r && varTuple_1(b, l + 1);
+    r = r && varTuple_2(b, l + 1);
+    r = r && varTuple_3(b, l + 1);
+    r = r && consumeTokens(b, -1, T_RPAREN, T_EQ);
+    r = r && varTuple_6(b, l + 1);
+    r = r && expr(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // &OPTIND
+  private static boolean varTuple_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTuple_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _AND_);
+    r = indOpt(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // <<listOf (&(IDENT | ACCENT_QUOTED) IdentPragmaPair) (T_COMMA)>>?
+  private static boolean varTuple_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTuple_2")) return false;
+    listOf(b, l + 1, varTuple_2_0_0_parser_, varTuple_2_0_1_parser_);
+    return true;
+  }
+
+  // &(IDENT | ACCENT_QUOTED) IdentPragmaPair
+  private static boolean varTuple_2_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTuple_2_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = varTuple_2_0_0_0(b, l + 1);
+    r = r && IdentPragmaPair(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // &(IDENT | ACCENT_QUOTED)
+  private static boolean varTuple_2_0_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTuple_2_0_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _AND_);
+    r = varTuple_2_0_0_0_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // IDENT | ACCENT_QUOTED
+  private static boolean varTuple_2_0_0_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTuple_2_0_0_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, IDENT);
+    if (!r) r = consumeToken(b, ACCENT_QUOTED);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (T_COMMA)
+  private static boolean varTuple_2_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTuple_2_0_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, T_COMMA);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // !INDLT
+  private static boolean varTuple_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTuple_3")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !indLt(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // &OPTIND
+  private static boolean varTuple_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varTuple_6")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _AND_);
+    r = indOpt(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
   final static Parser Block_0_0_1_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return Block_0_0_1(b, l + 1);
@@ -6027,4 +6125,10 @@ public class NimParser implements PsiParser, LightPsiParser {
       return tuple_1_2_1(b, l + 1);
     }
   };
+  final static Parser varTuple_2_0_0_parser_ = new Parser() {
+    public boolean parse(PsiBuilder b, int l) {
+      return varTuple_2_0_0(b, l + 1);
+    }
+  };
+  final static Parser varTuple_2_0_1_parser_ = ForStmt_2_1_parser_;
 }

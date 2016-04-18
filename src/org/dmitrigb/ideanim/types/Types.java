@@ -74,7 +74,7 @@ public abstract class Types {
     Expression initializer = null;
     if (declaration instanceof IdentifierDef) {
       PsiElement context = declaration.getContext();
-      if (context instanceof VarDef)
+      if (context instanceof VarDef && !((VarDef) context).isVarTuple())
         initializer = ((VarDef) context).getInitializer();
     }
 

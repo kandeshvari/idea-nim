@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.dmitrigb.ideanim.psi.ElementTypes;
 import org.dmitrigb.ideanim.psi.elements.Expression;
 import org.dmitrigb.ideanim.psi.elements.IdentPragmaPair;
 import org.dmitrigb.ideanim.psi.elements.TypeDesc;
@@ -37,6 +38,11 @@ public class VarDefImpl extends ASTWrapperPsiElement implements VarDef {
   @Nullable
   public Expression getInitializer() {
     return findChildByClass(Expression.class);
+  }
+
+  @Override
+  public boolean isVarTuple() {
+    return getNode().getFirstChildNode().getElementType() == ElementTypes.T_LPAREN;
   }
 
   @Override

@@ -15,4 +15,6 @@ public interface VarDef extends PsiElement {
   @Nullable
   Expression getInitializer();
 
+  boolean isVarTuple();
+
 }

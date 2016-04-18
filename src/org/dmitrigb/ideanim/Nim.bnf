@@ -166,7 +166,8 @@ LetSect ::= T_LET <<section VarDef>> {pin=1 extends=Statement}
 VarSect ::= T_VAR <<section VarDef>> {pin=1 extends=Statement}
 
 ConstDef ::= identWithPragma (T_COLON &OPTIND TypeDesc)? T_EQ &OPTIND expr
-VarDef ::= identColonEqualsWithPragma
+VarDef ::= identColonEqualsWithPragma | varTuple
+private varTuple ::= T_LPAREN &OPTIND <<listOf (&(IDENT | ACCENT_QUOTED) IdentPragmaPair) (T_COMMA)>>? !INDLT T_RPAREN T_EQ &OPTIND expr {pin=1}
 
 TypeDesc ::= <<typeDescMode simpleExpr>>
 
