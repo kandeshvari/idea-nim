@@ -200,6 +200,9 @@ public class NimParser implements PsiParser, LightPsiParser {
     else if (t == TUPLE_CTOR) {
       r = TupleCtor(b, 0);
     }
+    else if (t == TUPLE_TYPE_EXPR) {
+      r = TupleTypeExpr(b, 0);
+    }
     else if (t == TYPE_DEF) {
       r = TypeDef(b, 0);
     }
@@ -2825,6 +2828,31 @@ public class NimParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // T_LPAREN <<listOf simpleExpr (T_COMMA)>> T_RPAREN
+  public static boolean TupleTypeExpr(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "TupleTypeExpr")) return false;
+    if (!nextTokenIs(b, T_LPAREN)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, TUPLE_TYPE_EXPR, null);
+    r = consumeToken(b, T_LPAREN);
+    p = r; // pin = 1
+    r = r && report_error_(b, listOf(b, l + 1, simpleExpr_parser_, TupleTypeExpr_1_1_parser_));
+    r = p && consumeToken(b, T_RPAREN) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // (T_COMMA)
+  private static boolean TupleTypeExpr_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "TupleTypeExpr_1_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, T_COMMA);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // identWithPragma (&OPTIND genericParameters)? (T_EQ &OPTIND <<typeDefMode simpleExpr>>)?
   public static boolean TypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TypeDef")) return false;
@@ -4246,6 +4274,7 @@ public class NimParser implements PsiParser, LightPsiParser {
   //     | BracketCtor
   //     | CastExpr
   //     | <<inNormalMode>> par
+  //     | !<<inNormalMode>> TupleTypeExpr
   //     | SetOrTableCtor
   static boolean identOrLiteral(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "identOrLiteral")) return false;
@@ -4258,6 +4287,7 @@ public class NimParser implements PsiParser, LightPsiParser {
     if (!r) r = BracketCtor(b, l + 1);
     if (!r) r = CastExpr(b, l + 1);
     if (!r) r = identOrLiteral_6(b, l + 1);
+    if (!r) r = identOrLiteral_7(b, l + 1);
     if (!r) r = SetOrTableCtor(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -4345,6 +4375,27 @@ public class NimParser implements PsiParser, LightPsiParser {
     r = inNormalMode(b, l + 1);
     r = r && par(b, l + 1);
     exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // !<<inNormalMode>> TupleTypeExpr
+  private static boolean identOrLiteral_7(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "identOrLiteral_7")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = identOrLiteral_7_0(b, l + 1);
+    r = r && TupleTypeExpr(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // !<<inNormalMode>>
+  private static boolean identOrLiteral_7_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "identOrLiteral_7_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !inNormalMode(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -6025,6 +6076,7 @@ public class NimParser implements PsiParser, LightPsiParser {
   };
   final static Parser SetOrTableCtor_2_1_0_0_1_parser_ = ForStmt_2_1_parser_;
   final static Parser TupleCtor_2_1_2_1_parser_ = ForStmt_2_1_parser_;
+  final static Parser TupleTypeExpr_1_1_parser_ = ForStmt_2_1_parser_;
   final static Parser TypeDef_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return TypeDef(b, l + 1);

@@ -31,6 +31,16 @@ public class CompletionTests extends LightPlatformCodeInsightFixtureTestCase {
     assertContainsElements(strings, "A", "Foo", "Bah", "int", "string");
   }
 
+  public void testTypesInTupleTypeExpr() throws Exception {
+    List<String> strings = getCompletionStrings("" +
+        "type\n" +
+        "  A = object\n" +
+        "  Foo = int\n" +
+        "proc bar[Bah]() =\n" +
+        "  var a: (<caret>)\n");
+    assertContainsElements(strings, "A", "Foo", "Bah", "int", "string");
+  }
+
   @NotNull
   private List<String> getCompletionStrings(String nimSource) {
     myFixture.configureByText(NimFileType.INSTANCE, nimSource);

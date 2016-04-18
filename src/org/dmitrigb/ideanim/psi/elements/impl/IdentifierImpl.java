@@ -28,7 +28,7 @@ public class IdentifierImpl extends ASTWrapperPsiElement implements Identifier {
     if (parent instanceof IdentifierExpr) {
       PsiElement grand = parent.getParent();
 
-      if (grand instanceof SimpleTypeDesc || grand instanceof ObjectCtor)
+      if (grand instanceof SimpleTypeDesc || grand instanceof ObjectCtor || grand instanceof TupleTypeExpr)
         return new TypeReference(this);
 
       if (grand instanceof CallExpr && parent == ((CallExpr) grand).getCallee())

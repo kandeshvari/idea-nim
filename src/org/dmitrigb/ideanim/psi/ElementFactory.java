@@ -204,6 +204,9 @@ public class ElementFactory {
     else if (type == TUPLE_CTOR) {
       return new TupleCtorImpl(node);
     }
+    else if (type == TUPLE_TYPE_EXPR) {
+      return new TupleTypeExprImpl(node);
+    }
     else if (type == TYPE_DEF) {
       return new TypeDefImpl(node);
     }

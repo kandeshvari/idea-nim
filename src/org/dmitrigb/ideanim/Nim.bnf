@@ -277,6 +277,7 @@ private identOrLiteral ::=
     | BracketCtor
     | CastExpr
     | <<inNormalMode>> par
+    | !<<inNormalMode>> TupleTypeExpr
     | SetOrTableCtor
 
 IdentifierExpr ::= Identifier {extends=Expression}
@@ -304,6 +305,8 @@ private namedArgs ::= <<listOf CtorArg (T_COMMA)>>
 CtorArg ::= Identifier T_COLON expr {pin=2}
 
 GroupedExpr ::= T_LPAREN &OPTIND simpleExpr AssignmentExpr? T_RPAREN {extends=Expression}
+
+TupleTypeExpr ::= T_LPAREN <<listOf simpleExpr (T_COMMA)>> T_RPAREN {pin=1}
 
 SetOrTableCtor ::= T_LBRACE &OPTIND (T_COLON | <<listOf exprColonEqExpr (T_COMMA)>>? T_COMMA?) T_RBRACE {extends=Expression}
 

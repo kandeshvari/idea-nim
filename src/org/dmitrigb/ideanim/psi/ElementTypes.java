@@ -175,6 +175,7 @@ public interface ElementTypes {
   IElementType TEMPLATE_DEF = new NimElementType("TEMPLATE_DEF");
   IElementType TRY_STMT = new NimElementType("TRY_STMT");
   IElementType TUPLE_CTOR = new NimElementType("TUPLE_CTOR");
+  IElementType TUPLE_TYPE_EXPR = new NimElementType("TUPLE_TYPE_EXPR");
   TypeDefStubElementType TYPE_DEF = new TypeDefStubElementType();
   IElementType TYPE_DESC = new NimElementType("TYPE_DESC");
   IElementType TYPE_SECT = new NimElementType("TYPE_SECT");
