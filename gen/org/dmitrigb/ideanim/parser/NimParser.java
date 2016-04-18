@@ -3290,7 +3290,7 @@ public class NimParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // !(INDEQ | INDLT | T_SEMICOLON | T_RPAREN)
+  // !(INDEQ | INDLT | T_SEMICOLON | T_RPAREN | T_COMMA)
   static boolean complexOrSimpleStmtRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "complexOrSimpleStmtRecover")) return false;
     boolean r;
@@ -3300,7 +3300,7 @@ public class NimParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // INDEQ | INDLT | T_SEMICOLON | T_RPAREN
+  // INDEQ | INDLT | T_SEMICOLON | T_RPAREN | T_COMMA
   private static boolean complexOrSimpleStmtRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "complexOrSimpleStmtRecover_0")) return false;
     boolean r;
@@ -3309,6 +3309,7 @@ public class NimParser implements PsiParser, LightPsiParser {
     if (!r) r = indLt(b, l + 1);
     if (!r) r = consumeToken(b, T_SEMICOLON);
     if (!r) r = consumeToken(b, T_RPAREN);
+    if (!r) r = consumeToken(b, T_COMMA);
     exit_section_(b, m, null, r);
     return r;
   }

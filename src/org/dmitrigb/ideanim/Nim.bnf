@@ -109,7 +109,7 @@ private complexOrSimpleStmt ::=
   | simpleStmt
   {recoverWhile="complexOrSimpleStmtRecover"}
 
-private complexOrSimpleStmtRecover ::= !(INDEQ | INDLT | T_SEMICOLON | T_RPAREN)
+private complexOrSimpleStmtRecover ::= !(INDEQ | INDLT | T_SEMICOLON | T_RPAREN | T_COMMA)
 
 
 private condStmt ::= <<listOf (expr T_COLON stmt) ((&INDNONE | &INDEQ) T_ELIF)>> ((&INDNONE | &INDEQ) T_ELSE T_COLON stmt)?
