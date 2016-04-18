@@ -327,6 +327,3 @@ private exprColonEqExpr ::= expr (T_COLON expr | T_EQ expr)?
 left CommandExpr ::= &(IDENT | Literal | ACCENT_QUOTED | T_NIL | T_CAST | T_ADDR | T_TYPE) expr {extends=Expression}
 
 left DotExpr ::= T_DOT &OPTIND Identifier {pin=1 extends=Expression}
-
-
-fake InfixExpr ::= // Used by ParserUtil
