@@ -126,7 +126,7 @@ private caseBranches ::= (&INDEQ T_OF &OPTIND exprList T_COLON stmt)* (&INDEQ T_
 private exprList ::= <<listOf expr (T_COMMA &OPTIND)>>
 
 TryStmt ::= T_TRY T_COLON stmt (&(INDNONE | INDEQ) T_EXCEPT &OPTIND exprList? T_COLON stmt)*
-            (&(INDNONE | INDEQ) T_FINALLY &OPTIND exprList T_COLON stmt)? {pin=1 extends=Statement}
+            (&(INDNONE | INDEQ) T_FINALLY T_COLON stmt)? {pin=1 extends=Statement}
 
 ForStmt ::= T_FOR &INDNONE <<listOf (&OPTIND IdentPragmaPair) (T_COMMA)>> T_IN expr T_COLON stmt {pin=1 extends=Statement}
 

@@ -2585,7 +2585,7 @@ public class NimParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // T_TRY T_COLON stmt (&(INDNONE | INDEQ) T_EXCEPT &OPTIND exprList? T_COLON stmt)*
-  //             (&(INDNONE | INDEQ) T_FINALLY &OPTIND exprList T_COLON stmt)?
+  //             (&(INDNONE | INDEQ) T_FINALLY T_COLON stmt)?
   public static boolean TryStmt(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TryStmt")) return false;
     if (!nextTokenIs(b, T_TRY)) return false;
@@ -2665,23 +2665,20 @@ public class NimParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // (&(INDNONE | INDEQ) T_FINALLY &OPTIND exprList T_COLON stmt)?
+  // (&(INDNONE | INDEQ) T_FINALLY T_COLON stmt)?
   private static boolean TryStmt_4(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TryStmt_4")) return false;
     TryStmt_4_0(b, l + 1);
     return true;
   }
 
-  // &(INDNONE | INDEQ) T_FINALLY &OPTIND exprList T_COLON stmt
+  // &(INDNONE | INDEQ) T_FINALLY T_COLON stmt
   private static boolean TryStmt_4_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TryStmt_4_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = TryStmt_4_0_0(b, l + 1);
-    r = r && consumeToken(b, T_FINALLY);
-    r = r && TryStmt_4_0_2(b, l + 1);
-    r = r && exprList(b, l + 1);
-    r = r && consumeToken(b, T_COLON);
+    r = r && consumeTokens(b, 0, T_FINALLY, T_COLON);
     r = r && stmt(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -2705,16 +2702,6 @@ public class NimParser implements PsiParser, LightPsiParser {
     r = indNone(b, l + 1);
     if (!r) r = indEq(b, l + 1);
     exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // &OPTIND
-  private static boolean TryStmt_4_0_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "TryStmt_4_0_2")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _AND_);
-    r = indOpt(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
