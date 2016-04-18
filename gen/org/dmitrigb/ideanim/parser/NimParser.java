@@ -1741,6 +1741,7 @@ public class NimParser implements PsiParser, LightPsiParser {
   //           | BOOL_LITERAL
   //           | CHARACTER_LITERAL
   //           | STRING_LITERAL
+  //           | TRIPLESTR_LITERAL
   public static boolean Literal(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Literal")) return false;
     boolean r;
@@ -1761,6 +1762,7 @@ public class NimParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, BOOL_LITERAL);
     if (!r) r = consumeToken(b, CHARACTER_LITERAL);
     if (!r) r = consumeToken(b, STRING_LITERAL);
+    if (!r) r = consumeToken(b, TRIPLESTR_LITERAL);
     exit_section_(b, l, m, r, false, null);
     return r;
   }

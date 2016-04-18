@@ -33,6 +33,7 @@ public class LiteralImpl extends BaseExpression implements Literal {
     literalTypes.put(BOOL_LITERAL, TPrimitive.BOOL);
     literalTypes.put(CHARACTER_LITERAL, TPrimitive.CHAR);
     literalTypes.put(STRING_LITERAL, TPrimitive.STRING);
+    literalTypes.put(TRIPLESTR_LITERAL, TPrimitive.STRING);
   }
 
   public LiteralImpl(ASTNode node) {
@@ -118,10 +119,12 @@ public class LiteralImpl extends BaseExpression implements Literal {
 
   @Override
   public String stringValue() {
-    if (getLiteralElementType() != STRING_LITERAL)
-      throw new IllegalStateException("Not a string literal");
     String text = getText();
-    return StringEscapeUtils.unescapeJava(text.substring(1, text.length() - 1));
+    if (getLiteralElementType() == STRING_LITERAL)
+      return StringEscapeUtils.unescapeJava(text.substring(1, text.length() - 1));
+    if (getLiteralElementType() == TRIPLESTR_LITERAL)
+      return text.substring(3, text.length() - 3);
+    throw new IllegalStateException("Not a string literal");
   }
 
   @Override

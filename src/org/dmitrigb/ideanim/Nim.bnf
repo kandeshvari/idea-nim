@@ -49,6 +49,7 @@ Literal ::= FLOAT64_LITERAL
           | BOOL_LITERAL
           | CHARACTER_LITERAL
           | STRING_LITERAL
+          | TRIPLESTR_LITERAL
           {extends=Expression}
 
 Identifier ::= symbol

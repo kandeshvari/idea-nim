@@ -59,6 +59,7 @@ BOOL_LITERAL = "true" | "false"
 
 CHARACTER_LITERAL = \' (\\. | [^\\\'\r\n])* \'?
 STRING_LITERAL = \" (\\. | [^\\\"\r\n])* \"?
+TRIPLESTR_LITERAL = \"\"\" ([^\"]+ | \"\"? [^\"]+)* \"*\"\"\"
 
 ACCENT_QUOTED = ` [^`\r\n]* `
 
@@ -91,6 +92,7 @@ OP_CHAR = [\+\-\*\/\\\<\>\!\?\^\.\|=%&\$@\~:]
 
   {BOOL_LITERAL} { return BOOL_LITERAL; }
   {CHARACTER_LITERAL} { return CHARACTER_LITERAL; }
+  {TRIPLESTR_LITERAL} { return TRIPLESTR_LITERAL; }
   {STRING_LITERAL} { return STRING_LITERAL; }
 
   {ACCENT_QUOTED} { return ACCENT_QUOTED; }
