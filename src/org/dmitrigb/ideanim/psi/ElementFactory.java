@@ -90,6 +90,9 @@ public class ElementFactory {
     else if (type == FOR_STMT) {
       return new ForStmtImpl(node);
     }
+    else if (type == FROM_STMT) {
+      return new FromStmtImpl(node);
+    }
     else if (type == GENERIC_PARAM) {
       return new GenericParamImpl(node);
     }

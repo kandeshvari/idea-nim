@@ -180,6 +180,7 @@ private simpleStmt ::=
   | ContinueStmt
   | PragmaStmt
   | ImportStmt
+  | FromStmt
   | IncludeStmt
   | (&isExprStart ExprStmt)?
 
@@ -199,6 +200,8 @@ PragmaStmt ::= Pragma (&INDNONE T_COLON stmt)? {extends=Statement}
 
 ImportStmt ::= T_IMPORT &OPTIND moduleName (T_EXCEPT <<listOf (&OPTIND moduleName) (T_COMMA)>> | (T_COMMA &OPTIND moduleName)*) {pin=1 extends=Statement}
 private moduleName ::= expr
+
+FromStmt ::= T_FROM &OPTIND moduleName T_IMPORT <<listOf (&OPTIND expr) (T_COMMA)>> {pin=1}
 
 IncludeStmt ::= T_INCLUDE <<listOf (&OPTIND expr) (T_COMMA)>> {pin=1}
 

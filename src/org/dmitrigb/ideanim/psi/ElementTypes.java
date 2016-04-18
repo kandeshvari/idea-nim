@@ -137,6 +137,7 @@ public interface ElementTypes {
   IElementType ENUM_MEMBER = new NimElementType("ENUM_MEMBER");
   IElementType EXPR_STMT = new NimElementType("EXPR_STMT");
   IElementType FOR_STMT = new NimElementType("FOR_STMT");
+  IElementType FROM_STMT = new NimElementType("FROM_STMT");
   IElementType GENERIC_PARAM = new NimElementType("GENERIC_PARAM");
   IElementType GROUPED_EXPR = new NimElementType("GROUPED_EXPR");
   IElementType IDENTIFIER = new NimElementType("IDENTIFIER");
