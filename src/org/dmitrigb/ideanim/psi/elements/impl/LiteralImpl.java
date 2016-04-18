@@ -30,7 +30,6 @@ public class LiteralImpl extends BaseExpression implements Literal {
     literalTypes.put(FLOAT_LITERAL, TPrimitive.FLOAT);
     literalTypes.put(FLOAT32_LITERAL, TPrimitive.FLOAT32);
     literalTypes.put(FLOAT64_LITERAL, TPrimitive.FLOAT64);
-    literalTypes.put(BOOL_LITERAL, TPrimitive.BOOL);
     literalTypes.put(CHARACTER_LITERAL, TPrimitive.CHAR);
     literalTypes.put(STRING_LITERAL, TPrimitive.STRING);
     literalTypes.put(TRIPLESTR_LITERAL, TPrimitive.STRING);
@@ -103,13 +102,6 @@ public class LiteralImpl extends BaseExpression implements Literal {
   }
 
   @Override
-  public boolean boolValue() {
-    if (getLiteralElementType() != BOOL_LITERAL)
-      throw new IllegalStateException("Not a boolean literal");
-    return "true".equals(getText());
-  }
-
-  @Override
   public char charValue() {
     if (getLiteralElementType() != CHARACTER_LITERAL)
       throw new IllegalStateException("Not a character literal");
@@ -136,8 +128,6 @@ public class LiteralImpl extends BaseExpression implements Literal {
       return floatValue();
     if (type.isChar())
       return charValue();
-    if (type.isBool())
-      return boolValue();
     assert type.isString();
     return stringValue();
   }

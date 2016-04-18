@@ -1802,7 +1802,6 @@ public class NimParser implements PsiParser, LightPsiParser {
   //           | INT16_LITERAL
   //           | INT8_LITERAL
   //           | INT_LITERAL
-  //           | BOOL_LITERAL
   //           | CHARACTER_LITERAL
   //           | STRING_LITERAL
   //           | TRIPLESTR_LITERAL
@@ -1823,7 +1822,6 @@ public class NimParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, INT16_LITERAL);
     if (!r) r = consumeToken(b, INT8_LITERAL);
     if (!r) r = consumeToken(b, INT_LITERAL);
-    if (!r) r = consumeToken(b, BOOL_LITERAL);
     if (!r) r = consumeToken(b, CHARACTER_LITERAL);
     if (!r) r = consumeToken(b, STRING_LITERAL);
     if (!r) r = consumeToken(b, TRIPLESTR_LITERAL);

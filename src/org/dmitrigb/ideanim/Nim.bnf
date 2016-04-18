@@ -46,7 +46,6 @@ Literal ::= FLOAT64_LITERAL
           | INT16_LITERAL
           | INT8_LITERAL
           | INT_LITERAL
-          | BOOL_LITERAL
           | CHARACTER_LITERAL
           | STRING_LITERAL
           | TRIPLESTR_LITERAL

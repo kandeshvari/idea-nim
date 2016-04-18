@@ -20,7 +20,6 @@ public interface ElementTypes {
   IElementType FLOAT_LITERAL = new NimTokenType("FLOAT_LITERAL");
   IElementType FLOAT32_LITERAL = new NimTokenType("FLOAT32_LITERAL");
   IElementType FLOAT64_LITERAL = new NimTokenType("FLOAT64_LITERAL");
-  IElementType BOOL_LITERAL = new NimTokenType("BOOL_LITERAL");
   IElementType CHARACTER_LITERAL = new NimTokenType("CHARACTER_LITERAL");
   IElementType TRIPLESTR_LITERAL = new NimTokenType("TRIPLESTR_LITERAL");
   IElementType STRING_LITERAL = new NimTokenType("STRING_LITERAL");
@@ -203,5 +202,5 @@ public interface ElementTypes {
       UINT64_LITERAL, UINT32_LITERAL, UINT16_LITERAL, UINT8_LITERAL, UINT_LITERAL,
       INT64_LITERAL, INT32_LITERAL, INT16_LITERAL, INT8_LITERAL, INT_LITERAL);
 
-  TokenSet LITERALS = TokenSet.orSet(TokenSet.create(BOOL_LITERAL), NUMBER_LITERALS, STRINGS);
+  TokenSet LITERALS = TokenSet.orSet(NUMBER_LITERALS, STRINGS);
 }

@@ -55,8 +55,6 @@ FLOAT64_SUFFIX = [fF] "64" | [dD]
 FLOAT64_LITERAL = {HEX_LIT} \' {FLOAT64_SUFFIX}
                 | ({FLOAT_LITERAL} | {DEC_LIT} | {OCT_LIT} | {BIN_LIT}) \'? {FLOAT64_SUFFIX}
 
-BOOL_LITERAL = "true" | "false"
-
 CHARACTER_LITERAL = \' (\\. | [^\\\'\r\n])* \'?
 STRING_LITERAL = \" (\\. | [^\\\"\r\n])* \"?
 TRIPLESTR_LITERAL = \"\"\" ([^\"]+ | \"\"? [^\"]+)* \"*\"\"\"
@@ -90,7 +88,6 @@ OP_CHAR = [\+\-\*\/\\\<\>\!\?\^\.\|=%&\$@\~:]
   {INT8_LITERAL}    { return INT8_LITERAL; }
   {INT_LITERAL}     { return INT_LITERAL; }
 
-  {BOOL_LITERAL} { return BOOL_LITERAL; }
   {CHARACTER_LITERAL} { return CHARACTER_LITERAL; }
   {TRIPLESTR_LITERAL} { return TRIPLESTR_LITERAL; }
   {STRING_LITERAL} { return STRING_LITERAL; }
