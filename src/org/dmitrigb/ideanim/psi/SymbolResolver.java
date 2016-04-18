@@ -1,121 +1,105 @@
 package org.dmitrigb.ideanim.psi;
 
-import java.util.List;
+import java.util.function.Predicate;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.ResolveState;
-import com.intellij.psi.scope.BaseScopeProcessor;
 import org.dmitrigb.ideanim.NimIdentifierUtil;
 import org.dmitrigb.ideanim.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
 
-public class SymbolResolver extends BaseScopeProcessor {
+public class SymbolResolver extends SymbolProcessor {
 
-  private Identifier source;
-  private String sourceId;
+  private final String symbolName;
+
+  private final Predicate<PsiElement> elementFilter;
 
   private PsiElement target;
 
-  public SymbolResolver(Identifier source) {
-    this.source = source;
-    String sourceText = ApplicationManager.getApplication().runReadAction((Computable<String>) this.source::getText);
-    sourceId = NimIdentifierUtil.normalizeId(sourceText);
+  public static SymbolResolver forName(String symbolName) {
+    return new SymbolResolver(symbolName, null);
   }
 
-  protected boolean symbolMatches(Identifier symbol) {
-    String symbolText = ApplicationManager.getApplication().runReadAction((Computable<String>) symbol::getText);
-    return NimIdentifierUtil.normalizeId(symbolText).equals(sourceId);
+  public SymbolResolver withFilter(Predicate<PsiElement> filter) {
+    return new SymbolResolver(symbolName, filter);
   }
 
-  protected boolean accept(PsiElement element, ResolveState state) {
-    return true;
+  protected SymbolResolver(String symbolName, Predicate<PsiElement> elementFilter) {
+    this.elementFilter = elementFilter;
+    this.symbolName = NimIdentifierUtil.normalizeId(symbolName);
+  }
+
+  protected boolean symbolMatches(String symbolText) {
+    return NimIdentifierUtil.normalizeId(symbolText).equals(symbolName);
   }
 
   @Override
   public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
-    if (!accept(element, state))
-      return true;
-
-    if (element instanceof TypeDef) {
-      Identifier id = ((TypeDef) element).getIdentifier();
-      if (symbolMatches(id)) {
-        target = element;
-        return false;
-      }
-      Expression def = ((TypeDef) element).getDefinition();
-      if (def instanceof EnumDef) {
-        for (EnumMember member : ((EnumDef) def).getMembers()) {
-          if (symbolMatches(member.getIdentifier())) {
-            target = member;
-            return false;
-          }
-        }
-      }
-    }
-    else if (element instanceof RoutineDef) {
-      RoutineDef routine = (RoutineDef) element;
-      Identifier symbol = routine.getIdentifier();
-      if (symbol != null && symbolMatches(symbol)) {
-        target = element;
-        return false;
-      }
-    }
-    else if (element instanceof ProcResultPsiElement) {
-      if (sourceId.equals("result")) {
-        target = element;
-        return false;
-      }
-    }
-    else if (element instanceof VarDef) {
-      VarDef def = (VarDef) element;
-      List<IdentPragmaPair> symbols = def.getIdentifiers();
-      for (IdentPragmaPair pair : symbols) {
-        if (symbolMatches(pair.getIdentifier())) {
-          target = pair.getIdentifier();
-          return false;
-        }
-      }
-    }
-    else if (element instanceof ConstDef) {
-      ConstDef def = (ConstDef) element;
-      Identifier symbol = def.getIdentifier();
-      if (symbolMatches(symbol)) {
-        target = element;
-        return false;
-      }
-    }
-    else if (element instanceof IdentifierDefs) {
-      IdentifierDefs def = (IdentifierDefs) element;
-      List<IdentPragmaPair> pairs = def.getIdentifiers();
-      for (IdentPragmaPair pair : pairs) {
-        if (symbolMatches(pair.getIdentifier())) {
-          target = pair.getIdentifier();
-          return false;
-        }
-      }
-    }
-    else if (element instanceof ForStmt) {
-      List<IdentPragmaPair> pairs = ((ForStmt) element).getIdentPragmaPairList();
-      for (IdentPragmaPair pair : pairs) {
-        if (symbolMatches(pair.getIdentifier())) {
-          target = pair.getIdentifier();
-          return false;
-        }
-      }
-    }
-    else if (element instanceof GenericParam) {
-      List<IdentifierDef> ids = ((GenericParam) element).getIdentifers();
-      for (Identifier id : ids) {
-        if (symbolMatches(id)) {
-          target = id;
-          return false;
-        }
-      }
-    }
-
+    if (elementFilter == null || elementFilter.test(element))
+      return super.execute(element, state);
     return true;
+  }
+
+  private boolean match(IdentifierDef idDef) {
+    return match(idDef, idDef);
+  }
+
+  private boolean match(Identifier id, PsiNamedElement target) {
+    return match(id.getText(), target);
+  }
+
+  private boolean match(String name, PsiNamedElement target) {
+    if (symbolMatches(name)) {
+      this.target = target;
+      return true;
+    }
+    return false;
+  }
+
+  @Override
+  protected boolean processConst(ConstDef constDef) {
+    return !match(constDef.getIdentifier(), constDef);
+  }
+
+  @Override
+  protected boolean processEnumMember(EnumMember enumMember) {
+    return !match(enumMember.getIdentifier(), enumMember);
+  }
+
+  @Override
+  protected boolean processParam(IdentifierDef param) {
+    return !match(param);
+  }
+
+  @Override
+  protected boolean processRoutine(RoutineDef routine) {
+    return !match(routine.getIdentifier(), routine);
+  }
+
+  @Override
+  protected boolean processRoutineResult(ProcResultPsiElement result) {
+    return !symbolMatches("result");
+  }
+
+  @Override
+  protected boolean processTypeDef(TypeDef typeDef) {
+    return !match(typeDef.getName(), typeDef);
+  }
+
+  @Override
+  protected boolean processTypeParam(IdentifierDef typeParam) {
+    return !match(typeParam);
+  }
+
+  @Override
+  protected boolean processVar(IdentifierDef var) {
+    return !match(var);
+  }
+
+  @Override
+  protected boolean processField(IdentifierDef field) {
+    return !match(field);
   }
 
   public PsiElement getResolvedTarget() {

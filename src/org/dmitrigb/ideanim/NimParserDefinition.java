@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IFileElementType;
+import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.dmitrigb.ideanim.parser.NimParser;
 import org.dmitrigb.ideanim.psi.ElementFactory;
@@ -20,7 +21,18 @@ import org.jetbrains.annotations.NotNull;
 
 public class NimParserDefinition implements ParserDefinition {
 
-  public static final IFileElementType FILE = new IFileElementType(Language.findInstance(NimLanguage.class));
+  private static final IFileElementType FILE = new IStubFileElementType(NimLanguage.INSTANCE) {
+    @NotNull
+    @Override
+    public String getExternalId() {
+      return "nim.FILE";
+    }
+
+    @Override
+    public int getStubVersion() {
+      return 1;
+    }
+  };
 
   @NotNull
   @Override

@@ -19,6 +19,6 @@ public class NamedType extends Type {
 
   @Override
   public String toString() {
-    return definition.getIdentifier().getText() + " (" + getUnderlyingType().toString() + ")";
+    return definition.getName();
   }
 }

@@ -2,6 +2,7 @@ package org.dmitrigb.ideanim.psi;
 
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import org.dmitrigb.ideanim.psi.stubs.TypeDefStubElementType;
 
 public interface ElementTypes {
   IElementType IDENT = new NimTokenType("IDENT");
@@ -172,7 +173,7 @@ public interface ElementTypes {
   IElementType TEMPLATE_DEF = new NimElementType("TEMPLATE_DEF");
   IElementType TRY_STMT = new NimElementType("TRY_STMT");
   IElementType TUPLE_CTOR = new NimElementType("TUPLE_CTOR");
-  IElementType TYPE_DEF = new NimElementType("TYPE_DEF");
+  TypeDefStubElementType TYPE_DEF = new TypeDefStubElementType();
   IElementType TYPE_DESC = new NimElementType("TYPE_DESC");
   IElementType TYPE_SECT = new NimElementType("TYPE_SECT");
   IElementType VAR_DEF = new NimElementType("VAR_DEF");

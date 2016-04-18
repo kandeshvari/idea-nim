@@ -62,7 +62,7 @@ public class RoutineResolver extends SymbolResolver {
   private MatchCounts bestCounts;
 
   public RoutineResolver(Identifier procId, List<Expression> arguments) {
-    super(procId);
+    super(procId.getText(), null);
     this.arguments = arguments;
   }
 
@@ -74,7 +74,7 @@ public class RoutineResolver extends SymbolResolver {
   }
 
   private void match(RoutineDef routine) {
-    if (!symbolMatches(routine.getIdentifier()))
+    if (!symbolMatches(routine.getName()))
       return;
 
     if (nameMatch == null)

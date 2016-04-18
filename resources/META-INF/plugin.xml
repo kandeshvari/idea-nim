@@ -35,6 +35,8 @@
     <targetElementEvaluator language="Nim" implementationClass="org.dmitrigb.ideanim.NimTargetElementEvaluator"/>
     <renamePsiElementProcessor implementation="org.dmitrigb.ideanim.NimRenamePsiElementProcessor"/>
     <typeDeclarationProvider implementation="org.dmitrigb.ideanim.NimTypeDeclarationProvider"/>
+    <stubElementTypeHolder class="org.dmitrigb.ideanim.psi.ElementTypes"/>
+    <stubIndex implementation="org.dmitrigb.ideanim.psi.stubs.indices.TypeIndex"/>
   </extensions>
 
   <actions>

@@ -8,8 +8,6 @@ import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReferenceBase;
-import com.intellij.psi.ResolveState;
-import com.intellij.psi.util.PsiTreeUtil;
 
 public class IdentifierReference extends PsiReferenceBase<Identifier> {
   public IdentifierReference(@NotNull Identifier element) {
@@ -18,14 +16,14 @@ public class IdentifierReference extends PsiReferenceBase<Identifier> {
 
   @NotNull
   protected SymbolResolver getSymbolResolver() {
-    return new SymbolResolver(getElement());
+    return SymbolResolver.forName(getElement().getText());
   }
 
   @Nullable
   @Override
   public PsiElement resolve() {
     SymbolResolver resolver = getSymbolResolver();
-    NimPsiTreeUtil.walkUp(resolver, getElement(), null, getElement().getText());
+    NimPsiTreeUtil.walkUp(resolver, getElement(), getElement().getText());
     return resolver.getResolvedTarget();
   }
 

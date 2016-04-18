@@ -2,30 +2,32 @@ package org.dmitrigb.ideanim.psi.elements.impl;
 
 import java.util.List;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.dmitrigb.ideanim.psi.ElementFactory;
 import org.dmitrigb.ideanim.psi.ElementTypes;
-import org.dmitrigb.ideanim.psi.elements.Expression;
-import org.dmitrigb.ideanim.psi.elements.GenericParam;
-import org.dmitrigb.ideanim.psi.elements.Identifier;
-import org.dmitrigb.ideanim.psi.elements.Pragma;
-import org.dmitrigb.ideanim.psi.elements.TypeDef;
+import org.dmitrigb.ideanim.psi.elements.*;
+import org.dmitrigb.ideanim.psi.stubs.TypeDefStub;
 import org.dmitrigb.ideanim.types.NamedType;
 import org.dmitrigb.ideanim.types.Type;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class TypeDefImpl extends ASTWrapperPsiElement implements TypeDef {
+public class TypeDefImpl extends StubBasedPsiElementBase<TypeDefStub> implements TypeDef {
 
   public TypeDefImpl(ASTNode node) {
     super(node);
+  }
+
+  public TypeDefImpl(@NotNull TypeDefStub stub, @NotNull IStubElementType nodeType) {
+    super(stub, nodeType);
   }
 
   @Override
@@ -63,6 +65,9 @@ public class TypeDefImpl extends ASTWrapperPsiElement implements TypeDef {
 
   @Override
   public String getName() {
+    TypeDefStub stub = getStub();
+    if (stub != null)
+      return stub.getName();
     return getIdentifier().getText();
   }
 
@@ -78,5 +83,12 @@ public class TypeDefImpl extends ASTWrapperPsiElement implements TypeDef {
   @Override
   public PsiElement getNameIdentifier() {
     return getIdentifier();
+  }
+
+  @Override
+  public PsiElement getContext() {
+    PsiElement parent = getParent();
+    assert parent instanceof TypeSect;
+    return parent.getContext();
   }
 }

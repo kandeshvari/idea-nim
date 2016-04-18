@@ -12,6 +12,8 @@ public class TPrimitive extends Type {
     POINTER, BOOL, NIL, VOID
   }
 
+  public static final String[] PRIMITIVE_TYPE_NAMES = new String[]{"int", "int8", "int16", "int32", "int64", "uint", "uint8", "uint16", "uint32", "uint64", "float", "float32", "float64", "bool", "char", "string", "cstring"};
+
   private static final EnumSet<Kind> SIGNED_INT_KINDS = EnumSet.of(Kind.INT, Kind.INT8, Kind.INT16, Kind.INT32, Kind.INT64);
   private static final EnumSet<Kind> UNSIGNED_INT_KINDS = EnumSet.of(Kind.UINT, Kind.UINT8, Kind.UINT16, Kind.UINT32, Kind.UINT64);
   private static final EnumSet<Kind> FLOAT_KINDS = EnumSet.of(Kind.FLOAT, Kind.FLOAT32, Kind.FLOAT64);

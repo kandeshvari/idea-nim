@@ -1,6 +1,8 @@
 package org.dmitrigb.ideanim.psi;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Supplier;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -31,7 +33,7 @@ public abstract class NimPsiTreeUtil {
   }
 
   public static RoutineDef getForwardDeclaration(RoutineDef routine) {
-    SymbolResolver resolver = new SymbolResolver(routine.getIdentifier());
+    SymbolResolver resolver = SymbolResolver.forName(routine.getName());
     routine.getContext().processDeclarations(resolver, ResolveState.initial(), null, routine);
     PsiElement target = resolver.getResolvedTarget();
     if (target instanceof RoutineDef && ((RoutineDef) target).isForwardDeclaration())
@@ -40,12 +42,8 @@ public abstract class NimPsiTreeUtil {
   }
 
   public static RoutineDef getFullDefinition(RoutineDef routine) {
-    SymbolResolver resolver = new SymbolResolver(routine.getIdentifier()) {
-      @Override
-      protected boolean accept(PsiElement element, ResolveState state) {
-        return element instanceof RoutineDef && !((RoutineDef) element).isForwardDeclaration();
-      }
-    };
+    SymbolResolver resolver = SymbolResolver.forName(routine.getName())
+        .withFilter(elem -> elem instanceof RoutineDef && !((RoutineDef) elem).isForwardDeclaration());
     routine.getContext().processDeclarations(resolver, ResolveState.initial(), null, routine);
     PsiElement target = resolver.getResolvedTarget();
     if (target instanceof RoutineDef)
@@ -55,9 +53,8 @@ public abstract class NimPsiTreeUtil {
 
   public static boolean walkUp(@NotNull PsiScopeProcessor processor,
                                @NotNull PsiElement entrance,
-                               @Nullable PsiElement maxScope,
                                String searchWord) {
-    if (!PsiTreeUtil.treeWalkUp(processor, entrance, maxScope, ResolveState.initial()))
+    if (!PsiTreeUtil.treeWalkUp(processor, entrance, entrance.getContainingFile(), ResolveState.initial()))
       return false;
 
     Project project = entrance.getContainingFile().getProject();
@@ -76,9 +73,8 @@ public abstract class NimPsiTreeUtil {
 
   public static boolean walkUpWithFiles(@NotNull PsiScopeProcessor processor,
                                         @NotNull PsiElement entrance,
-                                        @Nullable PsiElement maxScope,
                                         PsiFile[] files) {
-    if (!PsiTreeUtil.treeWalkUp(processor, entrance, maxScope, ResolveState.initial()))
+    if (!PsiTreeUtil.treeWalkUp(processor, entrance, entrance.getContainingFile(), ResolveState.initial()))
       return false;
 
     for (PsiFile file : files) {
@@ -89,6 +85,20 @@ public abstract class NimPsiTreeUtil {
         if (!stmt.processDeclarations(processor, ResolveState.initial(), null, entrance))
           return false;
       }
+    }
+    return true;
+  }
+
+  public static boolean walkUpWithExtraElements(@NotNull PsiScopeProcessor processor,
+                                                @NotNull PsiElement entrance,
+                                                Supplier<Collection<? extends PsiElement>> extraSupplier) {
+    if (!PsiTreeUtil.treeWalkUp(processor, entrance, entrance.getContainingFile(), ResolveState.initial()))
+      return false;
+
+    Collection<? extends PsiElement> extraElems = extraSupplier.get();
+    for (PsiElement elem : extraElems) {
+      if (!elem.processDeclarations(processor, ResolveState.initial(), null, entrance))
+        return false;
     }
     return true;
   }

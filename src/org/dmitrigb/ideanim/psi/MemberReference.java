@@ -2,25 +2,15 @@ package org.dmitrigb.ideanim.psi;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
 
-import com.intellij.codeInsight.completion.InsertHandler;
-import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.icons.AllIcons;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import org.dmitrigb.ideanim.psi.elements.Expression;
 import org.dmitrigb.ideanim.psi.elements.Identifier;
-import org.dmitrigb.ideanim.psi.elements.ObjectDef;
 import org.dmitrigb.ideanim.psi.elements.ObjectFields;
-import org.dmitrigb.ideanim.psi.elements.RoutineDef;
 import org.dmitrigb.ideanim.types.TObject;
 import org.dmitrigb.ideanim.types.Type;
 import org.dmitrigb.ideanim.types.Types;
@@ -58,7 +48,8 @@ public class MemberReference extends IdentifierReference {
   @Nullable
   @Override
   public PsiElement resolve() {
-    MemberResolver memberResolver = new MemberResolver(getElement());
+    SymbolResolver memberResolver = SymbolResolver.forName(getElement().getText())
+        .withFilter(elem -> elem instanceof ObjectFields);
     if (!walkUpHierarchy(memberResolver, expression.getType()))
       return memberResolver.getResolvedTarget();
 
@@ -69,7 +60,7 @@ public class MemberReference extends IdentifierReference {
       if (callArgs != null)
         args.addAll(callArgs);
       RoutineResolver resolver = new RoutineResolver(getElement(), args);
-      NimPsiTreeUtil.walkUp(resolver, getElement(), null, getElement().getText());
+      NimPsiTreeUtil.walkUp(resolver, getElement(), getElement().getText());
       return resolver.getResolvedTarget();
     }
 
@@ -81,36 +72,18 @@ public class MemberReference extends IdentifierReference {
   public Object[] getVariants() {
     List<LookupElement> results = new ArrayList<>();
 
-    MemberCollector memberCollector = new MemberCollector();
+    SymbolCollector memberCollector = SymbolCollector.withFilter(el -> el instanceof ObjectFields);
     Type type = expression.getType();
     walkUpHierarchy(memberCollector, type);
-    results.addAll(memberCollector.getCandidates().stream()
-        .map(el -> LookupElementBuilder.create(el)
-            .withTypeText(((ObjectFields) el.getContext()).getDeclaredType().getText())
-            .withIcon(AllIcons.Nodes.Field))
-        .collect(Collectors.toList()));
+    results.addAll(memberCollector.getLookupElements());
 
     if (!fieldsOnly) {
       RoutineCollector routineCollector = new RoutineCollector(expression);
       PsiElement def = Types.resolveDefinition(type);
       // TODO: take files of all objects in the hierarchy
       PsiFile file = def == null ? null : def.getContainingFile();
-      NimPsiTreeUtil.walkUpWithFiles(routineCollector, getElement(), null, file == null ? new PsiFile[0] : new PsiFile[]{file});
-      results.addAll(routineCollector.getCandidates().stream()
-          .map(el -> LookupElementBuilder.create(el)
-              .withIcon(AllIcons.Nodes.Method)
-              .withTailText("(" + el.getParameters().stream().map(PsiElement::getText).collect(Collectors.joining(", ")) + ")")
-              .withTypeText(el.getReturnType() == null ? null : el.getReturnType().getText())
-              .withInsertHandler((context, item) -> {
-                Editor editor = context.getEditor();
-                Document document = editor.getDocument();
-                int offset = context.getTailOffset();
-                document.insertString(offset, "()");
-                RoutineDef routine = (RoutineDef) item.getPsiElement();
-                assert routine != null;
-                editor.getCaretModel().moveToOffset(offset + (routine.getParameterCount() == 1 ? 2 : 1));
-              }))
-          .collect(Collectors.toList()));
+      NimPsiTreeUtil.walkUpWithFiles(routineCollector, getElement(), file == null ? new PsiFile[0] : new PsiFile[]{file});
+      results.addAll(routineCollector.getLookupElements());
     }
 
     return results.toArray();

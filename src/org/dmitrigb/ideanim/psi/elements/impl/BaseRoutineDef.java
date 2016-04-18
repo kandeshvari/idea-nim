@@ -110,7 +110,8 @@ public abstract class BaseRoutineDef extends BaseStatement implements RoutineDef
 
   @Override
   public String getName() {
-    return getIdentifier().getText();
+    Identifier id = getIdentifier();
+    return id == null ? null : id.getText();
   }
 
   @Override
