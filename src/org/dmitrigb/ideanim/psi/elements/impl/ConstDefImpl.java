@@ -49,6 +49,8 @@ public class ConstDefImpl extends ASTWrapperPsiElement implements ConstDef {
 
   @Override
   public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+    if (lastParent != null)
+      return true;
     return processor.execute(this, state);
   }
 

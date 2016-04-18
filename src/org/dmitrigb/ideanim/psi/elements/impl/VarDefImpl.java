@@ -41,6 +41,8 @@ public class VarDefImpl extends ASTWrapperPsiElement implements VarDef {
 
   @Override
   public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+    if (lastParent != null)
+      return true;
     return processor.execute(this, state);
   }
 }
