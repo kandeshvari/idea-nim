@@ -41,17 +41,9 @@ public class SymbolResolver extends SymbolProcessor {
     return true;
   }
 
-  private boolean match(IdentifierDef idDef) {
-    return match(idDef, idDef);
-  }
-
-  private boolean match(Identifier id, PsiNamedElement target) {
-    return match(id.getText(), target);
-  }
-
-  private boolean match(String name, PsiNamedElement target) {
-    if (symbolMatches(name)) {
-      this.target = target;
+  private boolean process(PsiNamedElement namedTarget) {
+    if (symbolMatches(namedTarget.getName())) {
+      this.target = namedTarget;
       return true;
     }
     return false;
@@ -59,47 +51,47 @@ public class SymbolResolver extends SymbolProcessor {
 
   @Override
   protected boolean processConst(ConstDef constDef) {
-    return !match(constDef.getIdentifier(), constDef);
+    return !process(constDef);
   }
 
   @Override
   protected boolean processEnumMember(EnumMember enumMember) {
-    return !match(enumMember.getIdentifier(), enumMember);
+    return !process(enumMember);
   }
 
   @Override
   protected boolean processParam(IdentifierDef param) {
-    return !match(param);
+    return !process(param);
   }
 
   @Override
   protected boolean processRoutine(RoutineDef routine) {
-    return !match(routine.getIdentifier(), routine);
+    return !process(routine);
   }
 
   @Override
   protected boolean processRoutineResult(ProcResultPsiElement result) {
-    return !symbolMatches("result");
+    return !process(result);
   }
 
   @Override
   protected boolean processTypeDef(TypeDef typeDef) {
-    return !match(typeDef.getName(), typeDef);
+    return !process(typeDef);
   }
 
   @Override
   protected boolean processTypeParam(IdentifierDef typeParam) {
-    return !match(typeParam);
+    return !process(typeParam);
   }
 
   @Override
   protected boolean processVar(IdentifierDef var) {
-    return !match(var);
+    return !process(var);
   }
 
   @Override
   protected boolean processField(IdentifierDef field) {
-    return !match(field);
+    return !process(field);
   }
 
   public PsiElement getResolvedTarget() {

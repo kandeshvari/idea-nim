@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.dmitrigb.ideanim.psi.NimFile;
+import org.dmitrigb.ideanim.psi.ProcResultPsiElement;
 import org.dmitrigb.ideanim.psi.elements.*;
 
 public class ReferenceResolutionTests extends LightPlatformCodeInsightFixtureTestCase {
@@ -155,6 +156,13 @@ public class ReferenceResolutionTests extends LightPlatformCodeInsightFixtureTes
         "proc foo(a: int) =\n" +
         "  var a = <caret>a\n");
     assertPsiAncestors(target, IdentifierDef.class, IdentPragmaPair.class, IdentifierDefs.class, ProcDef.class);
+  }
+
+  public void testProcResult() throws Exception {
+    PsiElement target = resolveReferenceIn("" +
+        "proc foo(): int =\n" +
+        "  <caret>result = 0\n");
+    assertPsiAncestors(target, ProcResultPsiElement.class);
   }
 
   private PsiElement resolveReferenceIn(String nimSource) {
