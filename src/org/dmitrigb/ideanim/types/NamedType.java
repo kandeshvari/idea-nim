@@ -1,5 +1,7 @@
 package org.dmitrigb.ideanim.types;
 
+import java.util.Set;
+
 import org.dmitrigb.ideanim.psi.elements.TypeDef;
 
 public class NamedType extends Type {
@@ -15,6 +17,11 @@ public class NamedType extends Type {
 
   public Type getUnderlyingType() {
     return definition.getDefinition().asType();
+  }
+
+  @Override
+  protected boolean equals(Type other, Set<TypePair> s) {
+    return super.equals(other, s) || other instanceof NamedType && getUnderlyingType().equals(((NamedType) other).getUnderlyingType(), s);
   }
 
   @Override

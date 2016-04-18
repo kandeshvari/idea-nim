@@ -41,6 +41,15 @@ public class CompletionTests extends LightPlatformCodeInsightFixtureTestCase {
     assertContainsElements(strings, "A", "Foo", "Bah", "int", "string");
   }
 
+  public void testProcOnEnum() throws Exception {
+    List<String> strings = getCompletionStrings("" +
+        "type E = enum V\n" +
+        "proc foo(e: E) = discard\n" +
+        "var e: E\n" +
+        "e.<caret>\n");
+    assertSameElements(strings, "foo");
+  }
+
   @NotNull
   private List<String> getCompletionStrings(String nimSource) {
     myFixture.configureByText(NimFileType.INSTANCE, nimSource);
