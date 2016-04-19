@@ -38,10 +38,6 @@ public class TypeReference extends IdentifierReference {
   @NotNull
   @Override
   public Object[] getVariants() {
-    List<LookupElement> elements = new ArrayList<>();
-    elements.addAll(Stream.of(TPrimitive.PRIMITIVE_TYPE_NAMES)
-        .map(LookupElementBuilder::create).collect(Collectors.toList()));
-
     SymbolCollector collector = SymbolCollector.withFilter(el -> el instanceof TypeDef || el instanceof GenericParam);
     NimPsiTreeUtil.walkUpWithExtraElements(collector, getElement(), () -> {
       Project project = getElement().getProject();
@@ -51,8 +47,6 @@ public class TypeReference extends IdentifierReference {
           .flatMap(key -> typeIndex.get(key, project, scope).stream())
           .collect(Collectors.toList());
     });
-    elements.addAll(collector.getLookupElements());
-
-    return elements.toArray();
+    return collector.getLookupElements().toArray();
   }
 }
