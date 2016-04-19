@@ -165,6 +165,13 @@ public class ReferenceResolutionTests extends LightPlatformCodeInsightFixtureTes
     assertPsiAncestors(target, ProcResultPsiElement.class);
   }
 
+  public void testPragma() throws Exception {
+    myFixture.configureByText(NimFileType.INSTANCE, "" +
+        "proc push() = discard\n" +
+        "{.<caret>push.}\n");
+    assertNull(myFixture.getReferenceAtCaretPosition());
+  }
+
   private PsiElement resolveReferenceIn(String nimSource) {
     myFixture.configureByText(NimFileType.INSTANCE, nimSource);
     return myFixture.getReferenceAtCaretPositionWithAssertion().resolve();
