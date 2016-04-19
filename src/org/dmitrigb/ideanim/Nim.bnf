@@ -66,17 +66,19 @@ IdentPragmaPair ::= IdentifierDef OPERATOR? Pragma?
 
 fake IdentifierDefs ::=
 
+private colonTypeDesc ::= T_COLON &OPTIND TypeDesc
+
 private identColonEquals ::=
     <<listOf (&(IDENT | ACCENT_QUOTED) IdentifierDef) (T_COMMA &OPTIND)>> (T_COMMA &OPTIND)?
-    (T_COLON &OPTIND TypeDesc (T_EQ &OPTIND expr)? | T_EQ &OPTIND expr)
+    (colonTypeDesc (T_EQ &OPTIND expr)? | T_EQ &OPTIND expr)
 
 private identColonEqualsWithPragma ::=
     <<listOf (&(IDENT | ACCENT_QUOTED) IdentPragmaPair) (T_COMMA &OPTIND)>> (T_COMMA &OPTIND)?
-    (T_COLON &OPTIND TypeDesc (T_EQ &OPTIND expr)? | T_EQ &OPTIND expr)
+    (colonTypeDesc (T_EQ &OPTIND expr)? | T_EQ &OPTIND expr)
 
 identColonEqualsWithBothOptionalWithPragma ::=
     <<listOf (&(IDENT | ACCENT_QUOTED) IdentPragmaPair) (T_COMMA &OPTIND)>> (T_COMMA &OPTIND)?
-    (T_COLON &OPTIND TypeDesc)? (T_EQ &OPTIND expr)?
+    (colonTypeDesc)? (T_EQ &OPTIND expr)?
     {elementType=IdentifierDefs}
 
 
@@ -144,7 +146,7 @@ private genericParameters ::= T_LBRACKET &OPTIND <<listOf GenericParam (T_COMMA 
 GenericParam ::= <<listOf ((&IDENT | &ACCENT_QUOTED) IdentifierDef) (T_COMMA &OPTIND)>> (T_COLON &OPTIND expr)? (T_EQ &OPTIND expr)?
 
 private params ::= &INDNONE T_LPAREN &OPTIND <<listOf identColonEqualsWithBothOptionalWithPragma (T_COMMA | T_SEMICOLON)>>? T_RPAREN {pin=2}
-private paramListColon ::= params? (&INDNONE T_COLON &OPTIND TypeDesc)?
+private paramListColon ::= params? (&INDNONE colonTypeDesc)?
 private paramListArrow ::= params? (&INDNONE <<arrow>> &OPTIND TypeDesc)?
 
 ProcDef ::= T_PROC routine {pin=1 extends=Statement}
@@ -164,7 +166,7 @@ ConstSect ::= T_CONST <<section ConstDef>> {pin=1 extends=Statement}
 LetSect ::= T_LET <<section VarDef>> {pin=1 extends=Statement}
 VarSect ::= T_VAR <<section VarDef>> {pin=1 extends=Statement}
 
-ConstDef ::= identWithPragma (T_COLON &OPTIND TypeDesc)? T_EQ &OPTIND expr
+ConstDef ::= identWithPragma colonTypeDesc? T_EQ &OPTIND expr
 VarDef ::= identColonEqualsWithPragma | varTuple
 private varTuple ::= T_LPAREN &OPTIND <<listOf (&(IDENT | ACCENT_QUOTED) IdentPragmaPair) (T_COMMA)>>? !INDLT T_RPAREN T_EQ &OPTIND expr {pin=1}
 
@@ -223,26 +225,39 @@ CaseExpr ::= caseStmtOrExpr {extends=Expression}
 external simpleExpr ::= parseSimpleExpr primary 0
 private primary ::=
       PrefixExpr
-    | tuple
+    | TupleDef
+    | TupleTypeClass
     | &<<inNormalMode>> ProcExpr
-    | !<<inNormalMode>> (T_PROC | T_ITERATOR) (&INDNONE paramListColon? Pragma?)?
+    | ProcTypeExpr | ProcTypeClass
     | &<<inTypeDefMode>> EnumDef
+    | !<<inTypeDefMode>> EnumTypeClass
     | &<<inTypeDefMode>> ObjectDef
+    | !<<inTypeDefMode>> ObjectTypeClass
     | StaticTypeExpr
-    | VarTypeExpr
-    | RefTypeExpr
-    | PtrTypeExpr
-    | DistinctTypeExpr
+    | VarTypeExpr | VarTypeClass
+    | RefTypeExpr | RefTypeClass
+    | PtrTypeExpr | PtrTypeClass
+    | DistinctTypeExpr | DistinctTypeClass
     | identOrLiteral primarySuffix*
 
 PrefixExpr ::= anyOperator &OPTIND primary {pin=1 extends=Expression}
 
-private tuple ::= T_TUPLE (T_LBRACKET &OPTIND <<listOf identColonEquals (T_COMMA | T_SEMICOLON)>> (T_COMMA | T_SEMICOLON)? T_RBRACKET) {pin=1}
+TupleDef ::= T_TUPLE (inlineTupleDecl | <<inTypeDefMode>> extTupleDecl) {extends=Expression}
+private inlineTupleDecl ::= T_LBRACKET &OPTIND <<listOf identColonEquals (T_COMMA | T_SEMICOLON)>> (T_COMMA | T_SEMICOLON)? !INDLT T_RBRACKET {pin=1}
+private extTupleDecl ::= <<indented (<<listOf identColonEquals INDEQ>>)>>? // can be empty, only used in TypeDefMode, in which case it is _not_ a type class
 
-ProcExpr ::= (T_PROC | T_ITERATOR) (&INDNONE paramListColon? Pragma?)? T_EQ stmt {pin=1 extends=Expression}
+TupleTypeClass ::= T_TUPLE {extends=Expression}
+
+ProcExpr ::= (T_PROC | T_ITERATOR) (&INDNONE paramListColon Pragma?)? T_EQ stmt {extends=Expression}
+
+ProcTypeExpr ::= (T_PROC | T_ITERATOR) &INDNONE (params (&INDNONE colonTypeDesc)? | &INDNONE colonTypeDesc) Pragma? {extends=Expression}
+
+ProcTypeClass ::= T_PROC {extends=Expression}
 
 EnumDef ::= T_ENUM (&OPTIND EnumMember (&INDNONE T_COMMA)?)* {pin=1 extends=Expression}
 EnumMember ::= Identifier (&INDNONE T_EQ &OPTIND expr)?
+
+EnumTypeClass ::= T_ENUM {extends=Expression}
 
 ObjectDef ::= T_OBJECT (&OPTIND Pragma)? (&INDNONE T_OF TypeDesc)? (&INDGT objectPart)? {pin=1 extends=Expression}
 private objectPart ::= <<indented (&INDEQ &(T_CASE | T_WHEN | IDENT | ACCENT_QUOTED | T_NIL | T_DISCARD) objectPart)*>>
@@ -255,12 +270,22 @@ private objectWhen ::= T_WHEN <<listOf (&OPTIND expr T_COLON objectPart) (&INDEQ
 private objectCase ::= T_CASE &INDNONE identWithPragma T_COLON TypeDesc T_COLON? (<<indented objectCaseBranches>> | objectCaseBranches)  {pin=1}
 private objectCaseBranches ::= (&INDEQ T_OF exprList T_COLON objectPart)* (&INDEQ T_ELSE T_COLON objectPart)?
 
+ObjectTypeClass ::= T_OBJECT {extends=Expression}
+
 StaticTypeExpr ::= T_STATIC &INDNONE T_LBRACKET expr T_RBRACKET
 
-VarTypeExpr ::= T_VAR &OPTIND typeDescK {pin=1 extends=Expression}
-RefTypeExpr ::= T_REF &OPTIND typeDescK {pin=1 extends=Expression}
-PtrTypeExpr ::= T_PTR &OPTIND typeDescK {pin=1 extends=Expression}
-DistinctTypeExpr ::= T_DISTINCT &OPTIND typeDescK {pin=1 extends=Expression}
+VarTypeExpr ::= T_VAR &OPTIND typeDescK {extends=Expression}
+VarTypeClass ::= T_VAR {extends=Expression}
+
+RefTypeExpr ::= T_REF &OPTIND typeDescK {extends=Expression}
+RefTypeClass ::= T_REF {extends=Expression}
+
+PtrTypeExpr ::= T_PTR &OPTIND typeDescK {extends=Expression}
+PtrTypeClass ::= T_PTR {extends=Expression}
+
+DistinctTypeExpr ::= T_DISTINCT &OPTIND typeDescK {extends=Expression}
+DistinctTypeClass ::= T_DISTINCT {extends=Expression}
+
 private typeDescK ::= !anyOperator &isExprStart primary
 private anyOperator ::= OPERATOR | T_DIV | T_MOD | T_SHL | T_SHR | T_IN | T_NOTIN | T_IS | T_ISNOT | T_NOT | T_OF | T_AS
                       | T_DOTDOT | T_AND | T_OR | T_XOR

@@ -69,6 +69,9 @@ public class ElementFactory {
     else if (type == DISCARD_STMT) {
       return new DiscardStmtImpl(node);
     }
+    else if (type == DISTINCT_TYPE_CLASS) {
+      return new DistinctTypeClassImpl(node);
+    }
     else if (type == DISTINCT_TYPE_EXPR) {
       return new DistinctTypeExprImpl(node);
     }
@@ -83,6 +86,9 @@ public class ElementFactory {
     }
     else if (type == ENUM_MEMBER) {
       return new EnumMemberImpl(node);
+    }
+    else if (type == ENUM_TYPE_CLASS) {
+      return new EnumTypeClassImpl(node);
     }
     else if (type == EXPR_STMT) {
       return new ExprStmtImpl(node);
@@ -153,6 +159,9 @@ public class ElementFactory {
     else if (type == OBJECT_FIELDS) {
       return new ObjectFieldsImpl(node);
     }
+    else if (type == OBJECT_TYPE_CLASS) {
+      return new ObjectTypeClassImpl(node);
+    }
     else if (type == PATTERN) {
       return new PatternImpl(node);
     }
@@ -171,11 +180,23 @@ public class ElementFactory {
     else if (type == PROC_EXPR) {
       return new ProcExprImpl(node);
     }
+    else if (type == PROC_TYPE_CLASS) {
+      return new ProcTypeClassImpl(node);
+    }
+    else if (type == PROC_TYPE_EXPR) {
+      return new ProcTypeExprImpl(node);
+    }
+    else if (type == PTR_TYPE_CLASS) {
+      return new PtrTypeClassImpl(node);
+    }
     else if (type == PTR_TYPE_EXPR) {
       return new PtrTypeExprImpl(node);
     }
     else if (type == RAISE_STMT) {
       return new RaiseStmtImpl(node);
+    }
+    else if (type == REF_TYPE_CLASS) {
+      return new RefTypeClassImpl(node);
     }
     else if (type == REF_TYPE_EXPR) {
       return new RefTypeExprImpl(node);
@@ -204,6 +225,12 @@ public class ElementFactory {
     else if (type == TUPLE_CTOR) {
       return new TupleCtorImpl(node);
     }
+    else if (type == TUPLE_DEF) {
+      return new TupleDefImpl(node);
+    }
+    else if (type == TUPLE_TYPE_CLASS) {
+      return new TupleTypeClassImpl(node);
+    }
     else if (type == TUPLE_TYPE_EXPR) {
       return new TupleTypeExprImpl(node);
     }
@@ -221,6 +248,9 @@ public class ElementFactory {
     }
     else if (type == VAR_SECT) {
       return new VarSectImpl(node);
+    }
+    else if (type == VAR_TYPE_CLASS) {
+      return new VarTypeClassImpl(node);
     }
     else if (type == VAR_TYPE_EXPR) {
       return new VarTypeExprImpl(node);
