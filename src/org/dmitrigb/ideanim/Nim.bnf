@@ -108,6 +108,8 @@ private complexOrSimpleStmt ::=
   | LetSect
   | WhenStmt
   | VarSect
+  | BindStmt
+  | MixinStmt
   | simpleStmt
   {recoverWhile="complexOrSimpleStmtRecover"}
 
@@ -173,6 +175,10 @@ VarDef ::= identColonEqualsWithPragma | varTuple
 private varTuple ::= T_LPAREN &OPTIND <<listOf (&(IDENT | ACCENT_QUOTED) IdentPragmaPair) (T_COMMA)>>? !INDLT T_RPAREN T_EQ &OPTIND expr {pin=1}
 
 TypeDesc ::= <<typeDescMode simpleExpr>>
+
+private qualifiedIdent ::= Identifier DotExpr?
+BindStmt ::= T_BIND &OPTIND <<listOf qualifiedIdent (T_COMMA)>> {pin=1 extends=Statement}
+MixinStmt ::= T_MIXIN &OPTIND <<listOf qualifiedIdent (T_COMMA)>> {pin=1 extends=Statement}
 
 private simpleStmt ::=
     ReturnStmt

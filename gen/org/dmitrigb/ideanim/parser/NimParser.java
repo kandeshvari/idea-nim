@@ -29,6 +29,9 @@ public class NimParser implements PsiParser, LightPsiParser {
     else if (t == ASSIGNMENT_EXPR) {
       r = AssignmentExpr(b, 0);
     }
+    else if (t == BIND_STMT) {
+      r = BindStmt(b, 0);
+    }
     else if (t == BLOCK) {
       r = Block(b, 0);
     }
@@ -145,6 +148,9 @@ public class NimParser implements PsiParser, LightPsiParser {
     }
     else if (t == MACRO_DEF) {
       r = MacroDef(b, 0);
+    }
+    else if (t == MIXIN_STMT) {
+      r = MixinStmt(b, 0);
     }
     else if (t == NIL_TOKEN) {
       r = NilToken(b, 0);
@@ -278,13 +284,13 @@ public class NimParser implements PsiParser, LightPsiParser {
 
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
     create_token_set_(IDENTIFIER, IDENTIFIER_DEF),
-    create_token_set_(ASM_STMT, BLOCK_STMT, BREAK_STMT, CASE_STMT,
-      CONST_SECT, CONTINUE_STMT, DISCARD_STMT, EXPR_STMT,
-      FOR_STMT, IF_STMT, IMPORT_STMT, ITERATOR_DEF,
-      LET_SECT, MACRO_DEF, PRAGMA_STMT, PROC_DEF,
-      RAISE_STMT, RETURN_STMT, STATIC_STMT, TEMPLATE_DEF,
-      TRY_STMT, TYPE_SECT, VAR_SECT, WHEN_STMT,
-      WHILE_STMT, YIELD_STMT),
+    create_token_set_(ASM_STMT, BIND_STMT, BLOCK_STMT, BREAK_STMT,
+      CASE_STMT, CONST_SECT, CONTINUE_STMT, DISCARD_STMT,
+      EXPR_STMT, FOR_STMT, IF_STMT, IMPORT_STMT,
+      ITERATOR_DEF, LET_SECT, MACRO_DEF, MIXIN_STMT,
+      PRAGMA_STMT, PROC_DEF, RAISE_STMT, RETURN_STMT,
+      STATIC_STMT, TEMPLATE_DEF, TRY_STMT, TYPE_SECT,
+      VAR_SECT, WHEN_STMT, WHILE_STMT, YIELD_STMT),
     create_token_set_(ASSIGNMENT_EXPR, BRACKET_CTOR, BRACKET_EXPR, CALL_EXPR,
       CASE_EXPR, CAST_EXPR, COMMAND_EXPR, DISTINCT_TYPE_CLASS,
       DISTINCT_TYPE_EXPR, DOT_EXPR, ENUM_DEF, ENUM_TYPE_CLASS,
@@ -362,6 +368,41 @@ public class NimParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _AND_);
     r = indOpt(b, l + 1);
     exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // T_BIND &OPTIND <<listOf qualifiedIdent (T_COMMA)>>
+  public static boolean BindStmt(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "BindStmt")) return false;
+    if (!nextTokenIs(b, T_BIND)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, BIND_STMT, null);
+    r = consumeToken(b, T_BIND);
+    p = r; // pin = 1
+    r = r && BindStmt_1(b, l + 1);
+    r = r && listOf(b, l + 1, qualifiedIdent_parser_, BindStmt_2_1_parser_);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // &OPTIND
+  private static boolean BindStmt_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "BindStmt_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _AND_);
+    r = indOpt(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // (T_COMMA)
+  private static boolean BindStmt_2_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "BindStmt_2_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, T_COMMA);
+    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -1919,6 +1960,41 @@ public class NimParser implements PsiParser, LightPsiParser {
     r = r && routine(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  /* ********************************************************** */
+  // T_MIXIN &OPTIND <<listOf qualifiedIdent (T_COMMA)>>
+  public static boolean MixinStmt(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "MixinStmt")) return false;
+    if (!nextTokenIs(b, T_MIXIN)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, MIXIN_STMT, null);
+    r = consumeToken(b, T_MIXIN);
+    p = r; // pin = 1
+    r = r && MixinStmt_1(b, l + 1);
+    r = r && listOf(b, l + 1, qualifiedIdent_parser_, MixinStmt_2_1_parser_);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // &OPTIND
+  private static boolean MixinStmt_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "MixinStmt_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _AND_);
+    r = indOpt(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // (T_COMMA)
+  private static boolean MixinStmt_2_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "MixinStmt_2_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, T_COMMA);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -3663,6 +3739,8 @@ public class NimParser implements PsiParser, LightPsiParser {
   //   | LetSect
   //   | WhenStmt
   //   | VarSect
+  //   | BindStmt
+  //   | MixinStmt
   //   | simpleStmt
   static boolean complexOrSimpleStmt(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "complexOrSimpleStmt")) return false;
@@ -3685,6 +3763,8 @@ public class NimParser implements PsiParser, LightPsiParser {
     if (!r) r = LetSect(b, l + 1);
     if (!r) r = WhenStmt(b, l + 1);
     if (!r) r = VarSect(b, l + 1);
+    if (!r) r = BindStmt(b, l + 1);
+    if (!r) r = MixinStmt(b, l + 1);
     if (!r) r = simpleStmt(b, l + 1);
     exit_section_(b, l, m, r, false, complexOrSimpleStmtRecover_parser_);
     return r;
@@ -5671,6 +5751,25 @@ public class NimParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // Identifier DotExpr?
+  static boolean qualifiedIdent(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "qualifiedIdent")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = Identifier(b, l + 1);
+    r = r && qualifiedIdent_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // DotExpr?
+  private static boolean qualifiedIdent_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "qualifiedIdent_1")) return false;
+    DotExpr(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
   // &OPTIND Identifier OPERATOR? (&OPTIND Pattern)? (&OPTIND genericParameters)? &INDNONE paramListColon (&OPTIND Pragma)? (&OPTIND T_EQ stmt)?
   static boolean routine(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "routine")) return false;
@@ -6238,6 +6337,11 @@ public class NimParser implements PsiParser, LightPsiParser {
     return r;
   }
 
+  final static Parser BindStmt_2_1_parser_ = new Parser() {
+    public boolean parse(PsiBuilder b, int l) {
+      return consumeToken(b, T_COMMA);
+    }
+  };
   final static Parser Block_0_0_1_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return Block_0_0_1(b, l + 1);
@@ -6283,17 +6387,13 @@ public class NimParser implements PsiParser, LightPsiParser {
       return ForStmt_2_0(b, l + 1);
     }
   };
-  final static Parser ForStmt_2_1_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return consumeToken(b, T_COMMA);
-    }
-  };
+  final static Parser ForStmt_2_1_parser_ = BindStmt_2_1_parser_;
   final static Parser FromStmt_4_0_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return FromStmt_4_0(b, l + 1);
     }
   };
-  final static Parser FromStmt_4_1_parser_ = ForStmt_2_1_parser_;
+  final static Parser FromStmt_4_1_parser_ = BindStmt_2_1_parser_;
   final static Parser GenericParam_0_0_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return GenericParam_0_0(b, l + 1);
@@ -6319,13 +6419,14 @@ public class NimParser implements PsiParser, LightPsiParser {
       return ImportStmt_3_0_1_0(b, l + 1);
     }
   };
-  final static Parser ImportStmt_3_0_1_1_parser_ = ForStmt_2_1_parser_;
+  final static Parser ImportStmt_3_0_1_1_parser_ = BindStmt_2_1_parser_;
   final static Parser IncludeStmt_1_0_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return IncludeStmt_1_0(b, l + 1);
     }
   };
-  final static Parser IncludeStmt_1_1_parser_ = ForStmt_2_1_parser_;
+  final static Parser IncludeStmt_1_1_parser_ = BindStmt_2_1_parser_;
+  final static Parser MixinStmt_2_1_parser_ = BindStmt_2_1_parser_;
   final static Parser NimFile_0_0_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return NimFile_0_0(b, l + 1);
@@ -6341,9 +6442,9 @@ public class NimParser implements PsiParser, LightPsiParser {
       return Pragma_1_0(b, l + 1);
     }
   };
-  final static Parser SetOrTableCtor_2_1_0_0_1_parser_ = ForStmt_2_1_parser_;
-  final static Parser TupleCtor_2_1_2_1_parser_ = ForStmt_2_1_parser_;
-  final static Parser TupleTypeExpr_1_1_parser_ = ForStmt_2_1_parser_;
+  final static Parser SetOrTableCtor_2_1_0_0_1_parser_ = BindStmt_2_1_parser_;
+  final static Parser TupleCtor_2_1_2_1_parser_ = BindStmt_2_1_parser_;
+  final static Parser TupleTypeExpr_1_1_parser_ = BindStmt_2_1_parser_;
   final static Parser TypeDef_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return TypeDef(b, l + 1);
@@ -6389,7 +6490,7 @@ public class NimParser implements PsiParser, LightPsiParser {
       return condStmt_0_1(b, l + 1);
     }
   };
-  final static Parser exprColonEqExprList_1_0_1_parser_ = ForStmt_2_1_parser_;
+  final static Parser exprColonEqExprList_1_0_1_parser_ = BindStmt_2_1_parser_;
   final static Parser exprColonEqExpr_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return exprColonEqExpr(b, l + 1);
@@ -6460,7 +6561,7 @@ public class NimParser implements PsiParser, LightPsiParser {
       return inlineTupleDecl_2_1(b, l + 1);
     }
   };
-  final static Parser namedArgs_0_1_parser_ = ForStmt_2_1_parser_;
+  final static Parser namedArgs_0_1_parser_ = BindStmt_2_1_parser_;
   final static Parser objectCaseBranches_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return objectCaseBranches(b, l + 1);
@@ -6491,6 +6592,11 @@ public class NimParser implements PsiParser, LightPsiParser {
       return primary(b, l + 1);
     }
   };
+  final static Parser qualifiedIdent_parser_ = new Parser() {
+    public boolean parse(PsiBuilder b, int l) {
+      return qualifiedIdent(b, l + 1);
+    }
+  };
   final static Parser semiStmtList_0_0_1_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return semiStmtList_0_0_1(b, l + 1);
@@ -6511,5 +6617,5 @@ public class NimParser implements PsiParser, LightPsiParser {
       return varTuple_2_0_0(b, l + 1);
     }
   };
-  final static Parser varTuple_2_0_1_parser_ = ForStmt_2_1_parser_;
+  final static Parser varTuple_2_0_1_parser_ = BindStmt_2_1_parser_;
 }

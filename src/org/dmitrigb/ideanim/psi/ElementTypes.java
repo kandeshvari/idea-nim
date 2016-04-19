@@ -115,6 +115,7 @@ public interface ElementTypes {
 
   IElementType ASM_STMT = new NimElementType("ASM_STMT");
   IElementType ASSIGNMENT_EXPR = new NimElementType("ASSIGNMENT_EXPR");
+  IElementType BIND_STMT = new NimElementType("BIND_STMT");
   IElementType BLOCK = new NimElementType("BLOCK");
   IElementType BLOCK_STMT = new NimElementType("BLOCK_STMT");
   IElementType BRACKET_CTOR = new NimElementType("BRACKET_CTOR");
@@ -156,6 +157,7 @@ public interface ElementTypes {
   IElementType LET_SECT = new NimElementType("LET_SECT");
   IElementType LITERAL = new NimElementType("LITERAL");
   IElementType MACRO_DEF = new NimElementType("MACRO_DEF");
+  IElementType MIXIN_STMT = new NimElementType("MIXIN_STMT");
   IElementType NIL_TOKEN = new NimElementType("NIL_TOKEN");
   IElementType OBJECT_CTOR = new NimElementType("OBJECT_CTOR");
   IElementType OBJECT_DEF = new NimElementType("OBJECT_DEF");

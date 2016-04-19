@@ -27,6 +27,9 @@ public class ElementFactory {
     else if (type == ASSIGNMENT_EXPR) {
       return new AssignmentExprImpl(node);
     }
+    else if (type == BIND_STMT) {
+      return new BindStmtImpl(node);
+    }
     else if (type == BLOCK) {
       return new BlockImpl(node);
     }
@@ -149,6 +152,9 @@ public class ElementFactory {
     }
     else if (type == MACRO_DEF) {
       return new MacroDefImpl(node);
+    }
+    else if (type == MIXIN_STMT) {
+      return new MixinStmtImpl(node);
     }
     else if (type == NIL_TOKEN) {
       return new NilTokenImpl(node);
