@@ -46,7 +46,7 @@ public class IdentifierDefImpl extends IdentifierImpl implements IdentifierDef {
   @Override
   public SearchScope getUseScope() {
     PsiElement context = getContext();
-    if (context instanceof IdentifierDefs) {
+    if (context instanceof IdentifierDefs || context instanceof GenericParam) {
       context = context.getContext();
       if (context instanceof RoutineDef)
         return new LocalSearchScope(context);
