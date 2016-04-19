@@ -2,6 +2,7 @@ package org.dmitrigb.ideanim.types;
 
 import java.util.Set;
 
+import org.dmitrigb.ideanim.psi.elements.Expression;
 import org.dmitrigb.ideanim.psi.elements.TypeDef;
 
 public class NamedType extends Type {
@@ -16,7 +17,8 @@ public class NamedType extends Type {
   }
 
   public Type getUnderlyingType() {
-    return definition.getDefinition().asType();
+    Expression def = this.definition.getDefinition();
+    return def == null ? Type.UNKNOWN : def.asType();
   }
 
   @Override

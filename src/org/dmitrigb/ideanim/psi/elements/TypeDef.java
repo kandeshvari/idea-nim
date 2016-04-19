@@ -19,6 +19,7 @@ public interface TypeDef extends PsiNameIdentifierOwner, StubBasedPsiElement<Typ
   @Nullable
   Pragma getPragma();
 
+  @Nullable
   Expression getDefinition();
 
   Type toType();
