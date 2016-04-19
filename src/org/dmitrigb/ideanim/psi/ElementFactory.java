@@ -21,7 +21,10 @@ public class ElementFactory {
 
   public static PsiElement createElement(ASTNode node) {
     IElementType type = node.getElementType();
-    if (type == ASSIGNMENT_EXPR) {
+    if (type == ASM_STMT) {
+      return new AsmStmtImpl(node);
+    }
+    else if (type == ASSIGNMENT_EXPR) {
       return new AssignmentExprImpl(node);
     }
     else if (type == BLOCK) {

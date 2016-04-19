@@ -33,6 +33,7 @@ private meta listOf ::= <<p1>> (<<p2>> <<p1>>)*
 
 private symbol ::= IDENT | T_ADDR | T_TYPE | ACCENT_QUOTED
 
+private stringLiteral ::= STRING_LITERAL | TRIPLESTR_LITERAL
 Literal ::= FLOAT64_LITERAL
           | FLOAT32_LITERAL
           | FLOAT_LITERAL
@@ -47,8 +48,7 @@ Literal ::= FLOAT64_LITERAL
           | INT8_LITERAL
           | INT_LITERAL
           | CHARACTER_LITERAL
-          | STRING_LITERAL
-          | TRIPLESTR_LITERAL
+          | stringLiteral
           {extends=Expression}
 
 Identifier ::= symbol
@@ -98,6 +98,7 @@ private complexOrSimpleStmt ::=
   | ForStmt
   | BlockStmt
   | StaticStmt
+  | AsmStmt
   | ProcDef
   | IteratorDef
   | MacroDef
@@ -137,6 +138,7 @@ BlockStmt ::= T_BLOCK &INDNONE Identifier? T_COLON stmt {pin=1 extends=Statement
 
 StaticStmt ::= T_STATIC T_COLON stmt {pin=1 extends=Statement}
 
+AsmStmt ::= T_ASM &INDNONE Pragma? &stringLiteral Literal {pin=1 extends=Statement}
 
 private routine ::= &OPTIND Identifier OPERATOR? (&OPTIND Pattern)? (&OPTIND genericParameters)? &INDNONE paramListColon (&OPTIND Pragma)? (&OPTIND T_EQ stmt)?
 

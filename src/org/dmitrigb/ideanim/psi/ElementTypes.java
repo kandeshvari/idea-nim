@@ -113,6 +113,7 @@ public interface ElementTypes {
   IElementType T_XOR = new NimTokenType("T_XOR");
   IElementType T_YIELD = new NimTokenType("T_YIELD");
 
+  IElementType ASM_STMT = new NimElementType("ASM_STMT");
   IElementType ASSIGNMENT_EXPR = new NimElementType("ASSIGNMENT_EXPR");
   IElementType BLOCK = new NimElementType("BLOCK");
   IElementType BLOCK_STMT = new NimElementType("BLOCK_STMT");
