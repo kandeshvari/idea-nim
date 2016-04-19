@@ -5683,7 +5683,7 @@ public class NimParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // &INDNONE (ObjectCtor | CallExpr | &T_DO callWithDoBlocks | BracketExpr | CommandExpr) | DotExpr
+  // &INDNONE (ObjectCtor | CallExpr | &T_DO callWithDoBlocks | BracketExpr | !<<inPragma>> CommandExpr) | DotExpr
   static boolean primarySuffix(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primarySuffix")) return false;
     boolean r;
@@ -5694,7 +5694,7 @@ public class NimParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // &INDNONE (ObjectCtor | CallExpr | &T_DO callWithDoBlocks | BracketExpr | CommandExpr)
+  // &INDNONE (ObjectCtor | CallExpr | &T_DO callWithDoBlocks | BracketExpr | !<<inPragma>> CommandExpr)
   private static boolean primarySuffix_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primarySuffix_0")) return false;
     boolean r;
@@ -5715,7 +5715,7 @@ public class NimParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // ObjectCtor | CallExpr | &T_DO callWithDoBlocks | BracketExpr | CommandExpr
+  // ObjectCtor | CallExpr | &T_DO callWithDoBlocks | BracketExpr | !<<inPragma>> CommandExpr
   private static boolean primarySuffix_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primarySuffix_0_1")) return false;
     boolean r;
@@ -5724,7 +5724,7 @@ public class NimParser implements PsiParser, LightPsiParser {
     if (!r) r = CallExpr(b, l + 1);
     if (!r) r = primarySuffix_0_1_2(b, l + 1);
     if (!r) r = BracketExpr(b, l + 1);
-    if (!r) r = CommandExpr(b, l + 1);
+    if (!r) r = primarySuffix_0_1_4(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -5746,6 +5746,27 @@ public class NimParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b, l, _AND_);
     r = consumeToken(b, T_DO);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // !<<inPragma>> CommandExpr
+  private static boolean primarySuffix_0_1_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primarySuffix_0_1_4")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = primarySuffix_0_1_4_0(b, l + 1);
+    r = r && CommandExpr(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // !<<inPragma>>
+  private static boolean primarySuffix_0_1_4_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primarySuffix_0_1_4_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !inPragma(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }

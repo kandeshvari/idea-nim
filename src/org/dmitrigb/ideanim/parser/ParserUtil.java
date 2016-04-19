@@ -116,12 +116,17 @@ public class ParserUtil extends GeneratedParserUtilBase {
     return tokInd == -1 || tokInd > state.currentIndent;
   }
 
-  public static boolean enterPragma(PsiBuilder builder, int l, Parser parser) {
+  public static boolean enterPragma(PsiBuilder builder, int level, Parser parser) {
     ParserState state = getParserState(builder);
     state.pragmaCount++;
-    boolean result = parser.parse(builder, l + 1);
+    boolean result = parser.parse(builder, level + 1);
     state.pragmaCount--;
     return result;
+  }
+
+  public static boolean inPragma(PsiBuilder builder, int level) {
+    ParserState state = getParserState(builder);
+    return state.pragmaCount > 0;
   }
 
   public static boolean typeDefMode(PsiBuilder builder, int level, Parser parser) {

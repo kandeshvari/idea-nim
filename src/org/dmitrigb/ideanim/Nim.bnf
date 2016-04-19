@@ -342,7 +342,7 @@ TupleTypeExpr ::= T_LPAREN <<listOf simpleExpr (T_COMMA)>> T_RPAREN {pin=1}
 
 SetOrTableCtor ::= T_LBRACE &OPTIND (T_COLON | <<listOf exprColonEqExpr (T_COMMA)>>? T_COMMA?) T_RBRACE {extends=Expression}
 
-private primarySuffix ::= &INDNONE (ObjectCtor | CallExpr | &T_DO callWithDoBlocks | BracketExpr | CommandExpr) | DotExpr
+private primarySuffix ::= &INDNONE (ObjectCtor | CallExpr | &T_DO callWithDoBlocks | BracketExpr | !<<inPragma>> CommandExpr) | DotExpr
 
 left ObjectCtor ::= T_LPAREN &OPTIND namedArgs T_RPAREN {extends=Expression}
 
