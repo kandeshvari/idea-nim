@@ -5,6 +5,8 @@ import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.impl.FakePsiElement;
 import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.search.LocalSearchScope;
+import com.intellij.psi.search.SearchScope;
 import org.dmitrigb.ideanim.psi.elements.ProcExpr;
 import org.dmitrigb.ideanim.psi.elements.RoutineDef;
 import org.dmitrigb.ideanim.psi.elements.TypeDesc;
@@ -58,5 +60,11 @@ public class ProcResultPsiElement extends FakePsiElement implements PsiNameIdent
   @Override
   public PsiElement getNameIdentifier() {
     return null;
+  }
+
+  @NotNull
+  @Override
+  public SearchScope getUseScope() {
+    return new LocalSearchScope(routine);
   }
 }
