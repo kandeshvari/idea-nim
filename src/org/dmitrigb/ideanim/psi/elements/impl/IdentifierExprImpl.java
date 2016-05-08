@@ -3,11 +3,13 @@ package org.dmitrigb.ideanim.psi.elements.impl;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
-import org.dmitrigb.ideanim.psi.NimPsiTreeUtil;
+import org.dmitrigb.ideanim.psi.elements.GenericParam;
+import org.dmitrigb.ideanim.psi.elements.Identifier;
+import org.dmitrigb.ideanim.psi.elements.IdentifierDef;
+import org.dmitrigb.ideanim.psi.elements.IdentifierExpr;
+import org.dmitrigb.ideanim.psi.elements.TypeDef;
 import org.dmitrigb.ideanim.types.TGeneric;
-import org.dmitrigb.ideanim.types.TPrimitive;
 import org.dmitrigb.ideanim.types.Type;
-import org.dmitrigb.ideanim.psi.elements.*;
 import org.dmitrigb.ideanim.types.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,7 +53,7 @@ public class IdentifierExprImpl extends BaseExpression implements IdentifierExpr
       }
     }
 
-    return TPrimitive.fromPredefinedTypeName(id.getText());
+    return Type.UNKNOWN;
   }
 
 }

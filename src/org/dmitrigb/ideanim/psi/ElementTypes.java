@@ -2,6 +2,7 @@ package org.dmitrigb.ideanim.psi;
 
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import org.dmitrigb.ideanim.psi.stubs.RoutineDefElementType;
 import org.dmitrigb.ideanim.psi.stubs.TypeDefStubElementType;
 
 public interface ElementTypes {
@@ -153,10 +154,10 @@ public interface ElementTypes {
   IElementType IMPORT_STMT = new NimElementType("IMPORT_STMT");
   IElementType INCLUDE_STMT = new NimElementType("INCLUDE_STMT");
   IElementType INFIX_EXPR = new NimElementType("INFIX_EXPR");
-  IElementType ITERATOR_DEF = new NimElementType("ITERATOR_DEF");
+  IElementType ITERATOR_DEF = new RoutineDefElementType("ITERATOR_DEF", RoutineDefElementType.Kind.ITERATOR);
   IElementType LET_SECT = new NimElementType("LET_SECT");
   IElementType LITERAL = new NimElementType("LITERAL");
-  IElementType MACRO_DEF = new NimElementType("MACRO_DEF");
+  IElementType MACRO_DEF = new RoutineDefElementType("MACRO_DEF", RoutineDefElementType.Kind.MACRO);
   IElementType MIXIN_STMT = new NimElementType("MIXIN_STMT");
   IElementType NIL_TOKEN = new NimElementType("NIL_TOKEN");
   IElementType OBJECT_CTOR = new NimElementType("OBJECT_CTOR");
@@ -167,7 +168,7 @@ public interface ElementTypes {
   IElementType PRAGMA = new NimElementType("PRAGMA");
   IElementType PRAGMA_STMT = new NimElementType("PRAGMA_STMT");
   IElementType PREFIX_EXPR = new NimElementType("PREFIX_EXPR");
-  IElementType PROC_DEF = new NimElementType("PROC_DEF");
+  IElementType PROC_DEF = new RoutineDefElementType("PROC_DEF", RoutineDefElementType.Kind.PROC);
   IElementType PROC_EXPR = new NimElementType("PROC_EXPR");
   IElementType PROC_TYPE_CLASS = new NimElementType("PROC_TYPE_CLASS");
   IElementType PROC_TYPE_EXPR = new NimElementType("PROC_TYPE_EXPR");
@@ -181,7 +182,7 @@ public interface ElementTypes {
   IElementType STATIC_STMT = new NimElementType("STATIC_STMT");
   IElementType STATIC_TYPE_EXPR = new NimElementType("STATIC_TYPE_EXPR");
   IElementType STMT_LIST_EXPR = new NimElementType("STMT_LIST_EXPR");
-  IElementType TEMPLATE_DEF = new NimElementType("TEMPLATE_DEF");
+  IElementType TEMPLATE_DEF = new RoutineDefElementType("TEMPLATE_DEF", RoutineDefElementType.Kind.TEMPLATE);
   IElementType TRY_STMT = new NimElementType("TRY_STMT");
   IElementType TUPLE_CTOR = new NimElementType("TUPLE_CTOR");
   IElementType TUPLE_DEF = new NimElementType("TUPLE_DEF");
@@ -211,9 +212,13 @@ public interface ElementTypes {
       T_OF, T_OR, T_OUT, T_PROC, T_PTR, T_RAISE, T_REF, T_RETURN, T_SHL, T_SHR, T_STATIC, T_TEMPLATE, T_TRY, T_TUPLE,
       T_TYPE, T_USING, T_VAR, T_WHEN, T_WHILE, T_WITH, T_WITHOUT, T_XOR, T_YIELD);
 
-  TokenSet NUMBER_LITERALS = TokenSet.create(FLOAT64_LITERAL, FLOAT32_LITERAL, FLOAT_LITERAL,
-      UINT64_LITERAL, UINT32_LITERAL, UINT16_LITERAL, UINT8_LITERAL, UINT_LITERAL,
-      INT64_LITERAL, INT32_LITERAL, INT16_LITERAL, INT8_LITERAL, INT_LITERAL);
+  TokenSet INTEGER_LITERALS = TokenSet.create(
+      INT64_LITERAL, INT32_LITERAL, INT16_LITERAL, INT8_LITERAL, INT_LITERAL,
+      UINT64_LITERAL, UINT32_LITERAL, UINT16_LITERAL, UINT8_LITERAL, UINT_LITERAL);
+
+  TokenSet FLOAT_LITERALS = TokenSet.create(FLOAT64_LITERAL, FLOAT32_LITERAL, FLOAT_LITERAL);
+
+  TokenSet NUMBER_LITERALS = TokenSet.orSet(INTEGER_LITERALS, FLOAT_LITERALS);
 
   TokenSet LITERALS = TokenSet.orSet(NUMBER_LITERALS, STRINGS);
 }

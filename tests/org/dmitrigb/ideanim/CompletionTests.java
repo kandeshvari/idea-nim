@@ -2,10 +2,9 @@ package org.dmitrigb.ideanim;
 
 import java.util.List;
 
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
-public class CompletionTests extends LightPlatformCodeInsightFixtureTestCase {
+public class CompletionTests extends BaseNimTests {
   public void testObjectMembers() throws Exception {
     List<String> strings = getCompletionStrings("" +
         "type\n" +
@@ -16,9 +15,11 @@ public class CompletionTests extends LightPlatformCodeInsightFixtureTestCase {
         "\n" +
         "proc enroll(p: Student, school: string) = discard\n" +
         "\n" +
+        "proc setGPA(p: var Student, gpa: int) = discard\n" +
+        "\n" +
         "var s: Student\n" +
         "s.<caret>\n");
-    assertSameElements(strings, "name", "school", "enroll");
+    assertSameElements(strings, "name", "school", "enroll", "setGPA");
   }
 
   public void testTypes() throws Exception {

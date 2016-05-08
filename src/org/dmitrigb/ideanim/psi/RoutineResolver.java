@@ -10,9 +10,11 @@ import com.intellij.psi.ResolveState;
 import org.dmitrigb.ideanim.psi.elements.*;
 import org.dmitrigb.ideanim.types.TGeneric;
 import org.dmitrigb.ideanim.types.TPrimitive;
+import org.dmitrigb.ideanim.types.TVar;
 import org.dmitrigb.ideanim.types.Type;
 import org.dmitrigb.ideanim.types.Types;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class RoutineResolver extends SymbolResolver {
 
@@ -61,8 +63,8 @@ public class RoutineResolver extends SymbolResolver {
   private RoutineDef fullMatch;
   private MatchCounts bestCounts;
 
-  public RoutineResolver(Identifier procId, List<Expression> arguments) {
-    super(procId.getText(), null);
+  public RoutineResolver(String name, List<Expression> arguments) {
+    super(name, null);
     this.arguments = arguments;
   }
 
@@ -87,7 +89,8 @@ public class RoutineResolver extends SymbolResolver {
           .collect(Collectors.toList()));
     }
 
-    if (params.size() != arguments.size())
+    // TODO: varargs support
+    if (arguments.size() != routine.getMaxParameterCount())
       return;
 
     if (argCountMatch == null)
@@ -123,6 +126,14 @@ public class RoutineResolver extends SymbolResolver {
     if (argType == null)
       return null;
 
+    MatchCategory category = doMatchArgument(arg, argType, paramType);
+    if (category == null && paramType instanceof TVar)
+      category = doMatchArgument(arg, argType, ((TVar) paramType).getBaseType());
+    return category;
+  }
+
+  @Nullable
+  private static MatchCategory doMatchArgument(Expression arg, Type argType, Type paramType) {
     if (argType.equals(paramType))
       return MatchCategory.EXACT;
 

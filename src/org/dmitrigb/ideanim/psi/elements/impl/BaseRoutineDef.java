@@ -2,23 +2,30 @@ package org.dmitrigb.ideanim.psi.elements.impl;
 
 import java.util.List;
 
+import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.dmitrigb.ideanim.psi.ElementFactory;
 import org.dmitrigb.ideanim.psi.ElementTypes;
 import org.dmitrigb.ideanim.psi.elements.*;
+import org.dmitrigb.ideanim.psi.stubs.RoutineDefStub;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseRoutineDef extends BaseStatement implements RoutineDef {
+public abstract class BaseRoutineDef extends StubBasedPsiElementBase<RoutineDefStub> implements RoutineDef {
 
   public BaseRoutineDef(ASTNode node) {
     super(node);
+  }
+
+  public BaseRoutineDef(@NotNull RoutineDefStub stub, @NotNull IStubElementType nodeType) {
+    super(stub, nodeType);
   }
 
   @Override
@@ -80,6 +87,25 @@ public abstract class BaseRoutineDef extends BaseStatement implements RoutineDef
   }
 
   @Override
+  public int getMaxParameterCount() {
+    // TODO: take varargs into account
+    return (int) getParameters().stream().flatMap(def -> def.getIdentifiers().stream()).count();
+  }
+
+  @Override
+  public int getMinParameterCount() {
+    // TODO: take varargs into account
+    return (int) getParameters().stream().filter(defs -> defs.getInitializer() == null).flatMap(def -> def.getIdentifiers().stream()).count();
+  }
+
+  @Override
+  public boolean hasParams() {
+    if (getStub() != null)
+      return getStub().hasParams();
+    return !getParameters().isEmpty();
+  }
+
+  @Override
   public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
     if (lastParent != null) {
       List<IdentifierDefs> params = getParameters();
@@ -110,6 +136,9 @@ public abstract class BaseRoutineDef extends BaseStatement implements RoutineDef
 
   @Override
   public String getName() {
+    if (getStub() != null)
+      return getStub().getName();
+
     Identifier id = getIdentifier();
     return id == null ? null : id.getText();
   }

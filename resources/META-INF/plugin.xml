@@ -37,6 +37,7 @@
     <typeDeclarationProvider implementation="org.dmitrigb.ideanim.NimTypeDeclarationProvider"/>
     <stubElementTypeHolder class="org.dmitrigb.ideanim.psi.ElementTypes"/>
     <stubIndex implementation="org.dmitrigb.ideanim.psi.stubs.indices.TypeIndex"/>
+    <stubIndex implementation="org.dmitrigb.ideanim.psi.stubs.indices.RoutineIndex"/>
     <sdkType implementation="org.dmitrigb.ideanim.NimSdkType"/>
   </extensions>
 

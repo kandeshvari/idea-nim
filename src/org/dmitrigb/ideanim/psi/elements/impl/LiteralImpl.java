@@ -1,49 +1,58 @@
 package org.dmitrigb.ideanim.psi.elements.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.dmitrigb.ideanim.psi.ElementTypes;
 import org.dmitrigb.ideanim.psi.elements.Literal;
-import org.dmitrigb.ideanim.types.TPrimitive;
+import org.dmitrigb.ideanim.types.SystemTypes;
+import org.dmitrigb.ideanim.types.Type;
 import org.jetbrains.annotations.NotNull;
 
 import static org.dmitrigb.ideanim.psi.ElementTypes.*;
 
 public class LiteralImpl extends BaseExpression implements Literal {
 
-  private static Map<IElementType, TPrimitive> literalTypes = new HashMap<>();
-
-  static {
-    literalTypes.put(INT_LITERAL, TPrimitive.INT);
-    literalTypes.put(INT8_LITERAL, TPrimitive.INT8);
-    literalTypes.put(INT16_LITERAL, TPrimitive.INT16);
-    literalTypes.put(INT32_LITERAL, TPrimitive.INT32);
-    literalTypes.put(INT64_LITERAL, TPrimitive.INT64);
-    literalTypes.put(UINT_LITERAL, TPrimitive.UINT);
-    literalTypes.put(UINT8_LITERAL, TPrimitive.UINT8);
-    literalTypes.put(UINT16_LITERAL, TPrimitive.UINT16);
-    literalTypes.put(UINT32_LITERAL, TPrimitive.UINT32);
-    literalTypes.put(UINT64_LITERAL, TPrimitive.UINT64);
-    literalTypes.put(FLOAT_LITERAL, TPrimitive.FLOAT);
-    literalTypes.put(FLOAT32_LITERAL, TPrimitive.FLOAT32);
-    literalTypes.put(FLOAT64_LITERAL, TPrimitive.FLOAT64);
-    literalTypes.put(CHARACTER_LITERAL, TPrimitive.CHAR);
-    literalTypes.put(STRING_LITERAL, TPrimitive.STRING);
-    literalTypes.put(TRIPLESTR_LITERAL, TPrimitive.STRING);
-  }
-
   public LiteralImpl(ASTNode node) {
     super(node);
   }
 
   @Override
-  public TPrimitive getType() {
-    TPrimitive type = literalTypes.get(getLiteralElementType());
-    assert type != null;
-    return type;
+  public Type getType() {
+    IElementType el = getLiteralElementType();
+    SystemTypes sysTypes = SystemTypes.getInstance(this);
+    if (el == INT_LITERAL)
+      return sysTypes.intType();
+    if (el == INT8_LITERAL)
+      return sysTypes.int8Type();
+    if (el == INT16_LITERAL)
+      return sysTypes.int16Type();
+    if (el == INT32_LITERAL)
+      return sysTypes.int32Type();
+    if (el == INT64_LITERAL)
+      return sysTypes.int64Type();
+    if (el == UINT_LITERAL)
+      return sysTypes.uintType();
+    if (el == UINT8_LITERAL)
+      return sysTypes.uint8Type();
+    if (el == UINT16_LITERAL)
+      return sysTypes.uint16Type();
+    if (el == UINT32_LITERAL)
+      return sysTypes.uint32Type();
+    if (el == UINT64_LITERAL)
+      return sysTypes.uint64Type();
+    if (el == FLOAT_LITERAL)
+      return sysTypes.floatType();
+    if (el == FLOAT32_LITERAL)
+      return sysTypes.float32Type();
+    if (el == FLOAT64_LITERAL)
+      return sysTypes.float64Type();
+    if (el == CHARACTER_LITERAL)
+      return sysTypes.charType();
+    if (el == STRING_LITERAL || el == TRIPLESTR_LITERAL)
+      return sysTypes.stringType();
+
+    return Type.UNKNOWN;
   }
 
   @NotNull
@@ -121,14 +130,18 @@ public class LiteralImpl extends BaseExpression implements Literal {
 
   @Override
   public Object primitiveValue() {
-    TPrimitive type = getType();
-    if (type.isInteger())
+    IElementType el = getLiteralElementType();
+
+    if (ElementTypes.INTEGER_LITERALS.contains(el))
       return integerValue();
-    if (type.isFloat())
+
+    if (ElementTypes.FLOAT_LITERALS.contains(el))
       return floatValue();
-    if (type.isChar())
+
+    if (el == CHARACTER_LITERAL)
       return charValue();
-    assert type.isString();
+
+    assert ElementTypes.STRINGS.contains(el);
     return stringValue();
   }
 }

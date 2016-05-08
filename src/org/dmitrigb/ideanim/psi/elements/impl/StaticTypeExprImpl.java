@@ -1,6 +1,8 @@
 package org.dmitrigb.ideanim.psi.elements.impl;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.dmitrigb.ideanim.psi.elements.Expression;
 import org.dmitrigb.ideanim.psi.elements.StaticTypeExpr;
 import org.dmitrigb.ideanim.types.TStatic;
@@ -13,7 +15,7 @@ public class StaticTypeExprImpl extends BaseExpression implements StaticTypeExpr
 
   @Override
   public Expression getUnderlyingType() {
-    return (Expression) getFirstChild();
+    return PsiTreeUtil.getChildOfType(this, Expression.class);
   }
 
   @Override

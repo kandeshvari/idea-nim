@@ -21,7 +21,7 @@ public class ProcReference extends IdentifierReference {
   @NotNull
   @Override
   protected SymbolResolver getSymbolResolver() {
-    return new RoutineResolver(getElement(), arguments);
+    return new RoutineResolver(getElement().getText(), arguments);
   }
 
   @Override

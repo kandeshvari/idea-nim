@@ -2,49 +2,48 @@ package org.dmitrigb.ideanim;
 
 import java.util.List;
 
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.dmitrigb.ideanim.psi.NimFile;
 import org.dmitrigb.ideanim.psi.elements.DiscardStmt;
 import org.dmitrigb.ideanim.psi.elements.Expression;
 import org.dmitrigb.ideanim.psi.elements.RoutineDef;
 import org.dmitrigb.ideanim.psi.elements.Statement;
-import org.dmitrigb.ideanim.types.TPrimitive;
+import org.dmitrigb.ideanim.types.SystemTypes;
 import org.dmitrigb.ideanim.types.Type;
 
-public class TypeTests extends LightPlatformCodeInsightFixtureTestCase {
+public class TypeTests extends BaseNimTests {
   public void testVariableWithDeclaredType() throws Exception {
     Type type = getTypeOfDiscardedExpr("" +
         "var a: string\n" +
         "discard a\n");
-    assertEquals(TPrimitive.STRING, type);
+    assertEquals(systemTypes().stringType(), type);
   }
 
   public void testParameterWithDeclaredType() throws Exception {
     Type type = getTypeOfDiscardedExpr("" +
         "proc foo(a: int) =\n" +
         "  discard a\n");
-    assertEquals(TPrimitive.INT, type);
+    assertEquals(systemTypes().intType(), type);
   }
 
   public void testVariableWithInitializer() throws Exception {
     Type type = getTypeOfDiscardedExpr("" +
         "var a = \"foo\"\n" +
         "discard a\n");
-    assertEquals(TPrimitive.STRING, type);
+    assertEquals(systemTypes().stringType(), type);
   }
 
   public void testProcCall() throws Exception {
     Type type = getTypeOfDiscardedExpr("" +
         "proc foo(): int = return 0\n" +
         "discard foo()\n");
-    assertEquals(TPrimitive.INT, type);
+    assertEquals(systemTypes().intType(), type);
   }
 
   public void testProcCallMethodSyntax() throws Exception {
     Type type = getTypeOfDiscardedExpr("" +
         "proc foo(s: string): int = return 0\n" +
         "discard \"\".foo()\n");
-    assertEquals(TPrimitive.INT, type);
+    assertEquals(systemTypes().intType(), type);
   }
 
   public void testObjectField() throws Exception {
@@ -53,7 +52,7 @@ public class TypeTests extends LightPlatformCodeInsightFixtureTestCase {
         "  name: string\n" +
         "var p: Person\n" +
         "discard p.name\n");
-    assertEquals(TPrimitive.STRING, type);
+    assertEquals(systemTypes().stringType(), type);
   }
 
   private Type getTypeOfDiscardedExpr(String nimSource) {
@@ -66,5 +65,9 @@ public class TypeTests extends LightPlatformCodeInsightFixtureTestCase {
     }
     Expression expr = ((DiscardStmt) lastStmt).getExpression();
     return expr.getType();
+  }
+
+  private SystemTypes systemTypes() {
+    return SystemTypes.getInstance(myFixture.getFile());
   }
 }

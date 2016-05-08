@@ -19,4 +19,9 @@ public class TVar extends Type {
   protected boolean equals(Type other, Set<TypePair> s) {
     return super.equals(other, s) || other instanceof TVar && getBaseType().equals(((TVar) other).getBaseType(), s);
   }
+
+  @Override
+  public String toString() {
+    return "var " + getBaseType().toString();
+  }
 }

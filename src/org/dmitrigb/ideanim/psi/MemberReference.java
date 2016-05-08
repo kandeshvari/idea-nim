@@ -2,15 +2,22 @@ package org.dmitrigb.ideanim.psi;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.dmitrigb.ideanim.psi.elements.Expression;
 import org.dmitrigb.ideanim.psi.elements.Identifier;
 import org.dmitrigb.ideanim.psi.elements.ObjectFields;
+import org.dmitrigb.ideanim.psi.elements.RoutineDef;
+import org.dmitrigb.ideanim.psi.stubs.indices.RoutineIndex;
 import org.dmitrigb.ideanim.types.TObject;
 import org.dmitrigb.ideanim.types.Type;
 import org.dmitrigb.ideanim.types.Types;
@@ -48,7 +55,8 @@ public class MemberReference extends IdentifierReference {
   @Nullable
   @Override
   public PsiElement resolve() {
-    SymbolResolver memberResolver = SymbolResolver.forName(getElement().getText())
+    String name = getElement().getText();
+    SymbolResolver memberResolver = SymbolResolver.forName(name)
         .withFilter(elem -> elem instanceof ObjectFields);
     if (!walkUpHierarchy(memberResolver, expression.getType()))
       return memberResolver.getResolvedTarget();
@@ -59,8 +67,13 @@ public class MemberReference extends IdentifierReference {
       args.add(expression);
       if (callArgs != null)
         args.addAll(callArgs);
-      RoutineResolver resolver = new RoutineResolver(getElement(), args);
-      NimPsiTreeUtil.walkUp(resolver, getElement(), getElement().getText());
+      RoutineResolver resolver = new RoutineResolver(name, args);
+      NimPsiTreeUtil.walkUpWithExtraElements(resolver, getElement(), () -> {
+        Project project = getElement().getProject();
+        RoutineIndex routineIndex = RoutineIndex.INSTANCE;
+        GlobalSearchScope importScope = ImportProcessor.buildImportScope(getElement());
+        return routineIndex.get(name, project, importScope);
+      });
       return resolver.getResolvedTarget();
     }
 
@@ -79,10 +92,14 @@ public class MemberReference extends IdentifierReference {
 
     if (!fieldsOnly) {
       RoutineCollector routineCollector = new RoutineCollector(expression);
-      PsiElement def = Types.resolveDefinition(type);
-      // TODO: take files of all objects in the hierarchy
-      PsiFile file = def == null ? null : def.getContainingFile();
-      NimPsiTreeUtil.walkUpWithFiles(routineCollector, getElement(), file == null ? new PsiFile[0] : new PsiFile[]{file});
+      NimPsiTreeUtil.walkUpWithExtraElements(routineCollector, getElement(), () -> {
+        Project project = getElement().getProject();
+        GlobalSearchScope importScope = ImportProcessor.buildImportScope(getElement());
+        RoutineIndex routineIndex = RoutineIndex.INSTANCE;
+        return routineIndex.getAllKeys(project).stream()
+            .flatMap(key -> routineIndex.get(key, project, importScope).stream().filter(RoutineDef::hasParams))
+            .collect(Collectors.toList());
+      });
       results.addAll(routineCollector.getLookupElements());
     }
 

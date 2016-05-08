@@ -24,7 +24,10 @@ public abstract class Types {
 
   public static Type unwrapNamedTypes(Type type) {
     while (type instanceof NamedType) {
-      type = ((NamedType) type).getUnderlyingType();
+      Type underlying = ((NamedType) type).getUnderlyingType();
+      if (underlying == null)
+        return type;
+      type = underlying;
     }
     return type;
   }

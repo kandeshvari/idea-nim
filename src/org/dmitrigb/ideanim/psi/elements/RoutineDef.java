@@ -3,10 +3,12 @@ package org.dmitrigb.ideanim.psi.elements;
 import java.util.List;
 
 import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.psi.StubBasedPsiElement;
+import org.dmitrigb.ideanim.psi.stubs.RoutineDefStub;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface RoutineDef extends Statement, PsiNameIdentifierOwner {
+public interface RoutineDef extends Statement, PsiNameIdentifierOwner, StubBasedPsiElement<RoutineDefStub> {
 
   @NotNull
   List<GenericParam> getGenericParameters();
@@ -32,5 +34,11 @@ public interface RoutineDef extends Statement, PsiNameIdentifierOwner {
   boolean isForwardDeclaration();
 
   int getParameterCount();
+
+  int getMinParameterCount();
+
+  int getMaxParameterCount();
+
+  boolean hasParams();
 
 }

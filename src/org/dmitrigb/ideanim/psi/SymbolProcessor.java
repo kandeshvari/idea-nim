@@ -60,9 +60,18 @@ public abstract class SymbolProcessor extends BaseScopeProcessor {
         if (!processField(ipp.getIdentifier()))
           return false;
     }
+    else if (element instanceof ImportStmt) {
+      List<Expression> expressions = ((ImportStmt) element).getExpressionList();
+      for (Expression expression : expressions) {
+        if (!processImport(expression))
+          return false;
+      }
+    }
 
     return true;
   }
+
+  protected boolean processImport(Expression expression) { return true; }
 
   protected boolean processField(IdentifierDef field) {
     return true;

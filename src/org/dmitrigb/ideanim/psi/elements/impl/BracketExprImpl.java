@@ -15,9 +15,15 @@ public class BracketExprImpl extends BaseExpression implements BracketExpr {
   }
 
   @Override
+  public Expression getReceiver() {
+    return (Expression) getFirstChild();
+  }
+
+  @Override
   @NotNull
-  public List<Expression> getExpressionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, Expression.class);
+  public List<Expression> getArguments() {
+    List<Expression> list = PsiTreeUtil.getChildrenOfTypeAsList(this, Expression.class);
+    return list.subList(1, list.size());
   }
 
 }

@@ -5,12 +5,11 @@ import java.util.stream.Collectors;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.dmitrigb.ideanim.psi.NimFile;
 import org.dmitrigb.ideanim.psi.ProcResultPsiElement;
 import org.dmitrigb.ideanim.psi.elements.*;
 
-public class ReferenceResolutionTests extends LightPlatformCodeInsightFixtureTestCase {
+public class ReferenceResolutionTests extends BaseNimTests {
   public void testSimpleVariableResolution1() throws Exception {
     myFixture.configureByText(NimFileType.INSTANCE, "" +
         "var a = 3\n" +

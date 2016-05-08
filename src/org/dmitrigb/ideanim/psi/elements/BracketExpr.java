@@ -5,7 +5,9 @@ import org.jetbrains.annotations.*;
 
 public interface BracketExpr extends Expression {
 
+  Expression getReceiver();
+
   @NotNull
-  List<Expression> getExpressionList();
+  List<Expression> getArguments();
 
 }

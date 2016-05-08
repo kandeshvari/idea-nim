@@ -71,6 +71,10 @@ public abstract class NimPsiTreeUtil {
     }, false);
   }
 
+  public static boolean walkUp(@NotNull PsiScopeProcessor processor, @NotNull PsiElement entrance) {
+    return PsiTreeUtil.treeWalkUp(processor, entrance, entrance.getContainingFile(), ResolveState.initial());
+  }
+
   public static boolean walkUpWithFiles(@NotNull PsiScopeProcessor processor,
                                         @NotNull PsiElement entrance,
                                         PsiFile[] files) {

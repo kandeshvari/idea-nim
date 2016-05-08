@@ -16,14 +16,26 @@ public class NamedType extends Type {
     return definition;
   }
 
+  public String getName() {
+    return definition.getName();
+  }
+
   public Type getUnderlyingType() {
     Expression def = this.definition.getDefinition();
-    return def == null ? Type.UNKNOWN : def.asType();
+    return def == null ? null : def.asType();
   }
 
   @Override
   protected boolean equals(Type other, Set<TypePair> s) {
-    return super.equals(other, s) || other instanceof NamedType && getUnderlyingType().equals(((NamedType) other).getUnderlyingType(), s);
+    if (super.equals(other, s))
+      return true;
+    if (other instanceof NamedType) {
+      NamedType otherType = (NamedType) other;
+      if (definition == otherType.definition ||
+          getUnderlyingType() != null && getUnderlyingType().equals(otherType.getUnderlyingType(), s))
+        return true;
+    }
+    return false;
   }
 
   @Override
