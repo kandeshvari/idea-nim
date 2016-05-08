@@ -3,13 +3,17 @@ package org.dmitrigb.ideanim.psi.stubs;
 import java.io.IOException;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import org.dmitrigb.ideanim.NimLanguage;
+import org.dmitrigb.ideanim.psi.NimFile;
+import org.dmitrigb.ideanim.psi.elements.Block;
 import org.dmitrigb.ideanim.psi.elements.RoutineDef;
+import org.dmitrigb.ideanim.psi.elements.WhenStmt;
 import org.dmitrigb.ideanim.psi.elements.impl.IteratorDefImpl;
 import org.dmitrigb.ideanim.psi.elements.impl.MacroDefImpl;
 import org.dmitrigb.ideanim.psi.elements.impl.ProcDefImpl;
@@ -49,7 +53,12 @@ public class RoutineDefElementType extends IStubElementType<RoutineDefStub, Rout
   @Override
   public boolean shouldCreateStub(ASTNode node) {
     RoutineDef routine = (RoutineDef) node.getPsi();
-    return routine.getName() != null;
+    if (routine.getName() == null)
+      return false;
+    PsiElement context = routine.getContext();
+    while (context instanceof WhenStmt || context instanceof Block)
+      context = context.getContext();
+    return context instanceof NimFile;
   }
 
   @Override
