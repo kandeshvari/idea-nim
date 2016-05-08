@@ -1,13 +1,26 @@
 package org.dmitrigb.ideanim.psi;
 
+import java.util.stream.Collectors;
+
+import com.intellij.codeInsight.completion.InsertHandler;
+import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.ASTNode;
-import com.intellij.util.IncorrectOperationException;
-import org.dmitrigb.ideanim.psi.elements.Identifier;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReferenceBase;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.IncorrectOperationException;
+import org.dmitrigb.ideanim.psi.elements.GenericParam;
+import org.dmitrigb.ideanim.psi.elements.Identifier;
+import org.dmitrigb.ideanim.psi.elements.RoutineDef;
+import org.dmitrigb.ideanim.psi.elements.TypeDef;
+import org.dmitrigb.ideanim.psi.stubs.indices.RoutineIndex;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class IdentifierReference extends PsiReferenceBase<Identifier> {
   public IdentifierReference(@NotNull Identifier element) {
@@ -30,7 +43,37 @@ public class IdentifierReference extends PsiReferenceBase<Identifier> {
   @NotNull
   @Override
   public Object[] getVariants() {
-    return new Object[0];
+    SymbolCollector collector = SymbolCollector.withFilter(el -> !(el instanceof TypeDef || el instanceof GenericParam));
+    NimPsiTreeUtil.walkUpWithExtraElements(collector, getElement(), () -> {
+      RoutineIndex index = RoutineIndex.INSTANCE;
+      Project project = getElement().getProject();
+      GlobalSearchScope scope = ImportProcessor.buildImportScope(getElement());
+      return index.getAllKeys(project).stream()
+          .flatMap(key -> index.get(key, project, scope).stream())
+          .collect(Collectors.toList());
+    });
+    return collector.getLookupElements().stream().map(le -> {
+      if (le.getPsiElement() instanceof RoutineDef)
+        return ((LookupElementBuilder) le).withInsertHandler(getRoutineInsertHandler(false));
+      return le;
+    }).toArray();
+  }
+
+  @NotNull
+  public static InsertHandler<LookupElement> getRoutineInsertHandler(boolean ignoreFirstArg) {
+    return (context, item) -> {
+      Editor editor = context.getEditor();
+      Document document = editor.getDocument();
+      int offset = context.getTailOffset();
+      document.insertString(offset, "()");
+      RoutineDef def = (RoutineDef) item.getPsiElement();
+      assert def != null;
+      if (ignoreFirstArg)
+        offset += def.getMaxParameterCount() == 1 ? 2 : 1;
+      else
+        offset += def.hasParams() ? 1 : 2;
+      editor.getCaretModel().moveToOffset(offset);
+    };
   }
 
   @Override

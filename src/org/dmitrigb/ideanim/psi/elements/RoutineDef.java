@@ -33,8 +33,6 @@ public interface RoutineDef extends Statement, PsiNameIdentifierOwner, StubBased
 
   boolean isForwardDeclaration();
 
-  int getParameterCount();
-
   int getMinParameterCount();
 
   int getMaxParameterCount();

@@ -51,6 +51,24 @@ public class CompletionTests extends BaseNimTests {
     assertSameElements(strings, "foo");
   }
 
+  public void testAnySymbol() throws Exception {
+    List<String> strings = getCompletionStrings("" +
+        "type AType = object\n" +
+        "proc globalProc() = discard\n" +
+        "const globalConst = 42\n" +
+        "var globalVar: string\n" +
+        "proc test(param: char): int =\n" +
+        "  var\n" +
+        "    localVar1 = \"asd\"\n" +
+        "    localVar2: string\n" +
+        "  let localVar3 = 4\n" +
+        "  const localConst = 'X'\n" +
+        "  <caret>\n");
+    assertSameElements(strings,
+        "globalProc", "globalConst", "globalVar", "test", "param",
+        "localVar1", "localVar2", "localVar3", "localConst", "result");
+  }
+
   @NotNull
   private List<String> getCompletionStrings(String nimSource) {
     myFixture.configureByText(NimFileType.INSTANCE, nimSource);

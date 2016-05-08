@@ -5,14 +5,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.dmitrigb.ideanim.psi.elements.Expression;
 import org.dmitrigb.ideanim.psi.elements.Identifier;
 import org.dmitrigb.ideanim.psi.elements.ObjectFields;
@@ -100,7 +98,9 @@ public class MemberReference extends IdentifierReference {
             .flatMap(key -> routineIndex.get(key, project, importScope).stream().filter(RoutineDef::hasParams))
             .collect(Collectors.toList());
       });
-      results.addAll(routineCollector.getLookupElements());
+      results.addAll(routineCollector.getLookupElements().stream()
+          .map(le -> ((LookupElementBuilder) le).withInsertHandler(getRoutineInsertHandler(true)))
+          .collect(Collectors.toList()));
     }
 
     return results.toArray();

@@ -82,11 +82,6 @@ public abstract class BaseRoutineDef extends StubBasedPsiElementBase<RoutineDefS
   }
 
   @Override
-  public int getParameterCount() {
-    return (int) getParameters().stream().flatMap(def -> def.getIdentifiers().stream()).count();
-  }
-
-  @Override
   public int getMaxParameterCount() {
     // TODO: take varargs into account
     return (int) getParameters().stream().flatMap(def -> def.getIdentifiers().stream()).count();
@@ -118,7 +113,7 @@ public abstract class BaseRoutineDef extends StubBasedPsiElementBase<RoutineDefS
         if (!param.processDeclarations(processor, state, null, place))
           return false;
       }
-      if (!processResultDeclaration(processor, state, lastParent, place))
+      if (getReturnType() != null && !processResultDeclaration(processor, state, lastParent, place))
         return false;
     }
     return processor.execute(this, state);

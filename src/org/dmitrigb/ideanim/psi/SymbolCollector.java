@@ -38,6 +38,10 @@ public class SymbolCollector extends SymbolProcessor {
 
   @Override
   protected boolean processConst(ConstDef constDef) {
+    TypeDesc declaredType = constDef.getDeclaredType();
+    elements.add(LookupElementBuilder.create(constDef)
+        .withTypeText(declaredType == null ? null : declaredType.getText())
+        .withIcon(AllIcons.Nodes.Variable));
     return true;
   }
 
@@ -56,6 +60,13 @@ public class SymbolCollector extends SymbolProcessor {
 
   @Override
   protected boolean processParam(IdentifierDef param) {
+    PsiElement context = param.getContext();
+    TypeDesc declaredType = (((IdentifierDefs) context)).getDeclaredType();
+
+    elements.add(LookupElementBuilder.create(param)
+        .withTypeText(declaredType == null ? null : declaredType.getText())
+        .withIcon(AllIcons.Nodes.Parameter));
+
     return true;
   }
 
@@ -64,21 +75,16 @@ public class SymbolCollector extends SymbolProcessor {
     elements.add(LookupElementBuilder.create(routine)
         .withIcon(AllIcons.Nodes.Method)
         .withTailText("(" + routine.getParameters().stream().map(PsiElement::getText).collect(Collectors.joining(", ")) + ")")
-        .withTypeText(routine.getReturnType() == null ? null : routine.getReturnType().getText())
-        .withInsertHandler((context, item) -> {
-          Editor editor = context.getEditor();
-          Document document = editor.getDocument();
-          int offset = context.getTailOffset();
-          document.insertString(offset, "()");
-          RoutineDef def = (RoutineDef) item.getPsiElement();
-          assert def != null;
-          editor.getCaretModel().moveToOffset(offset + (def.getParameterCount() == 1 ? 2 : 1));
-        }));
+        .withTypeText(routine.getReturnType() == null ? null : routine.getReturnType().getText()));
     return true;
   }
 
   @Override
   protected boolean processRoutineResult(ProcResultPsiElement result) {
+    TypeDesc declaredType = result.getProcReturnType();
+    elements.add(LookupElementBuilder.create(result)
+        .withTypeText(declaredType == null ? null : declaredType.getText())
+        .withIcon(AllIcons.Nodes.Variable));
     return true;
   }
 
@@ -96,6 +102,15 @@ public class SymbolCollector extends SymbolProcessor {
 
   @Override
   protected boolean processVar(IdentifierDef var) {
+    PsiElement context = var.getContext();
+    TypeDesc declaredType = null;
+    if (context instanceof VarDef)
+      declaredType = (((VarDef) context)).getDeclaredType();
+
+    elements.add(LookupElementBuilder.create(var)
+        .withTypeText(declaredType == null ? null : declaredType.getText())
+        .withIcon(AllIcons.Nodes.Variable));
+
     return true;
   }
 
