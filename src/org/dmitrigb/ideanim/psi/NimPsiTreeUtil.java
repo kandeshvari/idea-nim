@@ -6,7 +6,6 @@ import java.util.function.Supplier;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -51,15 +50,34 @@ public abstract class NimPsiTreeUtil {
     return null;
   }
 
+  public static boolean walkUp(@NotNull PsiScopeProcessor processor, @NotNull PsiElement entrance) {
+    return PsiTreeUtil.treeWalkUp(processor, entrance, null, ResolveState.initial());
+  }
+
   public static boolean walkUp(@NotNull PsiScopeProcessor processor,
                                @NotNull PsiElement entrance,
-                               String searchWord) {
-    if (!PsiTreeUtil.treeWalkUp(processor, entrance, entrance.getContainingFile(), ResolveState.initial()))
+                               Supplier<Collection<? extends PsiElement>> extraSupplier) {
+    if (!walkUp(processor, entrance))
       return false;
 
-    Project project = entrance.getContainingFile().getProject();
+    Collection<? extends PsiElement> extraElems = extraSupplier.get();
+    for (PsiElement elem : extraElems) {
+      if (!elem.processDeclarations(processor, ResolveState.initial(), null, entrance))
+        return false;
+    }
+    return true;
+  }
+
+  public static boolean walkUp(@NotNull PsiScopeProcessor processor,
+                               @NotNull PsiElement entrance,
+                               Supplier<Collection<? extends PsiElement>> extraSupplier,
+                               String searchWord, GlobalSearchScope searchScope) {
+    if (!walkUp(processor, entrance, extraSupplier))
+      return false;
+
+    Project project = entrance.getProject();
     PsiSearchHelper helper = PsiSearchHelper.SERVICE.getInstance(project);
-    return helper.processAllFilesWithWord(searchWord, GlobalSearchScope.projectScope(project), file -> {
+    return helper.processAllFilesWithWord(searchWord, searchScope, file -> {
       if (!(file instanceof NimFile))
         return true;
       List<Statement> stmts = ((NimFile) file).getStatements();
@@ -69,42 +87,6 @@ public abstract class NimPsiTreeUtil {
       }
       return true;
     }, false);
-  }
-
-  public static boolean walkUp(@NotNull PsiScopeProcessor processor, @NotNull PsiElement entrance) {
-    return PsiTreeUtil.treeWalkUp(processor, entrance, entrance.getContainingFile(), ResolveState.initial());
-  }
-
-  public static boolean walkUpWithFiles(@NotNull PsiScopeProcessor processor,
-                                        @NotNull PsiElement entrance,
-                                        PsiFile[] files) {
-    if (!PsiTreeUtil.treeWalkUp(processor, entrance, entrance.getContainingFile(), ResolveState.initial()))
-      return false;
-
-    for (PsiFile file : files) {
-      if (!(file instanceof NimFile))
-        continue;
-      List<Statement> stmts = ((NimFile) file).getStatements();
-      for (Statement stmt : stmts) {
-        if (!stmt.processDeclarations(processor, ResolveState.initial(), null, entrance))
-          return false;
-      }
-    }
-    return true;
-  }
-
-  public static boolean walkUpWithExtraElements(@NotNull PsiScopeProcessor processor,
-                                                @NotNull PsiElement entrance,
-                                                Supplier<Collection<? extends PsiElement>> extraSupplier) {
-    if (!PsiTreeUtil.treeWalkUp(processor, entrance, entrance.getContainingFile(), ResolveState.initial()))
-      return false;
-
-    Collection<? extends PsiElement> extraElems = extraSupplier.get();
-    for (PsiElement elem : extraElems) {
-      if (!elem.processDeclarations(processor, ResolveState.initial(), null, entrance))
-        return false;
-    }
-    return true;
   }
 
   /**

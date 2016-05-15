@@ -36,7 +36,13 @@ public class IdentifierReference extends PsiReferenceBase<Identifier> {
   @Override
   public PsiElement resolve() {
     SymbolResolver resolver = getSymbolResolver();
-    NimPsiTreeUtil.walkUp(resolver, getElement(), getElement().getText());
+    Identifier identifier = getElement();
+    GlobalSearchScope scope = ImportProcessor.buildImportScope(identifier);
+    NimPsiTreeUtil.walkUp(resolver, identifier, () -> {
+      RoutineIndex index = RoutineIndex.INSTANCE;
+      Project project = identifier.getProject();
+      return index.get(identifier.getText(), project, scope);
+    }, identifier.getText(), scope);
     return resolver.getResolvedTarget();
   }
 
@@ -44,7 +50,7 @@ public class IdentifierReference extends PsiReferenceBase<Identifier> {
   @Override
   public Object[] getVariants() {
     SymbolCollector collector = SymbolCollector.withFilter(el -> !(el instanceof TypeDef || el instanceof GenericParam));
-    NimPsiTreeUtil.walkUpWithExtraElements(collector, getElement(), () -> {
+    NimPsiTreeUtil.walkUp(collector, getElement(), () -> {
       RoutineIndex index = RoutineIndex.INSTANCE;
       Project project = getElement().getProject();
       GlobalSearchScope scope = ImportProcessor.buildImportScope(getElement());

@@ -22,7 +22,7 @@ public class TypeReference extends IdentifierReference {
   public PsiElement resolve() {
     SymbolResolver resolver = SymbolResolver.forName(getElement().getText())
         .withFilter(elem -> elem instanceof TypeDef || elem instanceof GenericParam);
-    NimPsiTreeUtil.walkUpWithExtraElements(resolver, getElement(), () -> {
+    NimPsiTreeUtil.walkUp(resolver, getElement(), () -> {
       Project project = getElement().getProject();
       return TypeIndex.getInstance().get(getElement().getText(), project, ImportProcessor.buildImportScope(getElement()));
     });
@@ -33,7 +33,7 @@ public class TypeReference extends IdentifierReference {
   @Override
   public Object[] getVariants() {
     SymbolCollector collector = SymbolCollector.withFilter(el -> el instanceof TypeDef || el instanceof GenericParam);
-    NimPsiTreeUtil.walkUpWithExtraElements(collector, getElement(), () -> {
+    NimPsiTreeUtil.walkUp(collector, getElement(), () -> {
       Project project = getElement().getProject();
       TypeIndex typeIndex = TypeIndex.getInstance();
       GlobalSearchScope scope = ImportProcessor.buildImportScope(getElement());

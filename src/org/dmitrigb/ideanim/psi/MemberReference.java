@@ -66,7 +66,7 @@ public class MemberReference extends IdentifierReference {
       if (callArgs != null)
         args.addAll(callArgs);
       RoutineResolver resolver = new RoutineResolver(name, args);
-      NimPsiTreeUtil.walkUpWithExtraElements(resolver, getElement(), () -> {
+      NimPsiTreeUtil.walkUp(resolver, getElement(), () -> {
         Project project = getElement().getProject();
         RoutineIndex routineIndex = RoutineIndex.INSTANCE;
         GlobalSearchScope importScope = ImportProcessor.buildImportScope(getElement());
@@ -90,7 +90,7 @@ public class MemberReference extends IdentifierReference {
 
     if (!fieldsOnly) {
       RoutineCollector routineCollector = new RoutineCollector(expression);
-      NimPsiTreeUtil.walkUpWithExtraElements(routineCollector, getElement(), () -> {
+      NimPsiTreeUtil.walkUp(routineCollector, getElement(), () -> {
         Project project = getElement().getProject();
         GlobalSearchScope importScope = ImportProcessor.buildImportScope(getElement());
         RoutineIndex routineIndex = RoutineIndex.INSTANCE;
