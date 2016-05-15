@@ -2,6 +2,9 @@ package org.dmitrigb.ideanim.psi.elements.impl;
 
 import java.util.List;
 
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
 import org.dmitrigb.ideanim.psi.elements.Block;
 import org.dmitrigb.ideanim.psi.elements.Expression;
 import org.dmitrigb.ideanim.psi.elements.WhenStmt;
@@ -27,4 +30,14 @@ public class WhenStmtImpl extends BaseStatement implements WhenStmt {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, Expression.class);
   }
 
+  @Override
+  public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+    for (Block block : getBlockList()) {
+      if (block == lastParent)
+        break;
+      if (!block.processDeclarations(processor, state, null, place))
+          return false;
+    }
+    return true;
+  }
 }
