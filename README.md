@@ -1,6 +1,8 @@
 Nim plugin for IntelliJ IDEA
 ============================
 
+!! This repo forked from https://bitbucket.org/dmitri_gb/idea-nim
+
 This is an IntelliJ IDEA plugin for the Nim programming language. It is
 currently under development and is not yet meant for general use.
 
@@ -20,3 +22,5 @@ Notes
 * The [`NimLexer`](src/org/dmitrigb/ideanim/NimLexer.java) class is generated
   from the [`Nim.flex`](src/org/dmitrigb/ideanim/Nim.flex) file using the same
   plugin.
+  
+  
